@@ -1,5 +1,3 @@
-const pword = process.env.SQL_PW;
-
 //↓ Exports qui vont être utilisables dans le reste de l'application
 module.exports = {
   HOST: "localhost",

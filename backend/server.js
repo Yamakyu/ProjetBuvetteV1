@@ -13,14 +13,18 @@ monApp.use(express.urlencoded({ extended: true }));
 const RouteTutorial = require("./Routes/RouteTutorial");
 
 const db = require("./models");
-//En production : db.sequelize.sync();
+//En production : ↓
+db.sequelize.sync();
 //En développement : ↓
+
+/*
 db.sequelize
   .sync({ force: true })
   .then(() => {
     console.log("Drop and re-sync db.");
   })
   .catch((err) => console.log(`Error while dropping/syncing db : ${err}`));
+*/
 
 //Ceci ira en router après
 monApp.get("/", (req, res) => {
