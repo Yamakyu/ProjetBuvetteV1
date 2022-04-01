@@ -1,6 +1,8 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 const monApp = express();
 
 var corsOptions = { origin: "http://localhost:8081/" };

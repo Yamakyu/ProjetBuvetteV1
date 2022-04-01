@@ -2,7 +2,7 @@
 module.exports = {
   HOST: "localhost",
   USER: "root",
-  PASSWORD: "angelight09",
+  PASSWORD: process.env.SQL_PW,
   DB: "sequelizetestdb",
   dialect: "mysql",
   pool: {

@@ -86,3 +86,8 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Les tutos
+backend/controllers/tutorialController.js
+backend/models/tutorialsModel.js
+backend/Routes/RouteTutorial.js
