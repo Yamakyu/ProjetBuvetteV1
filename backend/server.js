@@ -12,7 +12,7 @@ monApp.use(cors(corsOptions));
 monApp.use(express.json());
 monApp.use(express.urlencoded({ extended: true }));
 
-const RouteTutorial = require("./Routes/RouteTutorial");
+//const RouteTutorial = require("./Routes/RouteTutorial");
 const RouteUser = require("./Routes/RouteUser");
 
 const db = require("./models");
@@ -28,13 +28,8 @@ db.sequelize
   .catch((err) => console.log(`Error while dropping/syncing db : ${err}`));
 */
 
-//Ceci ira en router après
-monApp.get("/", (req, res) => {
-  res.json({ message: "Welcome to Yamakyu application." });
-});
-
 //Redirection des requêtes
-monApp.use("/api/tutorials", RouteTutorial);
+//monApp.use("/api/tutorials", RouteTutorial);
 monApp.use("/api/users", RouteUser);
 
 //On écoute le port 8080 pour les requêtes

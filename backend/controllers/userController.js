@@ -29,8 +29,6 @@ exports.login = async (req, res) => {
   try {
     const userLogin = req.body.login;
 
-    console.log("private key : " + process.env.PRIVATE_KEY);
-
     let thatUser = await User.findOne({ where: { login: userLogin } });
 
     //Si aucun utilisateur ne correspond
@@ -82,9 +80,9 @@ exports.isLoggedIn = (req, res, next) => {
       } else {
         req.thatRequestToken = payload;
         //On ajoute le token à la requête en créant une nouvelle variable.
-        //Ainsi, le token est inclus dans la requête, et toute API qui suit isLoggedIn peut l'utiliser.
+        //Ainsi, le token est inclus dans la requête, et toute API qui suit isLoggedIn peut l'utiliser. Le token contient aussi l'ID de son utilisateur.
 
-        console.log("Accès autorisé, leToken(extreme)");
+        console.log(`Accès autorisé, leToken(extreme)`);
         next();
       }
     });

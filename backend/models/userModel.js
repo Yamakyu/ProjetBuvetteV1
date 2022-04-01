@@ -4,7 +4,7 @@ module.exports = (sequelize, Sequelize) => {
   const userSchema = sequelize.define(
     "users",
     {
-      userId: {
+      id: {
         field: "user_id",
         autoIncrement: true,
         primaryKey: true,
