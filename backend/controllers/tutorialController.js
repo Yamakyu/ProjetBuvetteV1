@@ -34,7 +34,7 @@ exports.create = (req, res) => {
 
 //------------- GET -------------- Get all tutorials
 exports.findAll = (req, res) => {
-  console.log("------ Requête *find all* reçue ------- /n");
+  console.log("------ Requête *find all* reçue -------");
 
   Tutorial.findAll()
     .then((data) => {

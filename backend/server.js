@@ -11,12 +11,12 @@ monApp.use(express.json());
 monApp.use(express.urlencoded({ extended: true }));
 
 const RouteTutorial = require("./Routes/RouteTutorial");
+const RouteUser = require("./Routes/RouteUser");
 
 const db = require("./models");
 //En production : ↓
 db.sequelize.sync();
 //En développement : ↓
-
 /*
 db.sequelize
   .sync({ force: true })
@@ -33,6 +33,7 @@ monApp.get("/", (req, res) => {
 
 //Redirection des requêtes
 monApp.use("/api/tutorials", RouteTutorial);
+monApp.use("/api/users", RouteUser);
 
 //On écoute le port 8080 pour les requêtes
 monApp.listen(PORT, () => {
