@@ -19,14 +19,16 @@ const RouteUser = require("./Routes/RouteUser");
 
 const db = require("./models");
 //En production : ↓
-//db.sequelize.sync();
+db.sequelize.sync();
 //En développement : ↓
+/*
 db.sequelize
   .sync({ force: true })
   .then(() => {
     console.log("Drop and re-sync db.");
   })
   .catch((err) => console.log(`Error while dropping/syncing db : ${err}`));
+  */
 
 //Redirection des requêtes
 //monApp.use("/api/tutorials", RouteTutorial);

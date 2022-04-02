@@ -8,23 +8,44 @@ const Op = db.Sequelize.Op;
 
 // ---------- POST -----------
 exports.addUser = async (req, res) => {
-  console.log("------ USER controller : addUser -------");
+  console.log("USER controller : addUser -------");
 
-  await User.create(req.body)
-    .then((data) => {
-      res.status(200).json({
-        message: "Inscription réussie",
-        addedUser: data,
+  console.log(`droits Admin : ${req.thatRequestToken.isAdmin}`);
+  console.log(`droits Materiel : ${req.thatRequestToken.isGerantMateriel}`);
+  console.log(`droits Buvette : ${req.thatRequestToken.isGerantBuvette}`);
+
+  try {
+    //↓ On vérifie ici si l'utilisateur est créé avec des droits particuliers, auquel on vérifie que l'utilisateur que c'est bien un admin qui créée cet utilisateur
+    if (
+      (req.body.isAdmin ||
+        req.body.isGerantBuvette ||
+        req.body.isGerantMateriel) &&
+      !req.thatRequestToken.isAdmin
+    ) {
+      return res.status(401).json({
+        message: "401 : Token invalide, droits administrateurs requis",
       });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: "Inscription impossible : " + err });
-    });
+    } else {
+      await User.create(req.body)
+        .then((data) => {
+          res.status(200).json({
+            message: "Inscription réussie",
+            addedUser: data,
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({ message: "Inscription impossible : " + err });
+        });
+    }
+  } catch (err) {
+    console.log(`------ Erreur dans addUser :  ${err}`);
+    res.status(500).json({ message: "Ajout impossible : " + err });
+  }
 };
 
 //------------- POST --------------
 exports.login = async (req, res) => {
-  console.log("------ USER controller : login -------");
+  console.log("USER controller : login -------");
 
   try {
     const userLogin = req.body.login;
@@ -48,10 +69,19 @@ exports.login = async (req, res) => {
           .status(500)
           .json({ message: "Combinaison login/password incorrecte" });
       } else {
-        //On ajoute l'id utilisateur dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API
-        let newToken = jwt.sign({ id: thatUser.id }, process.env.PRIVATE_KEY, {
-          expiresIn: "5h",
-        });
+        //On ajoute l'id utilisateur ainsi que ses droits dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API
+        let newToken = jwt.sign(
+          {
+            id: thatUser.id,
+            isAdmin: thatUser.isAdmin,
+            isGerantBuvette: thatUser.isGerantBuvette,
+            isGerantMateriel: thatUser.isGerantMateriel,
+          },
+          process.env.PRIVATE_KEY,
+          {
+            expiresIn: "5h",
+          }
+        );
 
         res.status(200).json({
           user: thatUser,
@@ -67,7 +97,7 @@ exports.login = async (req, res) => {
 
 //------------- GET --------------
 exports.isLoggedIn = (req, res, next) => {
-  console.log("------ USER controller : isLoggedIn -------");
+  console.log("USER controller : isLoggedIn -------");
   try {
     let requestToken = req.headers.authorization.replace("Bearer ", "");
     //↑ Dans notre requête, notre token se trouve dans une chaîne qui a la forme "Bearer le_token"
@@ -83,20 +113,20 @@ exports.isLoggedIn = (req, res, next) => {
         //On ajoute le token à la requête en créant une nouvelle variable.
         //Ainsi, le token est inclus dans la requête, et toute API qui suit isLoggedIn peut l'utiliser. Le token contient aussi l'ID de son utilisateur.
 
-        console.log(`Accès autorisé, leToken(extreme)`);
+        console.log(`------- Accès autorisé, leToken(extreme)`);
         next();
       }
     });
   } catch (error) {
     res.status(500).json({
-      message: "Erreur d'authentification : " + err,
+      message: "Erreur d'authentification : " + error,
     });
   }
 };
 
 //------------- GET --------------
 exports.checkAdmins = async (req, res) => {
-  console.log("------ USER controller : checkAdmins -------");
+  console.log("USER controller : checkAdmins -------");
 
   try {
     let adminsFound = await User.findAll({ where: { isAdmin: true } });
@@ -119,18 +149,17 @@ exports.checkAdmins = async (req, res) => {
 
       await User.create(newAdmin)
         .then((data) => {
-          console.log(`Admin ajouté`);
+          console.log(`------- Admin ajouté`);
           res.status(200).json({ message: "Admin ajouté" });
         })
         .catch((err) => {
-          console.log(`Impossible d'ajouter un admin : ${err} `);
+          console.log(`------- Impossible d'ajouter un admin : ${err} `);
           res
             .status(500)
             .json({ message: "Impossible d'ajouter un admin : " + err });
         });
     }
   } catch (err) {
-    console.log(`error caught : ${err}`);
     res.status(500).json({
       message: "Impossible de vérifier la présence d'un admin : " + err,
     });
