@@ -23,12 +23,27 @@ module.exports = (sequelize, Sequelize) => {
       nom: {
         type: Sequelize.STRING,
         field: "nom",
-        allowNull: false,
+        allowNull: true,
       },
       prenom: {
         type: Sequelize.STRING,
         field: "prenom",
         allowNull: true,
+      },
+      isAdmin: {
+        type: Sequelize.BOOLEAN,
+        field: "is_admin",
+        defaultValue: false,
+      },
+      isGerantBuvette: {
+        type: Sequelize.BOOLEAN,
+        field: "is_gerant_buvette",
+        defaultValue: false,
+      },
+      isGerantMateriel: {
+        type: Sequelize.BOOLEAN,
+        field: "is_gerant_materiel",
+        defaultValue: false,
       },
     },
 

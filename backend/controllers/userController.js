@@ -12,7 +12,7 @@ exports.addUser = async (req, res) => {
 
   await User.create(req.body)
     .then((data) => {
-      res.status(500).json({
+      res.status(200).json({
         message: "Inscription réussie",
         addedUser: data,
       });
@@ -48,6 +48,7 @@ exports.login = async (req, res) => {
           .status(500)
           .json({ message: "Combinaison login/password incorrecte" });
       } else {
+        //On ajoute l'id utilisateur dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API
         let newToken = jwt.sign({ id: thatUser.id }, process.env.PRIVATE_KEY, {
           expiresIn: "5h",
         });
@@ -89,6 +90,49 @@ exports.isLoggedIn = (req, res, next) => {
   } catch (error) {
     res.status(500).json({
       message: "Erreur d'authentification : " + err,
+    });
+  }
+};
+
+//------------- GET --------------
+exports.checkAdmins = async (req, res) => {
+  console.log("------ USER controller : checkAdmins -------");
+
+  try {
+    let adminsFound = await User.findAll({ where: { isAdmin: true } });
+
+    let adminCount = 0;
+    adminsFound.forEach((admin) => {
+      adminCount++;
+    });
+
+    if (adminCount > 0) {
+      res.status(200).json({
+        message: "Compte admin prêt",
+      });
+    } else {
+      let newAdmin = {
+        login: "admin1",
+        password: "root",
+        isAdmin: true,
+      };
+
+      await User.create(newAdmin)
+        .then((data) => {
+          console.log(`Admin ajouté`);
+          res.status(200).json({ message: "Admin ajouté" });
+        })
+        .catch((err) => {
+          console.log(`Impossible d'ajouter un admin : ${err} `);
+          res
+            .status(500)
+            .json({ message: "Impossible d'ajouter un admin : " + err });
+        });
+    }
+  } catch (err) {
+    console.log(`error caught : ${err}`);
+    res.status(500).json({
+      message: "Impossible de vérifier la présence d'un admin : " + err,
     });
   }
 };
