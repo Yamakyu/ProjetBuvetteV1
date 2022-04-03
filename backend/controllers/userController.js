@@ -10,12 +10,8 @@ const Op = db.Sequelize.Op;
 exports.addUser = async (req, res) => {
   console.log("USER controller : addUser -------");
 
-  console.log(`droits Admin : ${req.thatRequestToken.isAdmin}`);
-  console.log(`droits Materiel : ${req.thatRequestToken.isGerantMateriel}`);
-  console.log(`droits Buvette : ${req.thatRequestToken.isGerantBuvette}`);
-
   try {
-    //↓ On vérifie ici si l'utilisateur est créé avec des droits particuliers, auquel on vérifie que l'utilisateur que c'est bien un admin qui créée cet utilisateur
+    //↓ Si l'utilisateur est créé avec des droits particuliers, on vérifie que la requête est bien faite par un admin
     if (
       (req.body.isAdmin ||
         req.body.isGerantBuvette ||
@@ -23,7 +19,7 @@ exports.addUser = async (req, res) => {
       !req.thatRequestToken.isAdmin
     ) {
       return res.status(401).json({
-        message: "401 : Token invalide, droits administrateurs requis",
+        message: "Token invalide, droits administrateurs requis",
       });
     } else {
       await User.create(req.body)
@@ -69,10 +65,12 @@ exports.login = async (req, res) => {
           .status(500)
           .json({ message: "Combinaison login/password incorrecte" });
       } else {
-        //On ajoute l'id utilisateur ainsi que ses droits dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API
+        //On ajoute les informations utilisateur ainsi que ses droits dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API ou en front end
         let newToken = jwt.sign(
           {
             id: thatUser.id,
+            nom: thatUser.nom,
+            prenom: thatUser.prenom,
             isAdmin: thatUser.isAdmin,
             isGerantBuvette: thatUser.isGerantBuvette,
             isGerantMateriel: thatUser.isGerantMateriel,
@@ -105,9 +103,8 @@ exports.isLoggedIn = (req, res, next) => {
     //↓ Le payload ici c'est EXACTEMENT le payload encodé dans le token quand on s'est loggué. C'est pourquoi on utilise process.env.PRIVATE_KEY
     jwt.verify(requestToken, process.env.PRIVATE_KEY, (err, payload) => {
       if (err) {
-        res
-          .status(401) //← 401 = unauthorized
-          .json({ message: "Accès refusé, token invalide : " + err });
+        throw err;
+        //L'exception est gérée dans le catch un peu plus bas
       } else {
         req.thatRequestToken = payload;
         //On ajoute le token à la requête en créant une nouvelle variable.
@@ -118,9 +115,26 @@ exports.isLoggedIn = (req, res, next) => {
       }
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Erreur d'authentification : " + error,
-    });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res
+        .status(440) //← 440 = session expired
+        .json({
+          message:
+            "Accès refusé, session expirée, veuillez vous reconnecter. " +
+            error,
+          needLogout: true,
+        });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      return res
+        .status(401) //← 401 = unauthorized
+        .json({
+          message: "Accès refusé, token invalide. " + error,
+        });
+    } else {
+      return res.status(500).json({
+        message: "Erreur d'authentification : " + error,
+      });
+    }
   }
 };
 
