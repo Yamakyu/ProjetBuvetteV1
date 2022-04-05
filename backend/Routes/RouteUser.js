@@ -5,5 +5,19 @@ const userController = require("../controllers/userController");
 
 router.post("/login", userController.login);
 router.post("/signup", userController.isLoggedIn, userController.addUser);
+
+router.put("/edit/:id", userController.isLoggedIn, userController.editUser);
+
+router.get(
+  "/search/role",
+  userController.isLoggedIn,
+  userController.findByRole
+);
+router.get("/search/all", userController.isLoggedIn, userController.findAll);
+router.get("/search/:id", userController.isLoggedIn, userController.findById);
+router.get("/search", userController.isLoggedIn, userController.findByName);
+//Pour faire une query avec une recherche on met un "?maVariable=maValeur"
+//Par exemple, pour chercher les utilisateurs dont le nom contient "john" : http://localhost:8080/api/users/search?name=john
+
 //router.get("/verify", userController.isLoggedIn);
 module.exports = router;

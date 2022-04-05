@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const User = db.users;
 const Op = db.Sequelize.Op;
 
-// ---------- POST -----------
+// ---------- POST ----------- (testé)
 exports.addUser = async (req, res) => {
   console.log("USER controller : addUser -------");
 
@@ -19,27 +19,26 @@ exports.addUser = async (req, res) => {
       !req.thatRequestToken.isAdmin
     ) {
       return res.status(401).json({
-        message: "Token invalide, droits administrateurs requis",
+        message: "Non-authorisé, droits administrateurs requis",
       });
     } else {
       await User.create(req.body)
         .then((data) => {
           res.status(200).json({
             message: "Inscription réussie",
-            addedUser: data,
+            utilisateur_ajouté: data,
           });
         })
         .catch((err) => {
-          res.status(500).json({ message: "Inscription impossible : " + err });
+          displayThatError(res, err);
         });
     }
   } catch (err) {
-    console.log(`------ Erreur dans addUser :  ${err}`);
-    res.status(500).json({ message: "Ajout impossible : " + err });
+    displayThatError(res, err);
   }
 };
 
-//------------- POST --------------
+//------------- POST -------------- (testé)
 exports.login = async (req, res) => {
   console.log("USER controller : login -------");
 
@@ -89,11 +88,68 @@ exports.login = async (req, res) => {
       }
     }
   } catch (err) {
-    res.status(500).json({ message: "Connexion impossible : " + err });
+    displayThatError(res, err);
   }
 };
 
-//------------- GET --------------
+// ---------- PUT ----------- (testé)
+exports.editUser = async (req, res) => {
+  console.log("USER controller : editUser -------");
+
+  try {
+    const userToUpdateID = req.params.id;
+
+    if (!req.thatRequestToken.isAdmin) {
+      return res.status(401).json({
+        message: "Non-authorisé, droits administrateurs requis",
+      });
+    }
+
+    if (req.body.id != undefined) {
+      return res.status(401).json({
+        message: "Non-authorisé ! Le changement d'identifiant est interdit.",
+      });
+    }
+
+    await User.update(req.body, {
+      where: { id: userToUpdateID },
+    })
+      .then((num) => {
+        //En réponse de la requête d'update, Sequelize retourne le nombre d'entrées modifiées
+        if (num > 0) {
+          console.log(
+            "----- user has been updated. Returning data.... -------"
+          );
+        } else {
+          return res.send({
+            message: `Impossible de modifier l'utilisateur dont l'id est ${id}.`,
+          });
+        }
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          message: `Error updating user with id=${id} : + ${err}`,
+        });
+      });
+
+    let thatUserUpdated = await User.findByPk(userToUpdateID);
+
+    if (thatUserUpdated == null) {
+      return res.status(404).send({
+        message: `Impossible de retourner l'utilisateur dont l'id est l'id=${id}.`,
+      });
+    } else {
+      res.send({
+        message: "Utilisateur modifié avec succès.",
+        updated_user: thatUserUpdated,
+      });
+    }
+  } catch (err) {
+    displayThatError(res, err);
+  }
+};
+
+//------------- GET -------------- (tested) (not used as is)
 exports.isLoggedIn = (req, res, next) => {
   console.log("USER controller : isLoggedIn -------");
   try {
@@ -131,14 +187,12 @@ exports.isLoggedIn = (req, res, next) => {
           message: "Accès refusé, token invalide. " + error,
         });
     } else {
-      return res.status(500).json({
-        message: "Erreur d'authentification : " + error,
-      });
+      displayThatError(res, err);
     }
   }
 };
 
-//------------- GET --------------
+//------------- GET -------------- (tested) (not used as is)
 exports.checkAdmins = async (req, res) => {
   console.log("USER controller : checkAdmins -------");
 
@@ -178,4 +232,230 @@ exports.checkAdmins = async (req, res) => {
       message: "Impossible de vérifier la présence d'un admin : " + err,
     });
   }
+};
+
+//------------- GET -------------- (testé)
+exports.findById = async (req, res) => {
+  console.log("USER controller : findById -------");
+
+  try {
+    let thatUser;
+    const id = req.params.id;
+
+    thatUser = await User.findByPk(id);
+
+    console.log(thatUser);
+
+    if (thatUser == null) {
+      return res.status(200).send({
+        message: `Aucun utilisateur trouvé avec l'id=${id}.`,
+      });
+    }
+
+    if (
+      thatUser.isActiveAccount ||
+      (!thatUser.isActiveAccount && req.thatRequestToken.isAdmin)
+    ) {
+      res.status(200).json({
+        message: "Utilisateur trouvé :",
+        resultat: thatUser,
+      });
+    } else {
+      res.status(200).json({
+        message: `Aucun utilisateur trouvé avec l'id ${id}`,
+      });
+    }
+  } catch (err) {
+    displayThatError(res, err);
+  }
+};
+
+//------------- GET -------------- (testé)
+exports.findByRole = async (req, res) => {
+  console.log("USER controller : findByRole -------");
+
+  try {
+    let theseUsers;
+    let searchFilter = req.body.filter;
+
+    let { isInactiveAccountsDisplayed, isTtryingForbiddenRequest } =
+      checkAuthorizationDeadAccounts(req);
+
+    if (isInactiveAccountsDisplayed) {
+      switch (searchFilter) {
+        case "admin":
+          console.log("------ returning all ADMINS");
+          theseUsers = await User.findAll({
+            where: { isAdmin: true },
+          });
+          break;
+        case "buvette":
+          console.log("------ returning all GERANTS BUVETTE");
+          theseUsers = await User.findAll({
+            where: { isGerantBuvette: true },
+          });
+          break;
+        case "materiel":
+          console.log("------ returning all GERANTS MATERIEL");
+          theseUsers = await User.findAll({
+            where: { isGerantMateriel: true },
+          });
+          break;
+        default:
+          //Dans le cas où le filtre proposé est invalide
+          console.log("------ no matching filter");
+          return res.status(200).json({
+            message:
+              "Aucun résultat pour le critère de filtrage choisi. Veuillez modifier votre recherche.",
+          });
+      }
+    } else {
+      switch (searchFilter) {
+        case "admin":
+          console.log("------ returning all ADMINS");
+          theseUsers = await User.findAll({
+            where: {
+              isAdmin: true,
+              [Op.and]: [{ isActiveAccount: true }],
+            },
+          });
+          break;
+        case "buvette":
+          console.log("------ returning all GERANTS BUVETTE");
+          theseUsers = await User.findAll({
+            where: {
+              isGerantBuvette: true,
+              [Op.and]: [{ isActiveAccount: true }],
+            },
+          });
+          break;
+        case "materiel":
+          console.log("------ returning all GERANTS MATERIEL");
+          theseUsers = await User.findAll({
+            where: {
+              isGerantMateriel: true,
+              [Op.and]: [{ isActiveAccount: true }],
+            },
+          });
+          break;
+        default:
+          //Dans le cas où le filtre proposé est invalide
+          console.log("------ no matching filter");
+          return res.status(200).json({
+            message:
+              "Aucun résultat pour le critère de filtrage choisi. Veuillez modifier votre recherche.",
+          });
+      }
+    }
+
+    displayResults(res, theseUsers, isTtryingForbiddenRequest);
+  } catch (error) {
+    displayThatError(res, error);
+  }
+};
+
+//------------- GET -------------- (testé)
+exports.findByName = async (req, res) => {
+  console.log("USER controller : findByName -------");
+
+  try {
+    let enteredName = req.query.name;
+    let theseUsers;
+
+    let { isInactiveAccountsDisplayed, isTtryingForbiddenRequest } =
+      checkAuthorizationDeadAccounts(req);
+
+    //https://stackoverflow.com/questions/51370932/sequelize-op-contains-throws-unhandled-rejection-error-invalid-value
+    //Inspiration pour les requêtes OR et AND ↑
+
+    if (isInactiveAccountsDisplayed) {
+      theseUsers = await User.findAll({
+        where: {
+          [Op.or]: [
+            { nom: { [Op.like]: `%${enteredName}%` } },
+            { prenom: { [Op.like]: `%${enteredName}%` } },
+          ],
+        },
+      });
+    } else {
+      theseUsers = await User.findAll({
+        where: {
+          [Op.or]: [
+            { nom: { [Op.like]: `%${enteredName}%` } },
+            { prenom: { [Op.like]: `%${enteredName}%` } },
+          ],
+          [Op.and]: [{ isActiveAccount: true }],
+        },
+      });
+    }
+    displayResults(res, theseUsers, isTtryingForbiddenRequest);
+  } catch (error) {
+    displayThatError(res, err);
+  }
+};
+
+//------------- GET -------------- (testé)
+exports.findAll = async (req, res) => {
+  console.log("USER controller : findAll -------");
+
+  try {
+    let theseUsers;
+
+    let { isInactiveAccountsDisplayed, isTtryingForbiddenRequest } =
+      checkAuthorizationDeadAccounts(req);
+
+    if (isInactiveAccountsDisplayed) {
+      theseUsers = await User.findAll();
+    } else {
+      theseUsers = await User.findAll({ where: { isActiveAccount: true } });
+    }
+
+    displayResults(res, theseUsers, isTtryingForbiddenRequest);
+  } catch (err) {
+    displayThatError(res, err);
+  }
+};
+
+//-----------------------------------------
+//--------------FUNCTIONS------------------
+//-----------------------------------------
+let displayResults = (requestResponse, resultArray, triedForbiddenRequest) => {
+  if (resultArray.length === 0) {
+    return requestResponse.status(200).json({
+      message: "Aucun réusltat",
+    });
+  } else if (resultArray.length > 0 && triedForbiddenRequest) {
+    return requestResponse.status(200).json({
+      warning:
+        "Droits administrateurs requis pour afficher les utilisateurs désactivés/supprimés.",
+      message: "Résultats de la recherche : ",
+      resultats: resultArray,
+    });
+  } else {
+    return requestResponse.status(200).json({
+      message: "Résultats de la recherche : ",
+      resultArray,
+    });
+  }
+};
+
+let displayThatError = (requestResponse, thatError) => {
+  console.log("↓ ------- Une erreur s'est produite ↓");
+  console.log(thatError);
+  return requestResponse.status(500).json({
+    message: `Une erreur s'est produite lors de la requête : ${thatError}. Pour plus de détails, consultez la console.`,
+  });
+};
+
+//Retourne si oui ou non on demande l'affichage des comptes désactivés, et si oui ou non on y est autorisé (admin)
+let checkAuthorizationDeadAccounts = (thatRequest) => {
+  let isInactiveAccountsDisplayed =
+    thatRequest.body.isInactiveAccountsIncluded &&
+    thatRequest.thatRequestToken.isAdmin;
+
+  let isTtryingForbiddenRequest =
+    thatRequest.body.isInactiveAccountsIncluded &&
+    !thatRequest.thatRequestToken.isAdmin;
+
+  return { isInactiveAccountsDisplayed, isTtryingForbiddenRequest };
 };

@@ -30,6 +30,11 @@ module.exports = (sequelize, Sequelize) => {
         field: "prenom",
         allowNull: true,
       },
+      isActiveAccount: {
+        type: Sequelize.BOOLEAN,
+        field: "is_active",
+        defaultValue: true,
+      },
       isAdmin: {
         type: Sequelize.BOOLEAN,
         field: "is_admin",
