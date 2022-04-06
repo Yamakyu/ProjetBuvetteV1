@@ -10,10 +10,13 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      login: {
-        field: "login",
+      email: {
+        field: "email",
         type: Sequelize.STRING,
         allowNull: false,
+        validate: {
+          isEmail: true,
+        },
       },
       password: {
         field: "password",

@@ -43,9 +43,9 @@ exports.login = async (req, res) => {
   console.log("USER controller : login -------");
 
   try {
-    const userLogin = req.body.login;
+    const userEmail = req.body.email;
 
-    let thatUser = await User.findOne({ where: { login: userLogin } });
+    let thatUser = await User.findOne({ where: { email: userEmail } });
 
     //Si aucun utilisateur ne correspond
     if (!thatUser) {
@@ -64,7 +64,33 @@ exports.login = async (req, res) => {
           .status(500)
           .json({ message: "Combinaison login/password incorrecte" });
       } else {
-        //On ajoute les informations utilisateur ainsi que ses droits dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API ou en front end
+        //Le front end n'a pas besoin du mdp (crypé ou pas), on ne le retourne donc pas. On retourne par contre les droits.
+
+        let userRightsToReturn;
+
+        if (thatUser.isAdmin) {
+          userRightsToReturn = "admin";
+        } else if (thatUser.isGerantBuvette && thatUser.isGerantMateriel) {
+          userRightsToReturn = "both";
+        } else if (thatUser.isGerantBuvette || thatUser.isGerantMateriel) {
+          userRightsToReturn = thatUser.isGerantBuvette
+            ? "buvette"
+            : "materiel";
+        } else {
+          userRightsToReturn = "none";
+        }
+
+        //Pour cela je créée un nouvel objet qui ne contient que les éléments utiles
+
+        let userReturned = {
+          id: thatUser.id,
+          nom: thatUser.nom,
+          prenom: thatUser.prenom,
+          email: thatUser.email,
+          droits: userRightsToReturn,
+        };
+
+        //On ajoute les informations utilisateur ainsi que ses droits dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API (next())
         let newToken = jwt.sign(
           {
             id: thatUser.id,
@@ -81,7 +107,7 @@ exports.login = async (req, res) => {
         );
 
         res.status(200).json({
-          user: thatUser,
+          user: userReturned,
           message: "Connexion réussie",
           newToken,
         });
@@ -210,7 +236,7 @@ exports.checkAdmins = async (req, res) => {
       });
     } else {
       let newAdmin = {
-        login: "admin1",
+        email: "contact@bsolife.fr",
         password: "root",
         isAdmin: true,
       };
