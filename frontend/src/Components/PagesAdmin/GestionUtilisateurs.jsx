@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SessionContext } from '../../Contexts/SessionContext'
 
 
 export default function GestionUtilisateurs() {
+    const {activeSession, setActiveSession}= useContext(SessionContext);
+
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
@@ -18,16 +20,21 @@ export default function GestionUtilisateurs() {
     let inputedUser;
     let formulaireAdmin;
 
-    const resetEdits = () =>{
-        setUserWorkedOn({nom:"",
-        prenom:"",
-        login:"",
-        password:"",
-        droits:"none"})
-
+    const resetWarning = () => {
         setWarning("");
         setConfirmButton("");
         setIsDoubleChecking(false);
+    }
+
+    const resetEdits = () =>{
+        setUserWorkedOn({
+        nom:"",
+        prenom:"",
+        email:"",
+        password:"",
+        droits:"none"})
+
+        resetWarning();
     }
 
     //https://stackoverflow.com/questions/57581147/how-to-display-objects-keys-and-values-in-react-component
@@ -58,20 +65,39 @@ export default function GestionUtilisateurs() {
         }
     }
 
-    const sendRequest = () => {
-        setWarning("");
-        setConfirmButton("");
+    const apiAddUser = () => {
+        //Envoi à notre API back end
+        fetch("/api/users/signup",{
+            method: "POST",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+            body: JSON.stringify(
+                {
+                    nom: userWorkedOn.nom,
+                    prenom:userWorkedOn.prenom,
+                    email:userWorkedOn.email,
+                    password:userWorkedOn.password,
+                    isGerantBuvette:userWorkedOn.isGerantBuvette,
+                    isGerantMateriel:userWorkedOn.isGerantMateriel,
+                    isAdmin:userWorkedOn.isAdmin
+                })
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data.message);
+            console.log(data.addedUser);
+        })
+        .catch((err) => console.log(err));
+    }
 
-        setIsDoubleChecking(false);
+    const sendRequest = () => {
+        resetWarning();
+        apiAddUser();
     }
 
 
     //https://stackoverflow.com/questions/54150783/react-hooks--with-object 
     const handleInputs = inputEvent => {
-        setWarning("");
-        setConfirmButton("");
-
-        setIsDoubleChecking(false);
+        resetWarning();
 
         const { name, value } = inputEvent.target;
 
@@ -82,11 +108,7 @@ export default function GestionUtilisateurs() {
     };
 
     const handleInputSelect = inputEvent => {
-
-        setWarning("");
-        setConfirmButton("");
-
-        setIsDoubleChecking(false);
+        resetWarning();
 
         const pickedOption = inputEvent.target.value;
 
@@ -95,6 +117,7 @@ export default function GestionUtilisateurs() {
                 setUserWorkedOn(prevState => ({
                     ...prevState,
                     droits: pickedOption,
+                    isAdmin: false,
                     isGerantMateriel: false,
                     isGerantBuvette: true}));
                 setWarningCreateAdmin("");
@@ -103,6 +126,7 @@ export default function GestionUtilisateurs() {
                 setUserWorkedOn(prevState => ({
                     ...prevState,
                     droits: pickedOption,
+                    isAdmin: false,
                     isGerantBuvette: false,
                     isGerantMateriel: true}));
                 setWarningCreateAdmin("");
@@ -111,6 +135,7 @@ export default function GestionUtilisateurs() {
                 setUserWorkedOn(prevState => ({
                     ...prevState,
                     droits: pickedOption,
+                    isAdmin: false,
                     isGerantMateriel: true,
                     isGerantBuvette: true}));
                 setWarningCreateAdmin("");
@@ -126,6 +151,7 @@ export default function GestionUtilisateurs() {
             default:
                 setUserWorkedOn(prevState => ({
                     ...prevState,
+                    isAdmin: false,
                     isGerantMateriel: false,
                     isGerantBuvette: false,
                     droits: pickedOption}));
@@ -162,7 +188,7 @@ export default function GestionUtilisateurs() {
                 name="email"
             />
             <input
-                placeholder='prenom'
+                placeholder='mot de passe'
                 value={userWorkedOn.password}
                 type="password"
                 onChange={handleInputs}

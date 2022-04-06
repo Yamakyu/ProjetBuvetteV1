@@ -22,11 +22,31 @@ exports.addUser = async (req, res) => {
         message: "Non-authorisé, droits administrateurs requis",
       });
     } else {
+      //On parse les booleens. Dans l'éventualité où le frontend envoie quelque chose qui n'est ni true, ni false, alors c'est false par défaut
+      if (
+        req.body.isAdmin != undefined &&
+        typeof req.body.isAdmin != "boolean"
+      ) {
+        req.body.isAdmin = false;
+      }
+      if (
+        req.body.isGerantBuvette != undefined &&
+        typeof req.body.isGerantBuvette != "boolean"
+      ) {
+        req.body.isGerantBuvette = false;
+      }
+      if (
+        req.body.isGerantMateriel != undefined &&
+        typeof req.body.isGerantMateriel != "boolean"
+      ) {
+        req.body.isGerantMateriel = false;
+      }
+
       await User.create(req.body)
         .then((data) => {
           res.status(200).json({
             message: "Inscription réussie",
-            utilisateur_ajouté: data,
+            addedUser: data,
           });
         })
         .catch((err) => {
@@ -213,7 +233,7 @@ exports.isLoggedIn = (req, res, next) => {
           message: "Accès refusé, token invalide. " + error,
         });
     } else {
-      displayThatError(res, err);
+      displayThatError(res, error);
     }
   }
 };

@@ -9,15 +9,12 @@ export default function Connexion() {
     
     const myAppNavigator = useNavigate();
 
-    const [login, setLogin] = useState("");
+    //const [login, setLogin] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     
     const submitForm = (formEvent) => {
         formEvent.preventDefault();
-        
-        console.log(email);
-        console.log(password);
 
         //Envoi à notre API back end
         fetch("/api/users/login",{
@@ -70,8 +67,8 @@ export default function Connexion() {
                 <input type="email" value={email} placeholder='email' 
                 onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
 
-                <input type="text" value={login} placeholder='login' 
-                onChange={(inputEvent) => setLogin(inputEvent.target.value)}/>
+                {/*<input type="text" value={login} placeholder='login' 
+                onChange={(inputEvent) => setLogin(inputEvent.target.value)}/>*/}
                 
                 <input type="password" value={password} placeholder='password' 
                 onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
