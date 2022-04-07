@@ -24,14 +24,22 @@ export default function Connexion() {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log(data.message);
-            console.log(data.user);
-            console.log(`Le token (extreme) : ${data.newToken}`);
             
-            let thatNewSession = {
-                userInfo: data.user,
-                userToken: data.newToken
-            };
+            let thatNewSession;
+
+            if(data.user){
+                console.log(data.message);
+                console.log(data.user);            
+                console.log(`Le token (extreme) : ${data.newToken}`);
+                
+                thatNewSession = {
+                    userInfo: data.user,
+                    userToken: data.newToken
+                };
+            }else if (data.error){
+                console.log(data.error);
+            }
+            
 
             localStorage.setItem('currentSession', JSON.stringify(thatNewSession));
             setActiveSession(thatNewSession);

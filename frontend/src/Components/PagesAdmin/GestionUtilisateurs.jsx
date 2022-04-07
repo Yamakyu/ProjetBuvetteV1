@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { SessionContext } from '../../Contexts/SessionContext'
+import { useNavigate } from 'react-router-dom';
+
 
 
 export default function GestionUtilisateurs() {
     const {activeSession, setActiveSession}= useContext(SessionContext);
+    const myAppNavigator = useNavigate();
 
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
@@ -13,12 +16,16 @@ export default function GestionUtilisateurs() {
         droits:"none"
     })
     const [confirmButton, setConfirmButton] = useState();
+    const [adminAction, setAdminAction] = useState();
     const [warning, setWarning] = useState("");
     const [warningCreateAdmin, setWarningCreateAdmin] = useState("");
     const [isDoubleChecking, setIsDoubleChecking] = useState(false)
 
-    let inputedUser;
-    let formulaireAdmin;
+
+
+    const generateConfirmButton = () =>{
+
+    }
 
     const resetWarning = () => {
         setWarning("");
@@ -59,10 +66,6 @@ export default function GestionUtilisateurs() {
         setConfirmButton(<button onClick={sendRequest}>Confirmer</button>);
 
         setIsDoubleChecking(true);
-
-        inputedUser = () =>{
-            
-        }
     }
 
     const apiAddUser = () => {
@@ -90,8 +93,8 @@ export default function GestionUtilisateurs() {
     }
 
     const sendRequest = () => {
-        resetWarning();
         apiAddUser();
+        resetWarning();
     }
 
 
@@ -160,11 +163,19 @@ export default function GestionUtilisateurs() {
         }
     }
 
+    const goToAddUser = () =>
+    {
+        myAppNavigator("/manage/users/add");
+    }
 
 
   return (
     <div>
-        <br/>
+
+        <button onClick={goToAddUser}> Ajouter un utilisateur </button>
+
+
+        {/* <br/>
         <form onSubmit={submitForm}>
             <input
                 placeholder='nom'
@@ -212,7 +223,9 @@ export default function GestionUtilisateurs() {
         {confirmButton}
         {warning}
         <br/>
-        {isDoubleChecking ? displayInputedUser() : ""}
+        {isDoubleChecking ? displayInputedUser() : ""} */}
+
+
     </div>
 
 

@@ -9,6 +9,8 @@ import GestionBuvette from "./Components/PagesBuvette/GestionBuvette";
 import GestionMateriel from "./Components/PagesMateriel/GestionMateriel";
 import Accueil from "./Components/Accueil";
 import GestionUtilisateurs from "./Components/PagesAdmin/GestionUtilisateurs";
+import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
+import UserForm from "./Components/Utility/UserForm";
 
 function App() {
   let getLocalStorage = (localStorageKey) => {
@@ -46,6 +48,8 @@ function App() {
           <Route path="/manage/buvette" element={<GestionBuvette />} />
           <Route path="/manage/materiel" element={<GestionMateriel />} />
           <Route path="/manage/users" element={<GestionUtilisateurs />} />
+          <Route path="/manage/users/add" element={<AjouterUtilisateur />} />
+          <Route path="/test" element={<UserForm />} />
         </Routes>
       </BrowserRouter>
     </SessionContext.Provider>

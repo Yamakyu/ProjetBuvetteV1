@@ -71,7 +71,7 @@ exports.login = async (req, res) => {
     if (!thatUser) {
       res
         .status(500)
-        .json({ message: "WESH Combinaison login/password incorrecte" });
+        .json({ message: "Combinaison login/password incorrecte (01)" });
     } else {
       let userMatch = await bcrypt.compare(
         req.body.password,
@@ -82,10 +82,9 @@ exports.login = async (req, res) => {
       if (!userMatch) {
         res
           .status(500)
-          .json({ message: "Combinaison login/password incorrecte" });
+          .json({ message: "Combinaison login/password incorrecte (02)" });
       } else {
-        //Le front end n'a pas besoin du mdp (crypé ou pas), on ne le retourne donc pas. On retourne par contre les droits.
-
+        //Le front end n'a pas besoin du mdp (crypé ou pas), on ne le retourne donc pas. On retourne par contre les droits en string, pour que ce soit facile à lire.
         let userRightsToReturn;
 
         if (thatUser.isAdmin) {
@@ -128,7 +127,9 @@ exports.login = async (req, res) => {
 
         res.status(200).json({
           user: userReturned,
-          message: "Connexion réussie",
+          message: `Connexion réussie. Bienvenue ${
+            thatUser.nom != null ? thatUser.nom : ""
+          } ${thatUser.prenom != null ? thatUser.prenom : ""}`,
           newToken,
         });
       }
@@ -182,12 +183,12 @@ exports.editUser = async (req, res) => {
 
     if (thatUserUpdated == null) {
       return res.status(404).send({
-        message: `Impossible de retourner l'utilisateur dont l'id est l'id=${id}.`,
+        message: `Impossible de retourner l'utilisateur modifié dont l'id est l'id=${id}.`,
       });
     } else {
       res.send({
         message: "Utilisateur modifié avec succès.",
-        updated_user: thatUserUpdated,
+        updatedUser: thatUserUpdated,
       });
     }
   } catch (err) {
@@ -490,6 +491,7 @@ let displayThatError = (requestResponse, thatError) => {
   console.log(thatError);
   return requestResponse.status(500).json({
     message: `Une erreur s'est produite lors de la requête : ${thatError}. Pour plus de détails, consultez la console.`,
+    error: thatError,
   });
 };
 
