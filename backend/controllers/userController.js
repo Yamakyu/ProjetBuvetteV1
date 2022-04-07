@@ -476,7 +476,7 @@ let displayResults = (requestResponse, resultArray, triedForbiddenRequest) => {
       warning:
         "Droits administrateurs requis pour afficher les utilisateurs désactivés/supprimés.",
       message: "Résultats de la recherche : ",
-      resultats: resultArray,
+      resultArray,
     });
   } else {
     return requestResponse.status(200).json({

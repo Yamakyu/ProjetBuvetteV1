@@ -8,14 +8,14 @@ router.post("/signup", userController.isLoggedIn, userController.addUser);
 
 router.put("/edit/:id", userController.isLoggedIn, userController.editUser);
 
-router.get(
+router.post(
   "/search/role",
   userController.isLoggedIn,
   userController.findByRole
 );
-router.get("/search/all", userController.isLoggedIn, userController.findAll);
-router.get("/search/:id", userController.isLoggedIn, userController.findById);
-router.get("/search", userController.isLoggedIn, userController.findByName);
+router.post("/search/all", userController.isLoggedIn, userController.findAll);
+router.post("/search/:id", userController.isLoggedIn, userController.findById);
+router.post("/search", userController.isLoggedIn, userController.findByName);
 //Pour faire une query avec une recherche on met un "?maVariable=maValeur"
 //Par exemple, pour chercher les utilisateurs dont le nom contient "john" : http://localhost:8080/api/users/search?name=john
 

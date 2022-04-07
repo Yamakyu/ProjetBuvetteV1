@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { SessionContext } from '../../Contexts/SessionContext'
 import UserForm from '../Utility/UserForm';
 
 
-export default function GestionUtilisateurs() {
+export default function AjouterUtilisateur() {
     const {activeSession}= useContext(SessionContext);
 
     const [isDoubleChecking, setIsDoubleChecking] = useState(false)
@@ -88,13 +88,7 @@ export default function GestionUtilisateurs() {
             formHandler={submitForm}
             user={userWorkedOn} 
             setUser={setUserWorkedOn} 
-            resetWarning={resetWarning}
-            /*
-            doubleCheck={isDoubleChecking} 
-            setDoubleChecking={setIsDoubleChecking} 
-            confirmButton={confirmButton}
-            setConfirmButton={setConfirmButton}*/
-            >    
+            resetWarning={resetWarning} >    
         </UserForm>
 
         <br/>

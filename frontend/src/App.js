@@ -11,6 +11,7 @@ import Accueil from "./Components/Accueil";
 import GestionUtilisateurs from "./Components/PagesAdmin/GestionUtilisateurs";
 import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
 import UserForm from "./Components/Utility/UserForm";
+import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
   let getLocalStorage = (localStorageKey) => {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/manage/materiel" element={<GestionMateriel />} />
           <Route path="/manage/users" element={<GestionUtilisateurs />} />
           <Route path="/manage/users/add" element={<AjouterUtilisateur />} />
+          <Route path="/manage/users/edit" element={<ModifierUtilisateur />} />
           <Route path="/test" element={<UserForm />} />
         </Routes>
       </BrowserRouter>
