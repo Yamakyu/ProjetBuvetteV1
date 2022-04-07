@@ -257,6 +257,8 @@ exports.checkAdmins = async (req, res) => {
       });
     } else {
       let newAdmin = {
+        nom: "Mayaki",
+        prenom: "Abdoul-Jabar",
         email: "contact@bsolife.fr",
         password: "root",
         isAdmin: true,

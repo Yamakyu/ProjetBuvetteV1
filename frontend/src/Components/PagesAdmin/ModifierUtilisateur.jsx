@@ -10,8 +10,10 @@ export default function ModifierUtilisateur() {
     const [confirmButton, setConfirmButton] = useState();
     const [warning, setWarning] = useState("");
     const [warningUserDelete, setWarningUserDelete] = useState("");
+    const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [apiResponse, setApiResponse] = useState("");
-    const [userListResult, setUserListResult] = useState([])
+    const [userListResult, setUserListResult] = useState([]);
+    const [isEditingPassword, setIsEditingPassword] = useState(false)
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
@@ -36,7 +38,7 @@ export default function ModifierUtilisateur() {
                 console.log(data.message);
                 console.log(data.resultArray);
     
-                //setApiResponse(data.message);
+                //setApiSearchResponse(data.message);
                 setUserListResult(data.resultArray);
             })
             .catch((err) => {
@@ -55,7 +57,7 @@ export default function ModifierUtilisateur() {
             return "Admin";
         }else if (thatUser.isGerantBuvette && thatUser.isGerantMateriel){
             return "Double gérant";
-        }else if (!thatUser.isGerantBuvette && thatUser.isGerantMateriel) {
+        }else if (!thatUser.isGerantBuvette && !thatUser.isGerantMateriel) {
             return "Aucun";
         }else {
             return thatUser.isGerantBuvette 
@@ -69,8 +71,8 @@ export default function ModifierUtilisateur() {
         return(
             <ul>
                 {Object.entries(userWorkedOn).map(([objectKey, value]) =>
-                //Cette expression conditionelle permet de masquer les booléens (isAdmin, etc) et le mot de passe
-                objectKey.startsWith("is") || objectKey === "password"
+                //Cette expression conditionelle permet de masquer les booléens (isAdmin, etc), le mot de passe et les dates de création/update
+                objectKey.startsWith("is") || objectKey === "password" || objectKey.startsWith("crea") || objectKey.startsWith("upda")
                 ? ""
                 : <li key={objectKey}> {objectKey} : {value} </li>
                 )}
@@ -78,41 +80,57 @@ export default function ModifierUtilisateur() {
         );
     }
     
-    const disableUser = (userSelected) => {
 
-        //REPRENDRE ICI
-        setWarningUserDelete("Vous allez supprimer cet utilisateur")
+    const prepareDisableUser = (userSelected) => {
+        setWarningUserDelete("Vous allez supprimer cet utilisateur");
+        setIsDoubleChecking(true);
+
+        setWarning("");
+        
+        setUserWorkedOn(userSelected);
+        setUserWorkedOn(prevState => ({
+            ...prevState,
+            droits: parseUserRights(userSelected)
+        }));
+
+        setConfirmButton(<button onClick={() => apiDeactivateUser(userSelected)}>Confirmer la suppression</button>);
     }
 
-    const apiAddUser = async () => {
-        //Envoi à notre API back end
-        await fetch("/api/users/signup",{
-            method: "POST",
+    const apiDeactivateUser = async (thatUser) => {
+
+        await fetch(`/api/users/edit/${thatUser.id}`,{
+            method: "PUT",
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
             body: JSON.stringify(
                 {
-                    nom: userWorkedOn.nom,
-                    prenom:userWorkedOn.prenom,
-                    email:userWorkedOn.email,
-                    password:userWorkedOn.password,
-                    isGerantBuvette:userWorkedOn.isGerantBuvette,
-                    isGerantMateriel:userWorkedOn.isGerantMateriel,
-                    isAdmin:userWorkedOn.isAdmin
+                    isActiveAccount:false
                 })
         })
         .then((res) => res.json())
         .then((data) => {
             console.log(data.message);
-            console.log(data.addedUser);
+            console.log(data.updatedUser);
 
             resetWarning();
-            setApiResponse(data.message);
+            setApiSearchResponse(data.message);
+            setUserWorkedOn(data.updatedUser);
         })
         .catch((err) => console.log(err));
+
+
+        //Uncaught (in promise) TypeError: userListResult.filter is not a function :thonk:
+        //↑ Erreur quand on essaie de supprimer un 2e utilisateur sans refresh.
+        setUserListResult(userListResult.filter(
+            (itemToRemove) => itemToRemove.id != thatUser.id
+            ));
+        setUserListResult(prevState => ({...prevState, userWorkedOn}));
+
+
     }
 
     const resetWarning = () => {
         setWarning("");
+        setWarningUserDelete("");
         setConfirmButton("");
         setIsDoubleChecking(false);
     }
@@ -121,8 +139,9 @@ export default function ModifierUtilisateur() {
         formEvent.preventDefault();
         console.log(userWorkedOn);
 
-        setWarning("Résumé des modification : ↓");
-        setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
+        setWarning("Résumé des modification :");
+        setWarningUserDelete("");
+        setConfirmButton(<button>Confirmer la modification</button>);
         setIsDoubleChecking(true);
     }
 
@@ -138,6 +157,7 @@ export default function ModifierUtilisateur() {
             user={userWorkedOn} 
             setUser={setUserWorkedOn} 
             resetWarning={resetWarning}
+            editPassword={isEditingPassword}
             /*
             doubleCheck={isDoubleChecking} 
             setDoubleChecking={setIsDoubleChecking} 
@@ -147,28 +167,32 @@ export default function ModifierUtilisateur() {
         </UserForm>
 
         <br/>
-        {confirmButton}
         {warning}
+        {warningUserDelete}
         <br/>
         {isDoubleChecking ? displayInputedUser() : ""}
+        {confirmButton}
+        {apiResponse}
+        <br/>
+        <br/>
+        <br/>
 
         {/*Par défaut on affiche "liste utilisateurs, mais pour quand on fait des recherches, on va plutôt
         afficher "Résultats de la recherche", qui est donné en réponse de l'API Fetch.
-        cf setApiResponse() */}
-        {apiResponse || "Liste des utilisateurs :"}
+        cf setApiSearchResponse() */}
+        {apiSearchResponse || "Liste des utilisateurs :"}
 
         <br/>
 
         <ul>
-        
-                {Object.entries(userListResult).map(([objectKey, user]) =>
-                {
-                    return(
-                        <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {!user.isActiveAccount ? " ----- <COMPTE INACTIF>" : ""} 
-                        <button onClick={disableUser(user)}>Supprimer cet utilisateur</button>
-                        </li> 
-                    )}
+            {Object.entries(userListResult).map(([objectKey, user]) =>
+            {
+                return(
+                    <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {user.isActiveAccount ? "" : " ----- <COMPTE INACTIF>"} 
+                    {<button onClick={() => prepareDisableUser(user)}>Supprimer cet utilisateur</button>}
+                    </li> 
                 )}
+            )}
         </ul>
 
     </div>

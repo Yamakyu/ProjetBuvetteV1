@@ -7,6 +7,8 @@ export default function UserForm(props) {
     let setUserEdit = props.setUser;
     let validateForm = props.formHandler;
     let resetWarning = props.resetWarning;
+    //↓ Si on décide d'afficher le champ pour le mot de passe, ça fait true et true, et on l'affiche. Sinon false par défaut
+    let displayPasswordField = props.editPassword && true;
 
     const [warningCreateAdmin, setWarningCreateAdmin] = useState("");
 
@@ -117,13 +119,16 @@ export default function UserForm(props) {
                     onChange={handleInputs}
                     name="email"
                 />
-                <input
-                    placeholder='mot de passe'
-                    value={userEdit.password}
-                    type="password"
-                    onChange={handleInputs}
-                    name="password"
-                />
+                {displayPasswordField 
+                    ? <input
+                        placeholder='mot de passe'
+                        value={userEdit.password}
+                        type="password"
+                        onChange={handleInputs}
+                        name="password"
+                    />
+                    :""}       
+
                 <label>
                     Droits de gestion : 
                     <select onChange={handleInputSelect} value={userEdit.droits}>

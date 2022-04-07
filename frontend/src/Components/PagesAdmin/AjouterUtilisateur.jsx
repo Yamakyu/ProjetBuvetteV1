@@ -88,14 +88,16 @@ export default function AjouterUtilisateur() {
             formHandler={submitForm}
             user={userWorkedOn} 
             setUser={setUserWorkedOn} 
-            resetWarning={resetWarning} >    
+            resetWarning={resetWarning} 
+            editPassword={true}>    
         </UserForm>
 
         <br/>
-        {confirmButton}
+        
         {warning}
         <br/>
         {isDoubleChecking ? displayInputedUser() : ""}
+        {confirmButton}
         {apiResponse}
     </div>
 
