@@ -15,12 +15,14 @@ import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
   let getLocalStorage = (localStorageKey) => {
-    if (localStorage.getItem(localStorageKey) != null) {
+    try {
       return JSON.parse(localStorage.getItem(localStorageKey));
-    } else {
+    } catch (error) {
       console.log(
         `Impossible de trouver la clé de localStorage ${localStorageKey}`
       );
+      console.log(error);
+      return null;
     }
   };
 
@@ -31,6 +33,7 @@ function App() {
       : {
           userInfo: {},
           userToken: "",
+          userConnexionStatus: "",
         }
   );
 
@@ -44,7 +47,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Accueil />} />
-          <Route path="/connexion" element={<Connexion />} />
+          <Route path="/login" element={<Connexion />} />
           <Route path="/admin" element={<AdminMain />} />
           <Route path="/manage/buvette" element={<GestionBuvette />} />
           <Route path="/manage/materiel" element={<GestionMateriel />} />

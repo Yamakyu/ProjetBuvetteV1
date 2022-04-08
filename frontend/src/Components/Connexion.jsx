@@ -12,6 +12,9 @@ export default function Connexion() {
     //const [login, setLogin] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+
+    //------------------------------------------------------------------
     
     const submitForm = (formEvent) => {
         formEvent.preventDefault();
@@ -26,43 +29,47 @@ export default function Connexion() {
         .then((data) => {
             
             let thatNewSession;
+            console.log(data.message);
 
             if(data.user){
-                console.log(data.message);
                 console.log(data.user);            
                 console.log(`Le token (extreme) : ${data.newToken}`);
                 
                 thatNewSession = {
                     userInfo: data.user,
-                    userToken: data.newToken
+                    userToken: data.newToken,
+                    userConnexionStatus:"Vous êtes connecté"
                 };
+
+                localStorage.setItem('currentSession', JSON.stringify(thatNewSession));
+                setActiveSession(thatNewSession);
+    
+                switch (thatNewSession.userInfo.droits) {
+                    case "admin":
+                        myAppNavigator("/admin");
+                        break;
+                    case "both":
+                        myAppNavigator("/manage");
+                        break;
+                    case "buvette":
+                        myAppNavigator("/manage/buvette");
+                        break;
+                    case "materiel":
+                        myAppNavigator("/manage/materiel");
+                        break;
+                    case "none":
+                    default:
+                        myAppNavigator("/");
+                        break;
+                }
+
             }else if (data.error){
                 console.log(data.error);
             }
-            
-
-            localStorage.setItem('currentSession', JSON.stringify(thatNewSession));
-            setActiveSession(thatNewSession);
-
-            switch (thatNewSession.userInfo.droits) {
-                case "admin":
-                    myAppNavigator("/admin");
-                    break;
-                case "both":
-                    myAppNavigator("/manage");
-                    break;
-                case "buvette":
-                    myAppNavigator("/manage/buvette");
-                    break;
-                case "materiel":
-                    myAppNavigator("/manage/materiel");
-                    break;
-                case "none":
-                default:
-                    myAppNavigator("/");
-                    break;
-            }
-
+                setActiveSession(prevState => ({
+                    ...prevState,
+                    userConnexionStatus:data.message
+                }));
         })
         .catch((err) => console.log(err));
 
@@ -85,6 +92,8 @@ export default function Connexion() {
 
                 <button>Connexion</button>
             </form>
+
+            {activeSession.userConnexionStatus}
 
         </div>
     )

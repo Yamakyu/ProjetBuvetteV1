@@ -44,7 +44,7 @@ exports.addUser = async (req, res) => {
 
       await User.create(req.body)
         .then((data) => {
-          res.status(200).json({
+          return res.status(200).json({
             message: "Inscription réussie",
             addedUser: data,
           });
@@ -69,7 +69,7 @@ exports.login = async (req, res) => {
 
     //Si aucun utilisateur ne correspond
     if (!thatUser) {
-      res
+      return res
         .status(500)
         .json({ message: "Combinaison login/password incorrecte (01)" });
     } else {
@@ -80,7 +80,7 @@ exports.login = async (req, res) => {
 
       //Si le mot de passe n'est pas bon
       if (!userMatch) {
-        res
+        return res
           .status(500)
           .json({ message: "Combinaison login/password incorrecte (02)" });
       } else {
@@ -125,7 +125,7 @@ exports.login = async (req, res) => {
           }
         );
 
-        res.status(200).json({
+        return res.status(200).json({
           user: userReturned,
           message: `Connexion réussie. Bienvenue ${
             thatUser.nom != null ? thatUser.nom : ""
@@ -168,7 +168,7 @@ exports.editUser = async (req, res) => {
             "----- user has been updated. Returning data.... -------"
           );
         } else {
-          return res.send({
+          return res.status(500).json({
             message: `Impossible de modifier l'utilisateur dont l'id est ${id}.`,
           });
         }
@@ -182,11 +182,11 @@ exports.editUser = async (req, res) => {
     let thatUserUpdated = await User.findByPk(userToUpdateID);
 
     if (thatUserUpdated == null) {
-      return res.status(404).send({
+      return res.status(404).json({
         message: `Impossible de retourner l'utilisateur modifié dont l'id est l'id=${id}.`,
       });
     } else {
-      res.send({
+      return res.status(200).json({
         message: "Utilisateur modifié avec succès.",
         updatedUser: thatUserUpdated,
       });
@@ -231,7 +231,9 @@ exports.isLoggedIn = (req, res, next) => {
       return res
         .status(401) //← 401 = unauthorized
         .json({
-          message: "Accès refusé, token invalide. " + error,
+          message:
+            "Accès refusé, token invalide, veuillez vous reconnecter. " + error,
+          needLogout: true,
         });
     } else {
       displayThatError(res, error);
@@ -252,7 +254,7 @@ exports.checkAdmins = async (req, res) => {
     });
 
     if (adminCount > 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: "Compte admin prêt",
       });
     } else {
@@ -267,17 +269,17 @@ exports.checkAdmins = async (req, res) => {
       await User.create(newAdmin)
         .then((data) => {
           console.log(`------- Admin ajouté`);
-          res.status(200).json({ message: "Admin ajouté" });
+          return res.status(200).json({ message: "Admin ajouté" });
         })
         .catch((err) => {
           console.log(`------- Impossible d'ajouter un admin : ${err} `);
-          res
+          return res
             .status(500)
             .json({ message: "Impossible d'ajouter un admin : " + err });
         });
     }
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Impossible de vérifier la présence d'un admin : " + err,
     });
   }
@@ -305,12 +307,12 @@ exports.findById = async (req, res) => {
       thatUser.isActiveAccount ||
       (!thatUser.isActiveAccount && req.thatRequestToken.isAdmin)
     ) {
-      res.status(200).json({
+      return res.status(200).json({
         message: "Utilisateur trouvé :",
         resultat: thatUser,
       });
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         message: `Aucun utilisateur trouvé avec l'id ${id}`,
       });
     }

@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { SessionContext } from '../../Contexts/SessionContext'
 import UserForm from '../Utility/UserForm';
+import { useNavigate } from 'react-router-dom';
+
 
 
 export default function ModifierUtilisateur() {
-    const {activeSession}= useContext(SessionContext);
+    const {activeSession, setActiveSession}= useContext(SessionContext);
+
+    const myAppNavigator = useNavigate();
 
     const [isDoubleChecking, setIsDoubleChecking] = useState(false);
     const [confirmButton, setConfirmButton] = useState();
@@ -36,6 +40,19 @@ export default function ModifierUtilisateur() {
             .then((res) => res.json())
             .then((data) => {
                 console.log(data.message);
+
+                if (data.needLogout || !data.resultArray){
+                    setActiveSession(() => localStorage.setItem('currentSession', null));
+                    setActiveSession(prevState => ({
+                        ...prevState,
+                        userConnexionStatus:data.message
+                    }));
+
+                    console.log("statut de ActiveSession :");
+                    console.log(activeSession);
+
+                    myAppNavigator("/login");
+                }
                 console.log(data.resultArray);
     
                 //setApiSearchResponse(data.message);
