@@ -34,6 +34,10 @@ export default function AjouterUtilisateur() {
     }
     
     const apiAddUser = async () => {
+
+        setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
+        setConfirmButton("");
+
         //Envoi à notre API back end
         await fetch("/api/users/signup",{
             method: "POST",
@@ -51,11 +55,13 @@ export default function AjouterUtilisateur() {
         })
         .then((res) => res.json())
         .then((data) => {
+            console.log("API response ↓");
             console.log(data.message);
             console.log(data.addedUser);
 
             resetWarning();
             setApiResponse(data.message);
+            
         })
         .catch((err) => console.log(err));
 

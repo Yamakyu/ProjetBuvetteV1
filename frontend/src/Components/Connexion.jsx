@@ -29,6 +29,7 @@ export default function Connexion() {
         .then((data) => {
             
             let thatNewSession;
+            console.log("API response ↓");
             console.log(data.message);
 
             if(data.user){

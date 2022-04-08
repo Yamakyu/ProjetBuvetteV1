@@ -45,15 +45,15 @@ export default function ModifierUtilisateur() {
             })
             .then((res) => res.json())
             .then((data) => {
+                console.log("API response ↓");
                 console.log(data.message);
 
                 if (data.needLogout || !data.resultArray){
-                    setActiveSession(() => localStorage.setItem('currentSession', null));
-                    setActiveSession(prevState => ({
-                        ...prevState,
-                        userConnexionStatus:data.message
+                    setActiveSession(() => ({
+                        ...localStorage.setItem('currentSession', null)
+                        , userConnexionStatus:data.message
                     }));
-
+                    
                     console.log("statut de ActiveSession :");
                     console.log(activeSession);
 
@@ -66,8 +66,6 @@ export default function ModifierUtilisateur() {
                 console.log(err);
             });
 
-            
-
       return () => {
         //cleanup
       }
@@ -75,9 +73,7 @@ export default function ModifierUtilisateur() {
 
 
     useEffect(() => {
-        refreshDisplayUserList();
-        console.log(userWorkedOn);
-    
+        refreshDisplayUserList();    
       return () => {
         //Cleanup
       }
@@ -115,16 +111,21 @@ export default function ModifierUtilisateur() {
     }
 
     const refreshDisplayUserList = () =>{
-        console.log(userListResult);
+
         setListUserDisplay(
             <ul>
                 {Object.entries(userListResult).map(([objectKey, user]) =>
                 {
-                    return(
-                        <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {user.isActiveAccount ? "" : " ----- <COMPTE INACTIF>"} 
-                        {<button onClick={() => prepareDisableUser(user)}>Supprimer cet utilisateur</button>}
-                        </li> 
-                    )
+                    //Pour éviter des accidents, l'admin connecté n'est pas affiché dans la liste des utilisateurs modifiables.
+                    if(user.id === activeSession.userInfo.id) {
+                        return;
+                    }else{
+                        return(
+                            <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {user.isActiveAccount ? "" : " ----- <COMPTE INACTIF>"} 
+                            {<button onClick={() => prepareDisableUser(user)}>Supprimer cet utilisateur</button>}
+                            </li> 
+                        )
+                    }
                 })
                 }               
             </ul>
@@ -136,11 +137,6 @@ export default function ModifierUtilisateur() {
         setWarningUserDelete("");
         setConfirmButton("");
         setIsDoubleChecking(false);
-    }
-
-    const displayUserListInConsole = () => {
-        console.log(userListResult);
-        refreshDisplayUserList();
     }
     
     const submitForm = (formEvent) => {
@@ -162,18 +158,17 @@ export default function ModifierUtilisateur() {
         setWarning("");
         setApiResponse("");
         
-        
-        setUserWorkedOn(userSelected);
-        setUserWorkedOn(prevState => ({
-            ...prevState,
+        setUserWorkedOn(() => ({
+            ...userSelected,
             droits: parseUserRights(userSelected)
         }));
-
+        
         setConfirmButton(<button onClick={() => apiDeactivateUser(userSelected)}>Confirmer la suppression</button>);
     }
 
     const apiDeactivateUser = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
+        setConfirmButton("");
         let userAfterEdit;
 
         await fetch(`/api/users/edit/${thatUser.id}`,{
@@ -186,7 +181,7 @@ export default function ModifierUtilisateur() {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log(data.updatedUser);
+            //console.log(data.updatedUser);
 
             resetWarning();
             setApiResponse(data.message);
@@ -196,27 +191,33 @@ export default function ModifierUtilisateur() {
             
         })
         .catch((err) => console.log(err));
-        
-        console.log(userWorkedOn);
-        console.log(userAfterEdit);
 
+        //https://stackoverflow.com/questions/37585309/replacing-objects-in-array
+        //Cette expression permet de *remplacer* un objet dans un array qui contient des objets. Inspiré du lien ci dessus
+        setUserListResult(
+            userListResult.map(
+                (user) => userAfterEdit.id ===  user.id 
+                ? userAfterEdit 
+                : user
+            )
+        );
+
+                                    //arr1.map(obj => arr2.find(o => o.id === obj.id) || obj);
+/*
         setUserListResult(
             [
                 ...userListResult.filter((itemToRemove) => itemToRemove.id !== thatUser.id)
                 , userAfterEdit
             ])
-                        
-        refreshDisplayUserList();
+            */
     }
+
 
 //------------------------------------------------------------------------- AFFICHAGE
 
 
   return (
     <div>
-
-        <button onClick={displayUserListInConsole}>test</button>
-
         <br/>
         <h1>MODIFIER OU SUPPRIMER UN UTILISATEUR</h1>
         <br/>
@@ -246,29 +247,13 @@ export default function ModifierUtilisateur() {
         <br/>
         <br/>
 
-        {/*Par défaut on affiche "liste utilisateurs, mais pour quand on fait des recherches, on va plutôt
+        {/*Par défaut on affiche "liste utilisateurs, mais quand on fait des recherches on va plutôt
         afficher "Résultats de la recherche", qui est donné en réponse de l'API Fetch.
         cf setApiSearchResponse() */}
         {apiSearchResponse || "Liste des utilisateurs :"}
 
         <br/>
-
-
-
         {listUserDisplay}
-
-        <ul>
-            {/*
-            Object.entries(userListResult).map(([objectKey, user]) =>
-            {
-                return(
-                    <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {user.isActiveAccount ? "" : " ----- <COMPTE INACTIF>"} 
-                    {<button onClick={() => prepareDisableUser(user)}>Supprimer cet utilisateur</button>}
-                    </li> 
-                )}
-                )*/}
-        </ul>
-
     </div>
 
 
