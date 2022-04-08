@@ -72,9 +72,10 @@ export default function AjouterUtilisateur() {
         formEvent.preventDefault();
         console.log(userWorkedOn);
 
-        setWarning("Résumé des modification : ↓");
+        setWarning("Cet utilisateur sera ajouté à la base de données : ");
         setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
         setIsDoubleChecking(true);
+        setApiResponse("");
     }
 
 

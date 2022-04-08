@@ -18,6 +18,7 @@ export default function ModifierUtilisateur() {
     const [apiResponse, setApiResponse] = useState("");
     const [userListResult, setUserListResult] = useState([]);
     const [isEditingPassword, setIsEditingPassword] = useState(false)
+    const [listUserDisplay, setListUserDisplay] = useState("");
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
@@ -63,10 +64,22 @@ export default function ModifierUtilisateur() {
                 console.log(err);
             });
 
+            
+
       return () => {
         //cleanup
       }
     }, []);
+
+
+    useEffect(() => {
+        refreshDisplayUserList();
+    
+      return () => {
+        //Cleanup
+      }
+    }, [userListResult])
+    
 
     //Dans la BdD les droits sont des booléens, on parse ceci.
     const parseUserRights = (thatUser) => {
@@ -96,7 +109,22 @@ export default function ModifierUtilisateur() {
             </ul>
         );
     }
-    
+
+    const refreshDisplayUserList = () =>{
+        setListUserDisplay(
+            <ul>
+                {Object.entries(userListResult).map(([objectKey, user]) =>
+                {
+                    return(
+                        <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {user.isActiveAccount ? "" : " ----- <COMPTE INACTIF>"} 
+                        {<button onClick={() => prepareDisableUser(user)}>Supprimer cet utilisateur</button>}
+                        </li> 
+                    )
+                })
+                }               
+            </ul>
+        )
+    }
 
     const prepareDisableUser = (userSelected) => {
         setWarningUserDelete("Vous allez supprimer cet utilisateur");
@@ -138,9 +166,15 @@ export default function ModifierUtilisateur() {
         //Uncaught (in promise) TypeError: userListResult.filter is not a function :thonk:
         //↑ Erreur quand on essaie de supprimer un 2e utilisateur sans refresh.
         setUserListResult(userListResult.filter(
-            (itemToRemove) => itemToRemove.id != thatUser.id
+            (itemToRemove) => itemToRemove.id !== thatUser.id
             ));
-        setUserListResult(prevState => ({...prevState, userWorkedOn}));
+        setUserListResult([...userListResult, userWorkedOn]);
+
+        refreshDisplayUserList();
+
+
+        
+
 
 
     }
@@ -162,9 +196,18 @@ export default function ModifierUtilisateur() {
         setIsDoubleChecking(true);
     }
 
+    const displayUserListInConsole = () => {
+        console.log("UserList est de type " + typeof userListResult);
+        console.log(userListResult);
+        refreshDisplayUserList();
+    }
+
 
   return (
     <div>
+
+        <button onClick={displayUserListInConsole}>test</button>
+
         <br/>
         <h1>MODIFIER OU SUPPRIMER UN UTILISATEUR</h1>
         <br/>
@@ -201,15 +244,20 @@ export default function ModifierUtilisateur() {
 
         <br/>
 
+
+
+        {listUserDisplay}
+
         <ul>
-            {Object.entries(userListResult).map(([objectKey, user]) =>
+            {/*
+            Object.entries(userListResult).map(([objectKey, user]) =>
             {
                 return(
                     <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {user.isActiveAccount ? "" : " ----- <COMPTE INACTIF>"} 
                     {<button onClick={() => prepareDisableUser(user)}>Supprimer cet utilisateur</button>}
                     </li> 
                 )}
-            )}
+                )*/}
         </ul>
 
     </div>
