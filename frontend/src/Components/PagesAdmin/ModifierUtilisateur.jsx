@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function ModifierUtilisateur() {
+
+//------------------------------------------------------------------------- INITIALISATION
+
     const {activeSession, setActiveSession}= useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
@@ -26,6 +29,8 @@ export default function ModifierUtilisateur() {
         password:"",
         droits:"none"
     })
+
+//------------------------------------------------------------------------- USE EFFECT
 
     //Au chargement de la page
     useEffect(() => {
@@ -54,9 +59,6 @@ export default function ModifierUtilisateur() {
 
                     myAppNavigator("/login");
                 }
-                console.log(data.resultArray);
-    
-                //setApiSearchResponse(data.message);
                 setUserListResult(data.resultArray);
             })
             .catch((err) => {
@@ -74,12 +76,14 @@ export default function ModifierUtilisateur() {
 
     useEffect(() => {
         refreshDisplayUserList();
+        console.log(userWorkedOn);
     
       return () => {
         //Cleanup
       }
     }, [userListResult])
     
+//------------------------------------------------------------------------- METHODES D'AFFICHAGE
 
     //Dans la BdD les droits sont des booléens, on parse ceci.
     const parseUserRights = (thatUser) => {
@@ -111,6 +115,7 @@ export default function ModifierUtilisateur() {
     }
 
     const refreshDisplayUserList = () =>{
+        console.log(userListResult);
         setListUserDisplay(
             <ul>
                 {Object.entries(userListResult).map(([objectKey, user]) =>
@@ -126,11 +131,37 @@ export default function ModifierUtilisateur() {
         )
     }
 
+    const resetWarning = () => {
+        setWarning("");
+        setWarningUserDelete("");
+        setConfirmButton("");
+        setIsDoubleChecking(false);
+    }
+
+    const displayUserListInConsole = () => {
+        console.log(userListResult);
+        refreshDisplayUserList();
+    }
+    
+    const submitForm = (formEvent) => {
+        formEvent.preventDefault();
+        console.log(userWorkedOn);
+
+        setWarning("Résumé des modification :");
+        setWarningUserDelete("");
+        setConfirmButton(<button>Confirmer la modification</button>);
+        setIsDoubleChecking(true);
+    }
+
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT
+
     const prepareDisableUser = (userSelected) => {
         setWarningUserDelete("Vous allez supprimer cet utilisateur");
         setIsDoubleChecking(true);
 
         setWarning("");
+        setApiResponse("");
+        
         
         setUserWorkedOn(userSelected);
         setUserWorkedOn(prevState => ({
@@ -142,6 +173,8 @@ export default function ModifierUtilisateur() {
     }
 
     const apiDeactivateUser = async (thatUser) => {
+        setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
+        let userAfterEdit;
 
         await fetch(`/api/users/edit/${thatUser.id}`,{
             method: "PUT",
@@ -153,54 +186,30 @@ export default function ModifierUtilisateur() {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log(data.message);
             console.log(data.updatedUser);
 
             resetWarning();
-            setApiSearchResponse(data.message);
-            setUserWorkedOn(data.updatedUser);
+            setApiResponse(data.message);
+
+            userAfterEdit = data.updatedUser;
+            setUserWorkedOn(userAfterEdit);
+            
         })
         .catch((err) => console.log(err));
-
-
-        //Uncaught (in promise) TypeError: userListResult.filter is not a function :thonk:
-        //↑ Erreur quand on essaie de supprimer un 2e utilisateur sans refresh.
-        setUserListResult(userListResult.filter(
-            (itemToRemove) => itemToRemove.id !== thatUser.id
-            ));
-        setUserListResult([...userListResult, userWorkedOn]);
-
-        refreshDisplayUserList();
-
-
         
-
-
-
-    }
-
-    const resetWarning = () => {
-        setWarning("");
-        setWarningUserDelete("");
-        setConfirmButton("");
-        setIsDoubleChecking(false);
-    }
-
-    const submitForm = (formEvent) => {
-        formEvent.preventDefault();
         console.log(userWorkedOn);
+        console.log(userAfterEdit);
 
-        setWarning("Résumé des modification :");
-        setWarningUserDelete("");
-        setConfirmButton(<button>Confirmer la modification</button>);
-        setIsDoubleChecking(true);
-    }
-
-    const displayUserListInConsole = () => {
-        console.log("UserList est de type " + typeof userListResult);
-        console.log(userListResult);
+        setUserListResult(
+            [
+                ...userListResult.filter((itemToRemove) => itemToRemove.id !== thatUser.id)
+                , userAfterEdit
+            ])
+                        
         refreshDisplayUserList();
     }
+
+//------------------------------------------------------------------------- AFFICHAGE
 
 
   return (
