@@ -121,8 +121,11 @@ export default function ModifierUtilisateur() {
                         return;
                     }else{
                         return(
-                            <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} {user.isActiveAccount ? "" : " ----- <COMPTE INACTIF>"} 
-                            {<button onClick={() => prepareDisableUser(user)}>Supprimer cet utilisateur</button>}
+                            <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} 
+                            {user.isActiveAccount
+                            ? "" 
+                            : " ----- <COMPTE INACTIF>" } 
+                            {<button onClick={() => prepareChangeAccountActiveState(user)}>{user.isActiveAccount ? "Supprimer" : "Restaurer"} cet utilisateur</button>}
                             </li> 
                         )
                     }
@@ -151,22 +154,26 @@ export default function ModifierUtilisateur() {
 
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
-    const prepareDisableUser = (userSelected) => {
+    const prepareChangeAccountActiveState = (userSelected) => {
         setWarningUserDelete("Vous allez supprimer cet utilisateur");
         setIsDoubleChecking(true);
 
         setWarning("");
-        setApiResponse("");
-        
+        if(userSelected.isActiveAccount){
+            setApiResponse("");
+        }else{
+            setApiResponse(" Cet utilisateur est actuellement INACTIF. En validant vous confirmez vouloir le réactiver. ");
+        }
+
         setUserWorkedOn(() => ({
             ...userSelected,
             droits: parseUserRights(userSelected)
         }));
-        
-        setConfirmButton(<button onClick={() => apiDeactivateUser(userSelected)}>Confirmer la suppression</button>);
+
+        setConfirmButton(<button onClick={() => apiChangeAccountActiveState(userSelected)}>Confirmer la {userSelected.isActiveAccount ? "suppression" : "réactivation"}</button>);
     }
 
-    const apiDeactivateUser = async (thatUser) => {
+    const apiChangeAccountActiveState = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
         setConfirmButton("");
         let userAfterEdit;
@@ -176,7 +183,7 @@ export default function ModifierUtilisateur() {
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
             body: JSON.stringify(
                 {
-                    isActiveAccount:false
+                    isActiveAccount:!thatUser.isActiveAccount
                 })
         })
         .then((res) => res.json())
