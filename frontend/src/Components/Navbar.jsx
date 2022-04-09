@@ -27,7 +27,7 @@ export default function Navbar() {
             }
             else{
                 switch (activeSession.userInfo.droits) {
-                    case "admin":
+                    case "Admin":
                         return(
                             <nav>
                                 <Link to="/admin"> [ Interface admin ] </Link>
@@ -37,7 +37,7 @@ export default function Navbar() {
                                 <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
                             </nav>
                         )
-                    case "both":
+                    case "Double gérant":
                         return(
                             <nav>
                                 <Link to="/manage/buvette"> [ Gestion buvette ] </Link>
@@ -45,21 +45,21 @@ export default function Navbar() {
                                 <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
                             </nav>
                         )
-                    case "buvette":
+                    case "Gerant Buvette":
                         return(
                             <nav>
                                 <Link to="/manage/buvette"> [ Gestion buvette ] </Link>
                                 <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
                             </nav>
                         )
-                    case "materiel":
+                    case "Gerant Matériel":
                         return(
                             <nav>
                                 <Link to="/manage/materiel"> [ Gestion buvette ] </Link>
                                 <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
                             </nav>
                         )                
-                    case"none":
+                    case"Aucun":
                     default:
                         return(
                             <nav>

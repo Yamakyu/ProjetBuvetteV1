@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { SessionContext } from "./Contexts/SessionContext";
 import Navbar from "./Components/Navbar";
 import Connexion from "./Components/Connexion";
@@ -14,6 +14,22 @@ import UserForm from "./Components/Utility/UserForm";
 import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
+  let isUserTokenExpired = (apiResponseData) => {
+    if (apiResponseData.needLogout) {
+      setActiveSession(() => ({
+        ...localStorage.removeItem("currentSession"),
+        userConnexionStatus: apiResponseData.message,
+      }));
+
+      console.log("statut de ActiveSession :");
+      console.log(activeSession);
+
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   let getLocalStorage = (localStorageKey) => {
     if (localStorage.getItem("currentSession") === null) {
       console.log("session is null, returning empty session");
@@ -45,23 +61,16 @@ function App() {
     getLocalStorage("currentSession")
   );
 
-  /*
-  let [activeSession, setActiveSession] = useState(
-    getLocalStorage("currentSession")
-      ? getLocalStorage("currentSession")
-      : {
-          userInfo: {},
-          userToken: "",
-          userConnexionStatus: "",
-        }
-  );
-  */
-
   //↑ On rend les informations de la session accessible dans toute l'application ↓
 
   return (
     <SessionContext.Provider
-      value={{ activeSession, setActiveSession, getLocalStorage }}
+      value={{
+        activeSession,
+        setActiveSession,
+        getLocalStorage,
+        isUserTokenExpired,
+      }}
     >
       <BrowserRouter>
         <Navbar />

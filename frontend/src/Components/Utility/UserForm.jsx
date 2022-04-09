@@ -79,6 +79,8 @@ export default function UserForm(props) {
             case "Admin" :
                 setUserEdit(prevState => ({
                     ...prevState,
+                    isGerantMateriel: false,
+                    isGerantBuvette: false,
                     droits: pickedOption,
                     isAdmin: true}));
                 setWarningCreateAdmin("Vous vous apprêtez à donner les droits ADMINISTRATEUR à cet utilisateur.")

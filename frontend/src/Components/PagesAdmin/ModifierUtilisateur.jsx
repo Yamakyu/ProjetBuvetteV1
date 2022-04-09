@@ -9,7 +9,7 @@ export default function ModifierUtilisateur() {
 
 //------------------------------------------------------------------------- INITIALISATION
 
-    const {activeSession, setActiveSession}= useContext(SessionContext);
+    const {activeSession, setActiveSession, isUserTokenExpired}= useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
 
@@ -50,15 +50,7 @@ export default function ModifierUtilisateur() {
                 console.log("API response ↓");
                 console.log(data.message);
 
-                if (data.needLogout || !data.resultArray){
-                    setActiveSession(() => ({
-                        ...localStorage.setItem('currentSession', null)
-                        , userConnexionStatus:data.message
-                    }));
-                    
-                    console.log("statut de ActiveSession :");
-                    console.log(activeSession);
-
+                if (isUserTokenExpired(data)){
                     myAppNavigator("/login");
                 }
                 setUserListResult(data.resultArray);
@@ -182,20 +174,26 @@ export default function ModifierUtilisateur() {
 
     
     const prepareSearchUserByRole = () => {
-
-        let roleToLookFor= ("");
+        let checkInactiveAccounts = false;
+        let roleToLookFor;
         
         setSearchTool(
-            <label>
-                Droits de gestion : 
-                <select onChange={(e) => roleToLookFor = e.target.value}>
-                    <option value="Aucun">Aucun</option>
-                    <option value="Gerant Buvette">Gérant de buvette</option>
-                    <option value="Gerant Matériel">Gérant matériel</option>
-                    <option value="Double gérant">Gérant buvette + matériel</option>
-                    <option value="Admin">Administrateur</option>
-                </select>
-            </label>
+            <div>
+                <label>
+                    Droits de gestion :  
+                    <select onChange={(e) => roleToLookFor = e.target.value}>
+                        <option value="Aucun">Aucun</option>
+                        <option value="Gerant Buvette">Gérant de buvette</option>
+                        <option value="Gerant Matériel">Gérant matériel</option>
+                        <option value="Double gérant">Gérant buvette + matériel</option>
+                        <option value="Admin">Administrateur</option>
+                    </select>
+                </label>
+                 Inclure les comptes inactifs (supprimés) ?
+                <input type="checkbox" defaultChecked={false} value={checkInactiveAccounts} onChange={() => checkInactiveAccounts = !checkInactiveAccounts}/>
+
+                <button onClick={() => apiSearchUsersByRole(roleToLookFor, checkInactiveAccounts)}>Valider</button>
+            </div>
         );
     }
 
@@ -215,11 +213,14 @@ export default function ModifierUtilisateur() {
         })
         .then((res) => res.json())
         .then((data) => {
-            //console.log(data.updatedUser);
-
+            
             resetWarning();
             setApiResponse(data.message);
 
+            if (isUserTokenExpired(data)){
+                myAppNavigator("/login");
+            }
+            
             userAfterEdit = data.updatedUser;
             setUserWorkedOn(userAfterEdit);
             
@@ -235,17 +236,40 @@ export default function ModifierUtilisateur() {
                 : user
             )
         );
-
-                                    //arr1.map(obj => arr2.find(o => o.id === obj.id) || obj);
-/*
-        setUserListResult(
-            [
-                ...userListResult.filter((itemToRemove) => itemToRemove.id !== thatUser.id)
-                , userAfterEdit
-            ])
-            */
     }
 
+    const apiSearchUsersByRole = async (thatRole, isInactiveIncluded) => {
+        resetWarning();
+        console.log("recherche " + thatRole);
+        console.log("comptes inactifs ? " + isInactiveIncluded);
+
+        fetch("/api/users/search/role",{
+            method: "POST",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+            body: JSON.stringify(
+                {
+                    filter:thatRole,
+                    isInactiveAccountsIncluded: isInactiveIncluded,
+                }
+            )
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);
+
+            if (isUserTokenExpired(data)){
+                myAppNavigator("/login");
+            }
+
+            setUserListResult(data.resultArray);
+            setApiSearchResponse(data.message);
+        })
+        .catch((err) => {
+            console.log(err.message);
+            console.log(err);
+        });
+    }
 
 //------------------------------------------------------------------------- AFFICHAGE
 
@@ -286,8 +310,7 @@ export default function ModifierUtilisateur() {
         <br/>
         <br/>
 
-        <button onClick={() =>  prepareSearchUserByRole()}>Trouver des utilisateurs par droits</button>
-        <button onClick={() =>  prepareSearchUserByRole()}>Trouver des utilisateurs par nom</button>
+        <button onClick={prepareSearchUserByRole}>Trouver des utilisateurs par droits</button>
         <br/>
         {searchTool || " ---- filtre de rechercehe"}
         <br/>

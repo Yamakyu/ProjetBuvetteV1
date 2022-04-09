@@ -17,16 +17,12 @@ export default function Connexion() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-//------------------------------------------------------------------------- USE EFFECT
-
-
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
     
     const apiLogin = (formEvent) => {
         formEvent.preventDefault();
 
-        //Envoi à notre API back end
         fetch("/api/users/login",{
             method: "POST",
             headers:{"Content-type" : "application/json"},
@@ -53,19 +49,19 @@ export default function Connexion() {
                 setActiveSession(thatNewSession);
     
                 switch (thatNewSession.userInfo.droits) {
-                    case "admin":
+                    case "Admin":
                         myAppNavigator("/admin");
                         break;
-                    case "both":
+                    case "Double gérant":
                         myAppNavigator("/manage");
                         break;
-                    case "buvette":
+                    case "Gerant Buvette":
                         myAppNavigator("/manage/buvette");
                         break;
-                    case "materiel":
+                    case "Gerant Matériel":
                         myAppNavigator("/manage/materiel");
                         break;
-                    case "none":
+                    case "Aucun":
                     default:
                         myAppNavigator("/");
                         break;
