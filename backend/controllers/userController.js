@@ -88,15 +88,15 @@ exports.login = async (req, res) => {
         let userRightsToReturn;
 
         if (thatUser.isAdmin) {
-          userRightsToReturn = "admin";
+          userRightsToReturn = "Admin";
         } else if (thatUser.isGerantBuvette && thatUser.isGerantMateriel) {
-          userRightsToReturn = "both";
+          userRightsToReturn = "Double gérant";
         } else if (thatUser.isGerantBuvette || thatUser.isGerantMateriel) {
           userRightsToReturn = thatUser.isGerantBuvette
-            ? "buvette"
-            : "materiel";
+            ? "Gerant Buvette"
+            : "Gerant Matériel";
         } else {
-          userRightsToReturn = "none";
+          userRightsToReturn = "Aucun";
         }
 
         //Pour cela je créée un nouvel objet qui ne contient que les éléments utiles
@@ -334,22 +334,42 @@ exports.findByRole = async (req, res) => {
 
     if (isInactiveAccountsDisplayed) {
       switch (searchFilter) {
-        case "admin":
+        case "Admin":
           console.log("------ returning all ADMINS");
           theseUsers = await User.findAll({
             where: { isAdmin: true },
           });
           break;
-        case "buvette":
+        case "Gerant Buvette":
           console.log("------ returning all GERANTS BUVETTE");
           theseUsers = await User.findAll({
             where: { isGerantBuvette: true },
           });
           break;
-        case "materiel":
+        case "Gerant Matériel":
           console.log("------ returning all GERANTS MATERIEL");
           theseUsers = await User.findAll({
             where: { isGerantMateriel: true },
+          });
+          break;
+        case "Double gérant":
+          console.log("------ returning all GERANTS DOUBLE");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.and]: [{ isGerantMateriel: true }, { isGerantBuvette: true }],
+            },
+          });
+          break;
+        case "Aucun":
+          console.log("------ returning all users WITHOUT ROLES");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.and]: [
+                { isGerantMateriel: false },
+                { isGerantBuvette: false },
+                { isAdmin: false },
+              ],
+            },
           });
           break;
         default:
@@ -361,33 +381,66 @@ exports.findByRole = async (req, res) => {
           });
       }
     } else {
+      console.log(
+        " --------------- NOT RETURNING INACTIVE ACCOUNTS ----------------------"
+      );
+
       switch (searchFilter) {
-        case "admin":
+        case "Admin":
           console.log("------ returning all ADMINS");
           theseUsers = await User.findAll({
             where: {
-              isAdmin: true,
-              [Op.and]: [{ isActiveAccount: true }],
+              [Op.and]: [{ isActiveAccount: true, isAdmin: true }],
             },
           });
           break;
-        case "buvette":
+        case "Gerant Buvette":
           console.log("------ returning all GERANTS BUVETTE");
           theseUsers = await User.findAll({
             where: {
-              isGerantBuvette: true,
-              [Op.and]: [{ isActiveAccount: true }],
+              [Op.and]: [{ isGerantBuvette: true }, { isActiveAccount: true }],
             },
           });
           break;
-        case "materiel":
+        case "Gerant Matériel":
           console.log("------ returning all GERANTS MATERIEL");
           theseUsers = await User.findAll({
             where: {
-              isGerantMateriel: true,
-              [Op.and]: [{ isActiveAccount: true }],
+              [Op.and]: [{ isGerantMateriel: true }, { isActiveAccount: true }],
             },
           });
+          break;
+
+        case "Double gérant":
+          console.log("------ returning all GERANTS DOUBLE");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.and]: [
+                { isGerantMateriel: true },
+                { isGerantBuvette: true },
+                { isActiveAccount: true },
+              ],
+            },
+          });
+          break;
+        case "Aucun":
+          console.log("------ returning all users WITHOUT ROLES");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.and]: [
+                { isGerantMateriel: false },
+                { isGerantBuvette: false },
+                { isAdmin: false },
+                { isActiveAccount: true },
+              ],
+            },
+          });
+          // theseUsers = await User.findAll({
+          //   where: { isGerantMateriel: false },
+          //   [Op.and]: [{ isGerantBuvette: false }],
+          //   [Op.and]: [{ isAdmin: false }],
+          //   [Op.and]: [{ isActiveAccount: true }],
+          // });
           break;
         default:
           //Dans le cas où le filtre proposé est invalide

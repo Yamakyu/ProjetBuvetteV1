@@ -22,6 +22,8 @@ export default function ModifierUtilisateur() {
     const [userListResult, setUserListResult] = useState([]);
     const [isEditingPassword, setIsEditingPassword] = useState(false)
     const [listUserDisplay, setListUserDisplay] = useState("");
+    const [disableInput, setDisableInput] = useState(false);
+    const [searchTool, setSearchTool] = useState();
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
@@ -81,21 +83,6 @@ export default function ModifierUtilisateur() {
     
 //------------------------------------------------------------------------- METHODES D'AFFICHAGE
 
-    //Dans la BdD les droits sont des booléens, on parse ceci.
-    const parseUserRights = (thatUser) => {
-        if (thatUser.isAdmin){
-            return "Admin";
-        }else if (thatUser.isGerantBuvette && thatUser.isGerantMateriel){
-            return "Double gérant";
-        }else if (!thatUser.isGerantBuvette && !thatUser.isGerantMateriel) {
-            return "Aucun";
-        }else {
-            return thatUser.isGerantBuvette 
-            ? "Gerant Buvette"
-            : "Gerant Matériel"
-        };
-    }
-    
     //https://stackoverflow.com/questions/57581147/how-to-display-objects-keys-and-values-in-react-component
     const displayInputedUser = () => {
         return(
@@ -123,8 +110,8 @@ export default function ModifierUtilisateur() {
                         return(
                             <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} 
                             {user.isActiveAccount
-                            ? "" 
-                            : " ----- <COMPTE INACTIF>" } 
+                            ? " → " 
+                            : " |||| <COMPTE INACTIF> → " } 
                             {<button onClick={() => prepareChangeAccountActiveState(user)}>{user.isActiveAccount ? "Supprimer" : "Restaurer"} cet utilisateur</button>}
                             </li> 
                         )
@@ -155,6 +142,9 @@ export default function ModifierUtilisateur() {
     const prepareChangeAccountActiveState = (userSelected) => {
         setWarningUserDelete("Vous allez supprimer cet utilisateur");
         setIsDoubleChecking(true);
+        
+        //Si l'utilisateur veut activer/désactiver un compte, on évite de lui laisser la possibilité de modifier d'autres éléments du compte
+        setDisableInput(true);
 
         setWarning("");
         if(userSelected.isActiveAccount){
@@ -171,7 +161,44 @@ export default function ModifierUtilisateur() {
         setConfirmButton(<button onClick={() => apiChangeAccountActiveState(userSelected)}>Confirmer la {userSelected.isActiveAccount ? "suppression" : "réactivation"}</button>);
     }
 
+
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
+
+
+    //Dans la BdD les droits sont des booléens, on parse ceci.
+    const parseUserRights = (thatUser) => {
+        if (thatUser.isAdmin){
+            return "Admin";
+        }else if (thatUser.isGerantBuvette && thatUser.isGerantMateriel){
+            return "Double gérant";
+        }else if (!thatUser.isGerantBuvette && !thatUser.isGerantMateriel) {
+            return "Aucun";
+        }else {
+            return thatUser.isGerantBuvette 
+            ? "Gerant Buvette"
+            : "Gerant Matériel"
+        };
+    }
+
+    
+    const prepareSearchUserByRole = () => {
+
+        let roleToLookFor= ("");
+        
+        setSearchTool(
+            <label>
+                Droits de gestion : 
+                <select onChange={(e) => roleToLookFor = e.target.value}>
+                    <option value="Aucun">Aucun</option>
+                    <option value="Gerant Buvette">Gérant de buvette</option>
+                    <option value="Gerant Matériel">Gérant matériel</option>
+                    <option value="Double gérant">Gérant buvette + matériel</option>
+                    <option value="Admin">Administrateur</option>
+                </select>
+            </label>
+        );
+    }
+
 
     const apiChangeAccountActiveState = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
@@ -231,10 +258,12 @@ export default function ModifierUtilisateur() {
 
         <UserForm 
             formHandler={submitForm}
-            user={userWorkedOn} 
-            setUser={setUserWorkedOn} 
+            user={userWorkedOn}
+            setUser={setUserWorkedOn}
             resetWarning={resetWarning}
             editPassword={isEditingPassword}
+            disableInput={disableInput}
+            setDisableInput={setDisableInput}
             /*
             doubleCheck={isDoubleChecking} 
             setDoubleChecking={setIsDoubleChecking} 
@@ -257,11 +286,17 @@ export default function ModifierUtilisateur() {
         <br/>
         <br/>
 
+        <button onClick={() =>  prepareSearchUserByRole()}>Trouver des utilisateurs par droits</button>
+        <button onClick={() =>  prepareSearchUserByRole()}>Trouver des utilisateurs par nom</button>
+        <br/>
+        {searchTool || " ---- filtre de rechercehe"}
+        <br/>
+        <br/>
+        {apiSearchResponse || " Liste des utilisateurs :"}
+
         {/*Par défaut on affiche "liste utilisateurs, mais quand on fait des recherches on va plutôt
         afficher "Résultats de la recherche", qui est donné en réponse de l'API Fetch.
         cf setApiSearchResponse() */}
-        {apiSearchResponse || "Liste des utilisateurs :"}
-
         <br/>
         {listUserDisplay ||  " ---- affichage de la liste des utilisateurs" }
     </div>

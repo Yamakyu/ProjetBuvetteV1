@@ -9,6 +9,10 @@ export default function UserForm(props) {
     let resetWarning = props.resetWarning;
     //↓ Si on décide d'afficher le champ pour le mot de passe, ça fait true et true, et on l'affiche. Sinon false par défaut
     let displayPasswordField = props.editPassword && true;
+    //↓ Pour désactiver les inputs (suppressions utilisateur). C'est actif par défaut (si on ne transmet pas le props, il est false, l'input est actif)
+    let isInputDisabled = props.disableInput && true;
+    let setIsInputDisabled = props.setDisableInput || (() => {});
+    //↑ Si le props pour (dés)activer les input n'a pas été transmis, setIsInputEnabled est une fonction vide
 
     const [warningCreateAdmin, setWarningCreateAdmin] = useState("");
 
@@ -22,6 +26,7 @@ export default function UserForm(props) {
 
         resetWarning();
         setWarningCreateAdmin("");
+        setIsInputDisabled(false);
     }
 
     
@@ -44,7 +49,7 @@ export default function UserForm(props) {
         const pickedOption = inputEvent.target.value;
 
         switch (pickedOption) {
-            case "buvette":
+            case "Gerant Buvette":
                 setUserEdit(prevState => ({
                     ...prevState,
                     droits: pickedOption,
@@ -53,7 +58,7 @@ export default function UserForm(props) {
                     isGerantBuvette: true}));
                 setWarningCreateAdmin("");
                 break;
-            case "materiel":
+            case "Gerant Matériel":
                 setUserEdit(prevState => ({
                     ...prevState,
                     droits: pickedOption,
@@ -62,7 +67,7 @@ export default function UserForm(props) {
                     isGerantMateriel: true}));
                 setWarningCreateAdmin("");
                 break;
-            case "both":
+            case "Double gérant":
                 setUserEdit(prevState => ({
                     ...prevState,
                     droits: pickedOption,
@@ -71,14 +76,14 @@ export default function UserForm(props) {
                     isGerantBuvette: true}));
                 setWarningCreateAdmin("");
                 break;
-            case "admin" :
+            case "Admin" :
                 setUserEdit(prevState => ({
                     ...prevState,
                     droits: pickedOption,
                     isAdmin: true}));
                 setWarningCreateAdmin("Vous vous apprêtez à donner les droits ADMINISTRATEUR à cet utilisateur.")
                 break;
-            case "none":
+            case "Aucun":
             default:
                 setUserEdit(prevState => ({
                     ...prevState,
@@ -104,6 +109,7 @@ export default function UserForm(props) {
                     type="text"
                     onChange={handleInputs}
                     name="nom"
+                    disabled={isInputDisabled}
                 />
                 <input
                     placeholder='prenom'
@@ -111,6 +117,7 @@ export default function UserForm(props) {
                     type="text"
                     onChange={handleInputs}
                     name="prenom"
+                    disabled={isInputDisabled}
                 />
                 <input
                     placeholder='email'
@@ -118,6 +125,7 @@ export default function UserForm(props) {
                     type="text"
                     onChange={handleInputs}
                     name="email"
+                    disabled={isInputDisabled}
                 />
                 {displayPasswordField 
                     ? <input
@@ -126,24 +134,25 @@ export default function UserForm(props) {
                         type="password"
                         onChange={handleInputs}
                         name="password"
+                        disabled={isInputDisabled}
                     />
                     :""}       
 
                 <label>
                     Droits de gestion : 
-                    <select onChange={handleInputSelect} value={userEdit.droits}>
-                        <option value="none">Aucun</option>
-                        <option value="buvette">Gérant de buvette</option>
-                        <option value="materiel">Gérant matériel</option>
-                        <option value="both">Gérant buvette + matériel</option>
-                        <option value="admin">Administrateur</option>
+                    <select onChange={handleInputSelect} value={userEdit.droits} disabled={isInputDisabled}>
+                        <option value="Aucun">Aucun</option>
+                        <option value="Gerant Buvette">Gérant de buvette</option>
+                        <option value="Gerant Matériel">Gérant matériel</option>
+                        <option value="Double gérant">Gérant buvette + matériel</option>
+                        <option value="Admin">Administrateur</option>
                     </select>
                 </label>
                 <button>Valider</button>
             </form>
 
-            <button onClick={resetEdits}>Effacer tout les changements</button>
-        {warningCreateAdmin || "---- avertissement création admin" }
+            <button onClick={resetEdits}>Annuler l'opération</button>
+        {warningCreateAdmin || " ---- avertissement création admin" }
         <br/>
     </div>
   )
