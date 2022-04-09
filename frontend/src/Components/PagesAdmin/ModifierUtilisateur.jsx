@@ -71,7 +71,7 @@ export default function ModifierUtilisateur() {
       }
     }, []);
 
-
+    //À chaque mise à jour de la liste des résultats
     useEffect(() => {
         refreshDisplayUserList();    
       return () => {
@@ -152,8 +152,6 @@ export default function ModifierUtilisateur() {
         setIsDoubleChecking(true);
     }
 
-//------------------------------------------------------------------------- METHODES DE TRAITEMENT
-
     const prepareChangeAccountActiveState = (userSelected) => {
         setWarningUserDelete("Vous allez supprimer cet utilisateur");
         setIsDoubleChecking(true);
@@ -172,6 +170,8 @@ export default function ModifierUtilisateur() {
 
         setConfirmButton(<button onClick={() => apiChangeAccountActiveState(userSelected)}>Confirmer la {userSelected.isActiveAccount ? "suppression" : "réactivation"}</button>);
     }
+
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
     const apiChangeAccountActiveState = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
@@ -244,12 +244,15 @@ export default function ModifierUtilisateur() {
         </UserForm>
 
         <br/>
-        {warning}
-        {warningUserDelete}
+        {warning || " ---- affichage des informations entrées"}
         <br/>
-        {isDoubleChecking ? displayInputedUser() : ""}
-        {confirmButton}
-        {apiResponse}
+        {warningUserDelete || " ---- avertissement suppression utilisateur"}
+        <br/>
+        {isDoubleChecking ? displayInputedUser() : " ---- informations utilisateur"}
+        <br/>
+        {confirmButton || " ---- bouton de confirmation"}
+        <br/>
+        {apiResponse || " ---- réponse API"}
         <br/>
         <br/>
         <br/>
@@ -260,7 +263,7 @@ export default function ModifierUtilisateur() {
         {apiSearchResponse || "Liste des utilisateurs :"}
 
         <br/>
-        {listUserDisplay}
+        {listUserDisplay ||  " ---- affichage de la liste des utilisateurs" }
     </div>
 
 

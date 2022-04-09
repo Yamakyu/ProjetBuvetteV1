@@ -143,7 +143,7 @@ export default function UserForm(props) {
             </form>
 
             <button onClick={resetEdits}>Effacer tout les changements</button>
-        {warningCreateAdmin}
+        {warningCreateAdmin || "---- avertissement création admin" }
         <br/>
     </div>
   )

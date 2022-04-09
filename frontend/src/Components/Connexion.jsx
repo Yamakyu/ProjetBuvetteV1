@@ -1,22 +1,29 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../Contexts/SessionContext';
 
 
 export default function Connexion() {
 
-    const {activeSession, setActiveSession}= useContext(SessionContext);
+//------------------------------------------------------------------------- INITIALISATION
+
+    //Récupérer GetLocalStorage pour empêcher erreur en cas de localStorage vide
+    //↑ Après s'être déconnecté
+
+    const {activeSession, setActiveSession, getLocalStorage}= useContext(SessionContext);
     
     const myAppNavigator = useNavigate();
 
-    //const [login, setLogin] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+//------------------------------------------------------------------------- USE EFFECT
 
-    //------------------------------------------------------------------
+
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT
+
     
-    const submitForm = (formEvent) => {
+    const apiLogin = (formEvent) => {
         formEvent.preventDefault();
 
         //Envoi à notre API back end
@@ -76,15 +83,15 @@ export default function Connexion() {
 
     }
 
+//------------------------------------------------------------------------- AFFICHAGE
+
+
     return (
         <div>
 
-            <form onSubmit={submitForm}>
+            <form onSubmit={apiLogin}>
                 <input type="email" value={email} placeholder='email' 
                 onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
-
-                {/*<input type="text" value={login} placeholder='login' 
-                onChange={(inputEvent) => setLogin(inputEvent.target.value)}/>*/}
                 
                 <input type="password" value={password} placeholder='password' 
                 onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
@@ -94,7 +101,7 @@ export default function Connexion() {
                 <button>Connexion</button>
             </form>
 
-            {activeSession.userConnexionStatus}
+            {getLocalStorage("currentSession").userConnexionStatus}
 
         </div>
     )

@@ -15,18 +15,37 @@ import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
   let getLocalStorage = (localStorageKey) => {
-    try {
-      return JSON.parse(localStorage.getItem(localStorageKey));
-    } catch (error) {
-      console.log(
-        `Impossible de trouver la clé de localStorage ${localStorageKey}`
-      );
-      console.log(error);
-      return null;
+    if (localStorage.getItem("currentSession") === null) {
+      console.log("session is null, returning empty session");
+      return {
+        userInfo: {},
+        userToken: "",
+        userConnexionStatus: "",
+      };
+    } else {
+      try {
+        console.log("session found, returning session");
+        return JSON.parse(localStorage.getItem(localStorageKey));
+      } catch (error) {
+        console.log(
+          `Impossible de trouver la clé de localStorage ${localStorageKey}`
+        );
+        console.log(error);
+        return {
+          userInfo: {},
+          userToken: "",
+          userConnexionStatus: "",
+        };
+      }
     }
   };
 
   //Si on a une session dispo dans le localStorage, on l'utilise comme activeSession, sinon on a une session vide.
+  let [activeSession, setActiveSession] = useState(
+    getLocalStorage("currentSession")
+  );
+
+  /*
   let [activeSession, setActiveSession] = useState(
     getLocalStorage("currentSession")
       ? getLocalStorage("currentSession")
@@ -36,6 +55,7 @@ function App() {
           userConnexionStatus: "",
         }
   );
+  */
 
   //↑ On rend les informations de la session accessible dans toute l'application ↓
 

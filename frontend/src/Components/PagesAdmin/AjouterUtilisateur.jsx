@@ -4,6 +4,9 @@ import UserForm from '../Utility/UserForm';
 
 
 export default function AjouterUtilisateur() {
+
+//------------------------------------------------------------------------- INITIALISATION
+
     const {activeSession}= useContext(SessionContext);
 
     const [isDoubleChecking, setIsDoubleChecking] = useState(false)
@@ -18,6 +21,7 @@ export default function AjouterUtilisateur() {
         droits:"none"
     })
 
+//------------------------------------------------------------------------- METHODES D'AFFICHAGE
     
     //https://stackoverflow.com/questions/57581147/how-to-display-objects-keys-and-values-in-react-component
     const displayInputedUser = () => {
@@ -33,6 +37,24 @@ export default function AjouterUtilisateur() {
         );
     }
     
+    const resetWarning = () => {
+        setWarning("");
+        setConfirmButton("");
+        setIsDoubleChecking(false);
+    }
+
+    const submitForm = (formEvent) => {
+        formEvent.preventDefault();
+        console.log(userWorkedOn);
+
+        setWarning("Cet utilisateur sera ajouté à la base de données : ");
+        setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
+        setIsDoubleChecking(true);
+        setApiResponse("");
+    }
+
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT
+
     const apiAddUser = async () => {
 
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
@@ -68,22 +90,7 @@ export default function AjouterUtilisateur() {
 
     }
 
-    const resetWarning = () => {
-        setWarning("");
-        setConfirmButton("");
-        setIsDoubleChecking(false);
-    }
-
-    const submitForm = (formEvent) => {
-        formEvent.preventDefault();
-        console.log(userWorkedOn);
-
-        setWarning("Cet utilisateur sera ajouté à la base de données : ");
-        setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
-        setIsDoubleChecking(true);
-        setApiResponse("");
-    }
-
+//------------------------------------------------------------------------- AFFICHAGE
 
   return (
     <div>
@@ -104,8 +111,10 @@ export default function AjouterUtilisateur() {
         {warning}
         <br/>
         {isDoubleChecking ? displayInputedUser() : ""}
-        {confirmButton}
-        {apiResponse}
+        <br/>
+        {confirmButton || " ---- bouton de confirmation"}
+        <br/>
+        {apiResponse || " ---- réponse API"}
     </div>
 
 
