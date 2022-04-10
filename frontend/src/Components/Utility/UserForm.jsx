@@ -124,7 +124,7 @@ export default function UserForm(props) {
                 <input
                     placeholder='email'
                     value={userEdit.email}
-                    type="text"
+                    type="email"
                     onChange={handleInputs}
                     name="email"
                     disabled={isInputDisabled}

@@ -551,7 +551,7 @@ let displayResults = (
 
   if (resultArray.length === 0) {
     return requestResponse.status(200).json({
-      message: "Aucun réusltat",
+      message: "Aucun résultat",
     });
   } else if (resultArray.length > 0 && triedForbiddenRequest) {
     return requestResponse.status(200).json({

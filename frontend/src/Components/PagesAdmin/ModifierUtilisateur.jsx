@@ -160,6 +160,59 @@ export default function ModifierUtilisateur() {
 
 
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
+    let checkInactiveAccounts = false;
+
+    const prepareSearchUserByName = () => {
+        let nameToLookFor;
+        resetWarning();
+        
+        setSearchTool(
+            <div>
+                Rechercher un utilisateur dont le nom ou prénom est : 
+
+                <input
+                placeholder='Entrez un nom/prénom'
+                value={nameToLookFor}
+                type="text"
+                onChange={(e) => nameToLookFor = e.target.value}
+                name="searchName"
+                />
+                <br/>
+               
+                Inclure les utilisateurs inactifs (supprimés) ?
+                <input type="checkbox" defaultChecked={false} value={checkInactiveAccounts} onChange={() => checkInactiveAccounts = !checkInactiveAccounts}/>
+
+                <button onClick={() => apiSearchUsersByName(nameToLookFor, checkInactiveAccounts)}>Valider</button>
+            </div>
+        );
+    }
+
+    const prepareSearchUserByRole = () => {
+        let roleToLookFor;
+        resetWarning();
+        
+        setSearchTool(
+            <div>
+                <label>
+                    Rechercher un utilisateur ayant les droits de gestion suivants : 
+                    <select onChange={(e) => roleToLookFor = e.target.value}>
+                        <option value="Aucun">Aucun</option>
+                        <option value="Gerant Buvette">Gérant de buvette</option>
+                        <option value="Gerant Matériel">Gérant matériel</option>
+                        <option value="Double gérant">Gérant buvette + matériel</option>
+                        <option value="Admin">Administrateur</option>
+                    </select>
+                </label>
+                <br/>
+                Inclure les utilisateurs inactifs (supprimés) ?
+                <input type="checkbox" defaultChecked={false} value={checkInactiveAccounts} onChange={() => checkInactiveAccounts = !checkInactiveAccounts}/>
+
+                <button onClick={() => apiSearchUsersByRole(roleToLookFor, checkInactiveAccounts)}>Valider</button>
+            </div>
+        );
+    }
+
+//------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
 
 
     //Dans la BdD les droits sont des booléens, on parse ceci.
@@ -177,30 +230,6 @@ export default function ModifierUtilisateur() {
         };
     }
     
-    const prepareSearchUserByRole = () => {
-        let checkInactiveAccounts = false;
-        let roleToLookFor;
-        
-        setSearchTool(
-            <div>
-                <label>
-                    Droits de gestion :  
-                    <select onChange={(e) => roleToLookFor = e.target.value}>
-                        <option value="Aucun">Aucun</option>
-                        <option value="Gerant Buvette">Gérant de buvette</option>
-                        <option value="Gerant Matériel">Gérant matériel</option>
-                        <option value="Double gérant">Gérant buvette + matériel</option>
-                        <option value="Admin">Administrateur</option>
-                    </select>
-                </label>
-                 Inclure les comptes inactifs (supprimés) ?
-                <input type="checkbox" defaultChecked={false} value={checkInactiveAccounts} onChange={() => checkInactiveAccounts = !checkInactiveAccounts}/>
-
-                <button onClick={() => apiSearchUsersByRole(roleToLookFor, checkInactiveAccounts)}>Valider</button>
-            </div>
-        );
-    }
-
     const apiChangeAccountActiveState = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
         setConfirmButton("");
@@ -276,6 +305,39 @@ export default function ModifierUtilisateur() {
         });
     }
 
+    const apiSearchUsersByName = async (thatName, isInactiveIncluded) => {
+        resetWarning();
+        console.log("recherche " + thatName);
+        console.log("comptes inactifs ? " + isInactiveIncluded);
+
+        fetch("/api/users/search?name="+thatName,{
+            method: "POST",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+            body: JSON.stringify(
+                {
+                    isInactiveAccountsIncluded: isInactiveIncluded,
+                }
+            )
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);
+
+            if (isUserTokenExpired(data)){
+                myAppNavigator("/login");
+            }
+
+            setUserListResult(data.resultArray);
+            setApiSearchResponse(data.message);
+        })
+        .catch((err) => {
+            console.log(err.message);
+            console.log(err);
+        });
+    }
+
+
 //------------------------------------------------------------------------- AFFICHAGE
 
 
@@ -316,6 +378,7 @@ export default function ModifierUtilisateur() {
         <br/>
 
         <button onClick={prepareSearchUserByRole}>Trouver des utilisateurs par droits</button>
+        <button onClick={prepareSearchUserByName}>Trouver des utilisateurs par leur nom/prénom</button>
         <br/>
         {searchTool || " ---- filtre de rechercehe"}
         <br/>
