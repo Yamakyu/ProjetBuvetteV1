@@ -91,26 +91,31 @@ export default function ModifierUtilisateur() {
 
     const refreshDisplayUserList = () =>{
 
-        setListUserDisplay(
-            <ul>
-                {Object.entries(userListResult).map(([objectKey, user]) =>
-                {
-                    //Pour éviter des accidents, l'admin connecté n'est pas affiché dans la liste des utilisateurs modifiables.
-                    if(user.id === activeSession.userInfo.id) {
-                        return;
-                    }else{
-                        return(
-                            <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} 
-                            {user.isActiveAccount
-                            ? " → " 
-                            : " |||| <COMPTE INACTIF> → " } 
-                            {<button onClick={() => prepareChangeAccountActiveState(user)}>{user.isActiveAccount ? "Supprimer" : "Restaurer"} cet utilisateur</button>}
-                            </li> 
-                        )
-                    }
-                })
-                }               
-            </ul>
+        setListUserDisplay(() => {
+            if (userListResult){
+                return(
+                        <ul>
+                            {Object.entries(userListResult).map(([objectKey, user]) =>
+                            {
+                                //Pour éviter des accidents, l'admin connecté n'est pas affiché dans la liste des utilisateurs modifiables.
+                                if(user.id === activeSession.userInfo.id) {
+                                    return;
+                                }else{
+                                    return(
+                                        <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} 
+                                        {user.isActiveAccount
+                                        ? " → " 
+                                        : " |||| <COMPTE INACTIF> → " } 
+                                        {<button onClick={() => prepareChangeAccountActiveState(user)}>{user.isActiveAccount ? "Supprimer" : "Restaurer"} cet utilisateur</button>}
+                                        </li> 
+                                    )
+                                }
+                            })
+                            }               
+                        </ul>
+                )
+            }
+        }
         )
     }
 
@@ -171,7 +176,6 @@ export default function ModifierUtilisateur() {
             : "Gerant Matériel"
         };
     }
-
     
     const prepareSearchUserByRole = () => {
         let checkInactiveAccounts = false;
@@ -196,7 +200,6 @@ export default function ModifierUtilisateur() {
             </div>
         );
     }
-
 
     const apiChangeAccountActiveState = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
@@ -261,6 +264,8 @@ export default function ModifierUtilisateur() {
             if (isUserTokenExpired(data)){
                 myAppNavigator("/login");
             }
+
+            
 
             setUserListResult(data.resultArray);
             setApiSearchResponse(data.message);

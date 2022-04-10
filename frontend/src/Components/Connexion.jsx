@@ -16,8 +16,13 @@ export default function Connexion() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loginApiResponse, setLoginApiResponse] = useState("");
 
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
+
+    const displayApiResponse = (message) => {
+        setLoginApiResponse(message);
+    }
 
     
     const apiLogin = (formEvent) => {
@@ -70,10 +75,11 @@ export default function Connexion() {
             }else if (data.error){
                 console.log(data.error);
             }
-                setActiveSession(prevState => ({
-                    ...prevState,
-                    userConnexionStatus:data.message
-                }));
+
+            setActiveSession(prevState => ({
+                ...prevState,
+                userConnexionStatus:data.message
+            }), setLoginApiResponse(data.message));
         })
         .catch((err) => console.log(err));
 
@@ -97,6 +103,7 @@ export default function Connexion() {
                 <button>Connexion</button>
             </form>
 
+            {loginApiResponse}
             {getLocalStorage("currentSession").userConnexionStatus}
 
         </div>

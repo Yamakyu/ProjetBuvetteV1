@@ -153,8 +153,9 @@ export default function UserForm(props) {
                 <button>Valider</button>
             </form>
 
-            <button onClick={resetEdits}>Annuler l'opération</button>
         {warningCreateAdmin || " ---- avertissement création admin" }
+        <br/>
+            <button onClick={resetEdits}>Annuler l'opération</button>
         <br/>
     </div>
   )

@@ -452,7 +452,12 @@ exports.findByRole = async (req, res) => {
       }
     }
 
-    displayResults(res, theseUsers, isTtryingForbiddenRequest);
+    displayResults(
+      res,
+      theseUsers,
+      isTtryingForbiddenRequest,
+      req.thatRequestToken.id
+    );
   } catch (error) {
     displayThatError(res, error);
   }
@@ -492,7 +497,12 @@ exports.findByName = async (req, res) => {
         },
       });
     }
-    displayResults(res, theseUsers, isTtryingForbiddenRequest);
+    displayResults(
+      res,
+      theseUsers,
+      isTtryingForbiddenRequest,
+      req.thatRequestToken.id
+    );
   } catch (error) {
     displayThatError(res, err);
   }
@@ -514,7 +524,12 @@ exports.findAll = async (req, res) => {
       theseUsers = await User.findAll({ where: { isActiveAccount: true } });
     }
 
-    displayResults(res, theseUsers, isTtryingForbiddenRequest);
+    displayResults(
+      res,
+      theseUsers,
+      isTtryingForbiddenRequest,
+      req.thatRequestToken.id
+    );
   } catch (err) {
     displayThatError(res, err);
   }
@@ -523,7 +538,17 @@ exports.findAll = async (req, res) => {
 //-----------------------------------------
 //--------------FUNCTIONS------------------
 //-----------------------------------------
-let displayResults = (requestResponse, resultArray, triedForbiddenRequest) => {
+let displayResults = (
+  requestResponse,
+  resultArray,
+  triedForbiddenRequest,
+  userId
+) => {
+  resultArray = resultArray.filter(
+    (userToRemove) => userToRemove.id !== userId
+  );
+  //↑ Dans l'éventualité où les résultats incluent le compte qui a fait la requête, on l'enlève
+
   if (resultArray.length === 0) {
     return requestResponse.status(200).json({
       message: "Aucun réusltat",

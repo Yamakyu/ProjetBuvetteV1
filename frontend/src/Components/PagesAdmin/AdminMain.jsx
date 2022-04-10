@@ -13,8 +13,8 @@ export default function AdminMain() {
       <h1>Super page admin</h1>
 
       <button onClick={() => myAppNavigator("/manage/users")}>Gestion des utiilisateurs</button>
-      <button onClick={() => myAppNavigator("manage/materiel")}>Gestion du materiel</button>
-      <button onClick={() => myAppNavigator("manage/buvette")}>Gestion de la buvette</button>
+      <button onClick={() => myAppNavigator("/manage/materiel")}>Gestion du materiel</button>
+      <button onClick={() => myAppNavigator("/manage/buvette")}>Gestion de la buvette</button>
 
     </div>
   )
