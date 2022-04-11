@@ -16,6 +16,7 @@ export default function AjouterUtilisateur() {
     const [confirmButton, setConfirmButton] = useState();
     const [warning, setWarning] = useState("");
     const [apiResponse, setApiResponse] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
@@ -50,10 +51,18 @@ export default function AjouterUtilisateur() {
         formEvent.preventDefault();
         console.log(userWorkedOn);
 
-        setWarning("Cet utilisateur sera ajouté à la base de données : ");
-        setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
-        setIsDoubleChecking(true);
-        setApiResponse("");
+        if (passwordConfirm !== userWorkedOn.password){
+            setWarning("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
+            setIsDoubleChecking(false);
+            setConfirmButton("");
+            setApiResponse("");
+        } else {
+            setWarning("Cet utilisateur sera ajouté à la base de données : ");
+            setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
+            setIsDoubleChecking(true);
+            setApiResponse("");
+        }
+
     }
 
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
@@ -123,12 +132,14 @@ export default function AjouterUtilisateur() {
             user={userWorkedOn} 
             setUser={setUserWorkedOn} 
             resetWarning={resetWarning} 
-            editPassword={true}>    
+            editPassword={true}
+            setPasswordConfirm={setPasswordConfirm}
+            passwordConfirm={passwordConfirm}>    
         </UserForm>
 
         <br/>
         
-        {warning}
+        {warning || " ---- avertissement utilisateur"}
         <br/>
         {isDoubleChecking ? displayInputedUser() : ""}
         <br/>

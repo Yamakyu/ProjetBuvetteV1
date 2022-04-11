@@ -22,8 +22,10 @@ export default function ModifierUtilisateur() {
     const [userListResult, setUserListResult] = useState([]);
     const [isEditingPassword, setIsEditingPassword] = useState(false)
     const [listUserDisplay, setListUserDisplay] = useState("");
-    const [disableInput, setDisableInput] = useState(false);
+    const [isFilteredList, setIsFilteredList] = useState(false);    //What is up with that
+    const [disableInput, setDisableInput] = useState(true);
     const [searchTool, setSearchTool] = useState();
+    const [passwordConfirm, setPasswordConfirm] = useState("");
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
@@ -38,30 +40,7 @@ export default function ModifierUtilisateur() {
     useEffect(() => {
 
         if (activeSession){
-
-            fetch("/api/users/search/all",{
-                method: "POST",
-                headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-                body: JSON.stringify(
-                    {
-                        isInactiveAccountsIncluded: true,
-                    })
-            })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log("API response ↓");
-                console.log(data.message);
-
-                if (isUserTokenExpired(data)){
-                    myAppNavigator("/login");
-                }
-                setUserListResult(data.resultArray);
-            })
-            .catch((err) => {
-                console.log(err.message);
-                console.log(err);
-            });
-
+            apiGetAllUsers();
         } else {
             setActiveSession({
                 userConnexionStatus:"Accès réservé. Veuillez vous connecter."
@@ -104,6 +83,7 @@ export default function ModifierUtilisateur() {
         setListUserDisplay(() => {
             if (userListResult){
                 return(
+                    <div>
                         <ul>
                             {Object.entries(userListResult).map(([objectKey, user]) =>
                             {
@@ -123,6 +103,10 @@ export default function ModifierUtilisateur() {
                             })
                             }               
                         </ul>
+                        <br/>
+                        {isFilteredList ? <button onClick={apiGetAllUsers}>Afficher la liste de tout les utilisateurs</button> : ""}
+                    </div>
+                        
                 )
             }
         }
@@ -134,42 +118,30 @@ export default function ModifierUtilisateur() {
         setWarningUserDelete("");
         setConfirmButton("");
         setIsDoubleChecking(false);
+        setDisableInput(true);
+        setSearchTool("")
     }
     
     const submitForm = (formEvent) => {
         formEvent.preventDefault();
         console.log(userWorkedOn);
+        setApiResponse("");
 
-        setWarning("Résumé des modification :");
-        setWarningUserDelete("");
-        setConfirmButton(<button>Confirmer la modification</button>);
-        setIsDoubleChecking(true);
-    }
-
-    const prepareChangeAccountActiveState = (userSelected) => {
-        setWarningUserDelete("Vous allez supprimer cet utilisateur");
-        setIsDoubleChecking(true);
-        
-        //Si l'utilisateur veut activer/désactiver un compte, on évite de lui laisser la possibilité de modifier d'autres éléments du compte
-        setDisableInput(true);
-
-        setWarning("");
-        if(userSelected.isActiveAccount){
-            setApiResponse("");
-        }else{
-            setApiResponse(" Cet utilisateur est actuellement INACTIF. En validant vous confirmez vouloir le réactiver. ");
+        if (!disableInput && (passwordConfirm !== userWorkedOn.password)){
+            setWarning("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
+            setIsDoubleChecking(false);
+            setConfirmButton("");
+        } else {
+            setWarning("Résumé des modification :");
+            setConfirmButton(<button onClick={apiEditUser}>Confirmer la modification</button>);
+            setIsDoubleChecking(true);
+            setWarningUserDelete("");
         }
 
-        setUserWorkedOn(() => ({
-            ...userSelected,
-            droits: parseUserRights(userSelected)
-        }));
 
-        setConfirmButton(<button onClick={() => apiChangeAccountActiveState(userSelected)}>Confirmer la {userSelected.isActiveAccount ? "suppression" : "réactivation"}</button>);
     }
 
-
-//------------------------------------------------------------------------- METHODES DE TRAITEMENT
+//------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
     let checkInactiveAccounts = false;
 
     const prepareSearchUserByName = () => {
@@ -221,8 +193,31 @@ export default function ModifierUtilisateur() {
             </div>
         );
     }
+    
+    const prepareChangeAccountActiveState = (userSelected) => {
+        setWarningUserDelete("Vous allez supprimer cet utilisateur");
+        setIsDoubleChecking(true);
+        setSearchTool("");
+        
+        //Si l'utilisateur veut activer/désactiver un compte, on évite de lui laisser la possibilité de modifier d'autres éléments du compte
+        setDisableInput(true);
 
-//------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
+        setWarning("");
+        if(userSelected.isActiveAccount){
+            setApiResponse("");
+        }else{
+            setApiResponse(" Cet utilisateur est actuellement INACTIF. En validant vous confirmez vouloir le réactiver. ");
+        }
+
+        setUserWorkedOn(() => ({
+            ...userSelected,
+            droits: parseUserRights(userSelected)
+        }));
+
+        setConfirmButton(<button onClick={() => apiChangeUserActivation(userSelected)}>Confirmer la {userSelected.isActiveAccount ? "suppression" : "réactivation"}</button>);
+    }
+
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT 
 
 
     //Dans la BdD les droits sont des booléens, on parse ceci.
@@ -240,7 +235,7 @@ export default function ModifierUtilisateur() {
         };
     }
     
-    const apiChangeAccountActiveState = async (thatUser) => {
+    const apiChangeUserActivation = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
         setConfirmButton("");
         let userAfterEdit;
@@ -255,17 +250,18 @@ export default function ModifierUtilisateur() {
         })
         .then((res) => res.json())
         .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);
             
-            resetWarning();
-            setApiResponse(data.message);
-
             if (isUserTokenExpired(data)){
                 myAppNavigator("/login");
             }
             
-            userAfterEdit = data.updatedUser;
-            setUserWorkedOn(userAfterEdit);
+            resetWarning();
+            setApiResponse(data.message);
             
+            userAfterEdit = data.updatedUser;
+            setUserWorkedOn(userAfterEdit);            
         })
         .catch((err) => console.log(err));
 
@@ -304,15 +300,16 @@ export default function ModifierUtilisateur() {
                 myAppNavigator("/login");
             }
 
-            
-
-            setUserListResult(data.resultArray);
+            setUserListResult(data.resultArray, setIsFilteredList(true));
             setApiSearchResponse(data.message);
         })
         .catch((err) => {
             console.log(err.message);
             console.log(err);
         });
+
+        console.log(isFilteredList);
+
     }
 
     const apiSearchUsersByName = async (thatName, isInactiveIncluded) => {
@@ -338,14 +335,83 @@ export default function ModifierUtilisateur() {
                 myAppNavigator("/login");
             }
 
-            setUserListResult(data.resultArray);
             setApiSearchResponse(data.message);
+            setUserListResult(data.resultArray,setIsFilteredList(true));
         })
         .catch((err) => {
             console.log(err.message);
             console.log(err);
         });
     }
+
+    const apiEditUser = async (thatUser) => {
+        setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
+        setConfirmButton("");
+        let userAfterEdit;
+
+        await fetch(`/api/users/edit/${thatUser.id}`,{
+            method: "PUT",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+            body: JSON.stringify(
+                {
+                    isActiveAccount:!thatUser.isActiveAccount
+                })
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);
+            
+            if (isUserTokenExpired(data)){
+                myAppNavigator("/login");
+            }
+            
+            resetWarning();
+            setApiResponse(data.message);
+            
+            userAfterEdit = data.updatedUser;
+            setUserWorkedOn(userAfterEdit);
+            
+        })
+        .catch((err) => console.log(err));
+
+        //https://stackoverflow.com/questions/37585309/replacing-objects-in-array
+        //Cette expression permet de *remplacer* un objet dans un array qui contient des objets. Inspiré du lien ci dessus
+        setUserListResult(
+            userListResult.map(
+                (user) => userAfterEdit.id ===  user.id 
+                ? userAfterEdit 
+                : user
+            )
+        );
+    }
+
+    const apiGetAllUsers = async () => {
+        console.log("Returning all users...");
+
+            fetch("/api/users/search/all",{
+                method: "POST",
+                headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+                body: JSON.stringify(
+                    {
+                        isInactiveAccountsIncluded: true,
+                    })
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("API response ↓");
+                console.log(data.message);
+
+                if (isUserTokenExpired(data)){
+                    myAppNavigator("/login");
+                }
+                setUserListResult(data.resultArray, setIsFilteredList(false));
+            })
+            .catch((err) => {
+                console.log(err.message);
+                console.log(err);
+            });
+        }
 
 
 //------------------------------------------------------------------------- AFFICHAGE
@@ -365,6 +431,8 @@ export default function ModifierUtilisateur() {
             editPassword={isEditingPassword}
             disableInput={disableInput}
             setDisableInput={setDisableInput}
+            setPasswordConfirm={setPasswordConfirm}
+            passwordConfirm={passwordConfirm}  
             /*
             doubleCheck={isDoubleChecking} 
             setDoubleChecking={setIsDoubleChecking} 
@@ -374,7 +442,7 @@ export default function ModifierUtilisateur() {
         </UserForm>
 
         <br/>
-        {warning || " ---- affichage des informations entrées"}
+        {warning || " ---- avertissement utilisateur"}
         <br/>
         {warningUserDelete || " ---- avertissement suppression utilisateur"}
         <br/>

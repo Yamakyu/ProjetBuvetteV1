@@ -9,6 +9,8 @@ export default function UserForm(props) {
     let resetWarning = props.resetWarning;
     //↓ Si on décide d'afficher le champ pour le mot de passe, ça fait true et true, et on l'affiche. Sinon false par défaut
     let displayPasswordField = props.editPassword && true;
+    let passwordConfirm = props.passwordConfirm;
+    let setPasswordConfirm = props.setPasswordConfirm;
     //↓ Pour désactiver les inputs (suppressions utilisateur). C'est actif par défaut (si on ne transmet pas le props, il est false, l'input est actif)
     let isInputDisabled = props.disableInput && true;
     let setIsInputDisabled = props.setDisableInput || (() => {});
@@ -26,10 +28,7 @@ export default function UserForm(props) {
 
         resetWarning();
         setWarningCreateAdmin("");
-        setIsInputDisabled(false);
-    }
-
-    
+    }  
 
         //https://stackoverflow.com/questions/54150783/react-hooks--with-object 
     const handleInputs = inputEvent => {
@@ -129,6 +128,7 @@ export default function UserForm(props) {
                     name="email"
                     disabled={isInputDisabled}
                 />
+                <br />
                 {displayPasswordField 
                     ? <input
                         placeholder='mot de passe'
@@ -138,8 +138,19 @@ export default function UserForm(props) {
                         name="password"
                         disabled={isInputDisabled}
                     />
-                    :""}       
+                    :""}
 
+                {displayPasswordField 
+                    ? <input
+                        placeholder='CONFIRMEZ mot de passe'
+                        value={passwordConfirm}
+                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                        type="password"
+                        name="passwordConfirm"
+                        disabled={isInputDisabled}
+                    />
+                    :""}       
+                    <br />
                 <label>
                     Droits de gestion : 
                     <select onChange={handleInputSelect} value={userEdit.droits} disabled={isInputDisabled}>
@@ -150,10 +161,12 @@ export default function UserForm(props) {
                         <option value="Admin">Administrateur</option>
                     </select>
                 </label>
-                <button>Valider</button>
+                <br />
+                {warningCreateAdmin || " ---- avertissement création admin" }   
+                <br />
+                <button disabled={isInputDisabled}>Valider</button>
             </form>
 
-        {warningCreateAdmin || " ---- avertissement création admin" }
         <br/>
             <button onClick={resetEdits}>Annuler l'opération</button>
         <br/>
