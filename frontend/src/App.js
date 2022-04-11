@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SessionContext } from "./Contexts/SessionContext";
 import Navbar from "./Components/Navbar";
 import Connexion from "./Components/Connexion";
@@ -15,11 +15,36 @@ import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
   let isUserTokenExpired = (apiResponseData) => {
+    //Si le backend retourne que le token est expiré, on vide la session actuelle (removeItem + getLocalStorage) et on y ajoute le message (le backend retourne l'erreur : la plupart du temps, Token expiré).
+    /*
+    Afin que la déconnexion soit complète (session vidée + retour à la page de login, le code qui appelle cette fonction doit toujours être :
+    if (isUserTokenExpired(apiResponseData)){
+      myAppNavigator("/login");       //Avec le useNavigate → const myAppNavigator = useNavigate();
+
+      }
+    */
     if (apiResponseData.needLogout) {
-      setActiveSession(() => ({
-        ...localStorage.removeItem("currentSession"),
-        userConnexionStatus: apiResponseData.message,
-      }));
+      try {
+        setActiveSession(
+          localStorage.removeItem("currentSession"),
+          setActiveSession(() => ({
+            userInfo: {},
+            userToken: "",
+            userConnexionStatus: apiResponseData.message,
+          }))
+        );
+      } catch (error) {
+        console.log(
+          `Tried to empty an already empty session. Returning empty session`
+        );
+        console.log(error);
+        setActiveSession({
+          userInfo: {},
+          userToken: "",
+          userConnexionStatus:
+            "Token invalide ou expiré. Veuillez vous reconnecter",
+        });
+      }
 
       console.log("statut de ActiveSession :");
       console.log(activeSession);
@@ -31,7 +56,10 @@ function App() {
   };
 
   let getLocalStorage = (localStorageKey) => {
-    if (localStorage.getItem("currentSession") === null) {
+    if (
+      localStorage.getItem("currentSession") === null ||
+      !localStorage.getItem("currentSession")
+    ) {
       console.log("session is null, returning empty session");
       return {
         userInfo: {},

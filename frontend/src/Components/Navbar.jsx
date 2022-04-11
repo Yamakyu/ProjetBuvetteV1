@@ -8,10 +8,17 @@ import { SessionContext } from '../Contexts/SessionContext';
 
 export default function Navbar() { 
 
-    const {activeSession, setActiveSession}= useContext(SessionContext); 
+    const {activeSession, setActiveSession, getLocalStorage}= useContext(SessionContext); 
 
     const userLogout = () => {
-        setActiveSession(() => localStorage.removeItem('currentSession'));
+        //setActiveSession(() => localStorage.removeItem('currentSession'));
+
+        setActiveSession(
+            localStorage.removeItem("currentSession"),
+            setActiveSession(() => ({
+              ...getLocalStorage("currentSession")            
+            }))
+        );
     }
 
     let generateNavbar = () =>{

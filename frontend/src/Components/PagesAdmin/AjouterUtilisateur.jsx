@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext'
 import UserForm from '../Utility/UserForm';
 
@@ -7,7 +8,9 @@ export default function AjouterUtilisateur() {
 
 //------------------------------------------------------------------------- INITIALISATION
 
-    const {activeSession}= useContext(SessionContext);
+    const {activeSession, setActiveSession, isUserTokenExpired}= useContext(SessionContext);
+
+    const myAppNavigator = useNavigate();
 
     const [isDoubleChecking, setIsDoubleChecking] = useState(false)
     const [confirmButton, setConfirmButton] = useState();
@@ -57,35 +60,52 @@ export default function AjouterUtilisateur() {
 
     const apiAddUser = async () => {
 
-        setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
-        setConfirmButton("");
+        if (activeSession) {
 
-        //Envoi à notre API back end
-        await fetch("/api/users/signup",{
-            method: "POST",
-            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-            body: JSON.stringify(
-                {
-                    nom: userWorkedOn.nom,
-                    prenom:userWorkedOn.prenom,
-                    email:userWorkedOn.email,
-                    password:userWorkedOn.password,
-                    isGerantBuvette:userWorkedOn.isGerantBuvette,
-                    isGerantMateriel:userWorkedOn.isGerantMateriel,
-                    isAdmin:userWorkedOn.isAdmin
-                })
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("API response ↓");
-            console.log(data.message);
-            console.log(data.addedUser);
+            setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
+            setConfirmButton("");
+    
+            //Envoi à notre API back end
+            await fetch("/api/users/signup",{
+                method: "POST",
+                headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+                body: JSON.stringify(
+                    {
+                        nom: userWorkedOn.nom,
+                        prenom:userWorkedOn.prenom,
+                        email:userWorkedOn.email,
+                        password:userWorkedOn.password,
+                        isGerantBuvette:userWorkedOn.isGerantBuvette,
+                        isGerantMateriel:userWorkedOn.isGerantMateriel,
+                        isAdmin:userWorkedOn.isAdmin
+                    })
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("API response ↓");
+                console.log(data.message);
 
-            resetWarning();
-            setApiResponse(data.message);
-            
-        })
-        .catch((err) => console.log(err));
+                if (isUserTokenExpired(data)){
+                    myAppNavigator("/login");
+                }
+
+                console.log(data.addedUser);
+    
+                resetWarning();
+                setApiResponse(data.message);
+                
+            })
+            .catch((err) => console.log(err));
+    
+
+
+        }else{
+            setActiveSession({
+                userConnexionStatus:"Accès réservé. Veuillez vous connecter."
+            })
+            myAppNavigator("/login");
+        }
+
 
 
     }

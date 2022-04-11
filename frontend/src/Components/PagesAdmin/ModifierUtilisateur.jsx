@@ -36,7 +36,9 @@ export default function ModifierUtilisateur() {
 
     //Au chargement de la page
     useEffect(() => {
-         
+
+        if (activeSession){
+
             fetch("/api/users/search/all",{
                 method: "POST",
                 headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
@@ -59,6 +61,14 @@ export default function ModifierUtilisateur() {
                 console.log(err.message);
                 console.log(err);
             });
+
+        } else {
+            setActiveSession({
+                userConnexionStatus:"Accès réservé. Veuillez vous connecter."
+            })
+            myAppNavigator("/login");
+        }
+            
 
       return () => {
         //cleanup

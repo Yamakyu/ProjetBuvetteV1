@@ -20,11 +20,14 @@ export default function Connexion() {
 
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
-    const displayApiResponse = (message) => {
-        setLoginApiResponse(message);
+    const displayConnexionStatus = () => {
+        try {
+            return activeSession.userConnexionStatus;
+        } catch (error) {
+            return "nothing somehow";
+        }
     }
 
-    
     const apiLogin = (formEvent) => {
         formEvent.preventDefault();
 
@@ -36,9 +39,9 @@ export default function Connexion() {
         .then((res) => res.json())
         .then((data) => {
             
-            let thatNewSession;
             console.log("API response ↓");
             console.log(data.message);
+            let thatNewSession;
 
             if(data.user){
                 console.log(data.user);            
@@ -81,7 +84,7 @@ export default function Connexion() {
                 userConnexionStatus:data.message
             }), setLoginApiResponse(data.message));
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {console.log(err)})
 
     }
 
@@ -90,7 +93,6 @@ export default function Connexion() {
 
     return (
         <div>
-
             <form onSubmit={apiLogin}>
                 <input type="email" value={email} placeholder='email' 
                 onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
@@ -103,8 +105,9 @@ export default function Connexion() {
                 <button>Connexion</button>
             </form>
 
-            {loginApiResponse}
-            {getLocalStorage("currentSession").userConnexionStatus}
+            {/*loginApiResponse*/}
+            {displayConnexionStatus()}
+            {/*getLocalStorage("currentSession").userConnexionStatus*/}
 
         </div>
     )

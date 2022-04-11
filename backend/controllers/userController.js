@@ -219,6 +219,7 @@ exports.isLoggedIn = (req, res, next) => {
     });
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
+      console.log("---------- IS LOGGED IN : token expiré");
       return res
         .status(440) //← 440 = session expired
         .json({
@@ -228,6 +229,7 @@ exports.isLoggedIn = (req, res, next) => {
           needLogout: true,
         });
     } else if (error instanceof jwt.JsonWebTokenError) {
+      console.log("---------- IS LOGGED IN : token invalide");
       return res
         .status(401) //← 401 = unauthorized
         .json({
