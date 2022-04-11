@@ -15,7 +15,7 @@ import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
   let isUserTokenExpired = (apiResponseData) => {
-    //Si le backend retourne que le token est expiré, on vide la session actuelle (removeItem + getLocalStorage) et on y ajoute le message (le backend retourne l'erreur : la plupart du temps, Token expiré).
+    //Si le backend retourne que le token est expiré, on vide la session actuelle (removeItem) et on y ajoute le message (le backend retourne l'erreur : la plupart du temps, Token expiré).
     /*
     Afin que la déconnexion soit complète (session vidée + retour à la page de login, le code qui appelle cette fonction doit toujours être :
     if (isUserTokenExpired(apiResponseData)){
@@ -25,14 +25,12 @@ function App() {
     */
     if (apiResponseData.needLogout) {
       try {
-        setActiveSession(
-          localStorage.removeItem("currentSession"),
-          setActiveSession(() => ({
-            userInfo: {},
-            userToken: "",
-            userConnexionStatus: apiResponseData.message,
-          }))
-        );
+        localStorage.removeItem("currentSession");
+        setActiveSession({
+          userInfo: {},
+          userToken: "",
+          userConnexionStatus: apiResponseData.message,
+        });
       } catch (error) {
         console.log(
           `Tried to empty an already empty session. Returning empty session`

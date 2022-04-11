@@ -10,7 +10,7 @@ export default function Connexion() {
     //Récupérer GetLocalStorage pour empêcher erreur en cas de localStorage vide
     //↑ Après s'être déconnecté
 
-    const {activeSession, setActiveSession, getLocalStorage}= useContext(SessionContext);
+    const {activeSession, setActiveSession}= useContext(SessionContext);
     
     const myAppNavigator = useNavigate();
 
@@ -18,11 +18,23 @@ export default function Connexion() {
     const [password, setPassword] = useState("");
     const [loginApiResponse, setLoginApiResponse] = useState("");
 
+
+    useEffect(() => {
+        console.log("QUELQUE CHOSE A CHANGE ACTIVE SESSION DANS CONNEXION")
+    
+      return () => {
+        //
+      }
+    }, [activeSession])
+    
+
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
-    const displayConnexionStatus = () => {
+    const displayConnexionStatus = (session) => {
+        console.log("Active session :")
+        console.log(session);
         try {
-            return activeSession.userConnexionStatus;
+            return session.userConnexionStatus;
         } catch (error) {
             return "nothing somehow";
         }
@@ -106,7 +118,7 @@ export default function Connexion() {
             </form>
 
             {/*loginApiResponse*/}
-            {displayConnexionStatus()}
+            {displayConnexionStatus(activeSession)}
             {/*getLocalStorage("currentSession").userConnexionStatus*/}
 
         </div>

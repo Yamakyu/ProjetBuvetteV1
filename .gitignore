@@ -96,3 +96,5 @@ backend/Routes/RouteTutorial.js
 backend/models/articleModel.js
 
 backend/models/receiptModel.js
+
+.vscode/launch.json

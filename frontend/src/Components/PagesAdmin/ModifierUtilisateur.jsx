@@ -20,6 +20,7 @@ export default function ModifierUtilisateur() {
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [apiResponse, setApiResponse] = useState("");
     const [userListResult, setUserListResult] = useState([]);
+    const [isEditingUser, setisEditingUser] = useState(false);
     const [isEditingPassword, setIsEditingPassword] = useState(false)
     const [listUserDisplay, setListUserDisplay] = useState("");
     const [isFilteredList, setIsFilteredList] = useState(false);    //What is up with that
@@ -61,6 +62,15 @@ export default function ModifierUtilisateur() {
         //Cleanup
       }
     }, [userListResult])
+
+    useEffect(() => {
+      console.log("QUELQUE CHOSE A CHANGE ACTIVE SESSION DANS MODIFIER UTILISATEUR")
+    
+      return () => {
+        //
+      }
+    }, [activeSession])
+    
     
 //------------------------------------------------------------------------- METHODES D'AFFICHAGE
 

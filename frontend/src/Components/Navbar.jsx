@@ -92,6 +92,7 @@ export default function Navbar() {
 
         <div>
             {generateNavbar()}
+            <button onClick={() => console.log(activeSession.userConnexionStatus)}>Bon c'est quoi l'active session là</button>
         </div>
     )
 }
