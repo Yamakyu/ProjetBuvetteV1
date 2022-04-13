@@ -12,7 +12,7 @@ export default function AjouterUtilisateur() {
 
     const myAppNavigator = useNavigate();
 
-    const [isDoubleChecking, setIsDoubleChecking] = useState(false)
+    const [checkEditUser, setCheckEditUser] = useState();
     const [confirmButton, setConfirmButton] = useState();
     const [warning, setWarning] = useState("");
     const [apiResponse, setApiResponse] = useState("");
@@ -22,8 +22,8 @@ export default function AjouterUtilisateur() {
         prenom:"",
         email:"",
         password:"",
-        droits:"none"
-    })
+        droits:"Aucun"
+    });
 
 //------------------------------------------------------------------------- METHODES D'AFFICHAGE
     
@@ -44,7 +44,7 @@ export default function AjouterUtilisateur() {
     const resetWarning = () => {
         setWarning("");
         setConfirmButton("");
-        setIsDoubleChecking(false);
+        setCheckEditUser("");
     }
 
     const submitForm = (formEvent) => {
@@ -53,13 +53,13 @@ export default function AjouterUtilisateur() {
 
         if (passwordConfirm !== userWorkedOn.password){
             setWarning("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
-            setIsDoubleChecking(false);
+            setCheckEditUser("");
             setConfirmButton("");
             setApiResponse("");
         } else {
             setWarning("Cet utilisateur sera ajouté à la base de données : ");
             setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
-            setIsDoubleChecking(true);
+            setCheckEditUser(displayInputedUser());
             setApiResponse("");
         }
 
@@ -141,7 +141,7 @@ export default function AjouterUtilisateur() {
         
         {warning || " ---- avertissement utilisateur"}
         <br/>
-        {isDoubleChecking ? displayInputedUser() : ""}
+        {checkEditUser || " ---- informations utilisateur"}
         <br/>
         {confirmButton || " ---- bouton de confirmation"}
         <br/>

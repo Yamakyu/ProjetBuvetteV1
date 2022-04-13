@@ -19,22 +19,11 @@ export default function Connexion() {
     const [loginApiResponse, setLoginApiResponse] = useState("");
 
 
-    useEffect(() => {
-        console.log("QUELQUE CHOSE A CHANGE ACTIVE SESSION DANS CONNEXION")
-    
-      return () => {
-        //
-      }
-    }, [activeSession])
-    
-
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
-    const displayConnexionStatus = (session) => {
-        console.log("Active session :")
-        console.log(session);
+    const displayConnexionStatus = () => {
         try {
-            return session.userConnexionStatus;
+            return activeSession.userConnexionStatus;
         } catch (error) {
             return "nothing somehow";
         }
@@ -42,6 +31,10 @@ export default function Connexion() {
 
     const apiLogin = (formEvent) => {
         formEvent.preventDefault();
+
+        setActiveSession((prevState) => ({
+            ...prevState, userConnexionStatus : "Connexion en cours..."
+        }))
 
         fetch("/api/users/login",{
             method: "POST",
@@ -108,7 +101,7 @@ export default function Connexion() {
             <form onSubmit={apiLogin}>
                 <input type="email" value={email} placeholder='email' 
                 onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
-                
+            
                 <input type="password" value={password} placeholder='password' 
                 onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
                 <br />
@@ -118,7 +111,7 @@ export default function Connexion() {
             </form>
 
             {/*loginApiResponse*/}
-            {displayConnexionStatus(activeSession)}
+            {displayConnexionStatus()}
             {/*getLocalStorage("currentSession").userConnexionStatus*/}
 
         </div>

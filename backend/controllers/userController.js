@@ -152,7 +152,7 @@ exports.editUser = async (req, res) => {
       });
     }
 
-    if (req.body.id != undefined) {
+    if (req.body.id !== undefined) {
       return res.status(401).json({
         message: "Non-authorisé ! Le changement d'identifiant est interdit.",
       });
@@ -169,13 +169,13 @@ exports.editUser = async (req, res) => {
           );
         } else {
           return res.status(500).json({
-            message: `Impossible de modifier l'utilisateur dont l'id est ${id}.`,
+            message: `Impossible de modifier l'utilisateur dont l'id est ${userToUpdateID}.`,
           });
         }
       })
       .catch((err) => {
         return res.status(500).json({
-          message: `Error updating user with id=${id} : + ${err}`,
+          message: `Error updating user with id=${userToUpdateID} : + ${err}`,
         });
       });
 
@@ -183,10 +183,11 @@ exports.editUser = async (req, res) => {
 
     if (thatUserUpdated == null) {
       return res.status(404).json({
-        message: `Impossible de retourner l'utilisateur modifié dont l'id est l'id=${id}.`,
+        message: `Impossible de retourner l'utilisateur modifié dont l'id est l'id=${userToUpdateID}.`,
       });
     } else {
       return res.status(200).json({
+        //← ????????????
         message: "Utilisateur modifié avec succès.",
         updatedUser: thatUserUpdated,
       });

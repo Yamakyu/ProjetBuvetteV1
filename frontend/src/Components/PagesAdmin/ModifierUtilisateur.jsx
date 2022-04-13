@@ -13,26 +13,28 @@ export default function ModifierUtilisateur() {
 
     const myAppNavigator = useNavigate();
 
-    const [isDoubleChecking, setIsDoubleChecking] = useState(false);
+    const [checkEditUser, setCheckEditUser] = useState("");
+    //const [isDoubleChecking, setIsDoubleChecking] = useState(false);
     const [confirmButton, setConfirmButton] = useState();
     const [warning, setWarning] = useState("");
     const [warningUserDelete, setWarningUserDelete] = useState("");
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [apiResponse, setApiResponse] = useState("");
     const [userListResult, setUserListResult] = useState([]);
-    const [isEditingUser, setisEditingUser] = useState(false);
+    //const [isEditingUser, setisEditingUser] = useState(false);
     const [isEditingPassword, setIsEditingPassword] = useState(false)
     const [listUserDisplay, setListUserDisplay] = useState("");
-    const [isFilteredList, setIsFilteredList] = useState(false);    //What is up with that
+    const [isFilteredList, setIsFilteredList] = useState(false);
     const [disableInput, setDisableInput] = useState(true);
     const [searchTool, setSearchTool] = useState();
     const [passwordConfirm, setPasswordConfirm] = useState("");
+    const [originalUser, setOriginalUser] = useState(null);
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
         email:"",
         password:"",
-        droits:"none"
+        droits:"Aucun"
     })
 
 //------------------------------------------------------------------------- USE EFFECT
@@ -61,28 +63,29 @@ export default function ModifierUtilisateur() {
       return () => {
         //Cleanup
       }
-    }, [userListResult])
-
-    useEffect(() => {
-      console.log("QUELQUE CHOSE A CHANGE ACTIVE SESSION DANS MODIFIER UTILISATEUR")
-    
-      return () => {
-        //
-      }
-    }, [activeSession])
-    
+    }, [userListResult]);
     
 //------------------------------------------------------------------------- METHODES D'AFFICHAGE
 
     //https://stackoverflow.com/questions/57581147/how-to-display-objects-keys-and-values-in-react-component
-    const displayInputedUser = () => {
+    const displayInputedUser = (thatUser) => {
         return(
             <ul>
-                {Object.entries(userWorkedOn).map(([objectKey, value]) =>
+                {Object.entries(thatUser).map(([objectKey, value]) =>
                 //Cette expression conditionelle permet de masquer les booléens (isAdmin, etc), le mot de passe et les dates de création/update
                 objectKey.startsWith("is") || objectKey === "password" || objectKey.startsWith("crea") || objectKey.startsWith("upda")
                 ? ""
-                : <li key={objectKey}> {objectKey} : {value} </li>
+                : <li key={objectKey}> {objectKey} :  
+                {
+                    originalUser                                //← Vide ou null si on est pas en train de modifier un utilisateur
+                    ? value !== originalUser[objectKey]         //SI on modifie la valeur (par exemple, si on modifie le nom)
+                        ? ` ${originalUser[objectKey]} ---→ `    //ALORS affichage de l'ancienne valeur à côté de la nouvelle (= value)
+                        : ""
+                    : ""
+                } {value} </li>
+                /*↑ originalUser est vide sauf si on fait une modification d'utilisateur. 
+                Le cas échéant, SI l'ancienne valeur d'une propriété (par exemple, le nom) est changée alors on affiche l'ancienne valeur et la nouvelle. Sinon, on affiche seulement la "nouvelle" valeur (qui est inchangée)
+                */
                 )}
             </ul>
         );
@@ -99,7 +102,7 @@ export default function ModifierUtilisateur() {
                             {
                                 //Pour éviter des accidents, l'admin connecté n'est pas affiché dans la liste des utilisateurs modifiables.
                                 if(user.id === activeSession.userInfo.id) {
-                                    return;
+                                    return "";
                                 }else{
                                     return(
                                         <li key={objectKey}> {user.nom} {user.prenom} // {user.email} // Droits : {parseUserRights(user)} 
@@ -107,6 +110,7 @@ export default function ModifierUtilisateur() {
                                         ? " → " 
                                         : " |||| <COMPTE INACTIF> → " } 
                                         {<button onClick={() => prepareChangeAccountActiveState(user)}>{user.isActiveAccount ? "Supprimer" : "Restaurer"} cet utilisateur</button>}
+                                        {<button onClick={() => prepareEditUser(user)}>Modifier cet utilisateur</button>}
                                         </li> 
                                     )
                                 }
@@ -127,28 +131,31 @@ export default function ModifierUtilisateur() {
         setWarning("");
         setWarningUserDelete("");
         setConfirmButton("");
-        setIsDoubleChecking(false);
-        setDisableInput(true);
-        setSearchTool("")
+        //setIsDoubleChecking(false);
+        //setCheckEditUser("");
+        setSearchTool("");
+        setOriginalUser(null);
     }
     
     const submitForm = (formEvent) => {
-        formEvent.preventDefault();
-        console.log(userWorkedOn);
-        setApiResponse("");
+        //submitForm est appelé par le composant userForm.jsx
 
-        if (!disableInput && (passwordConfirm !== userWorkedOn.password)){
+        formEvent.preventDefault();
+        setApiResponse("");
+        
+        if (isEditingPassword && !disableInput && (passwordConfirm !== userWorkedOn.password)){
             setWarning("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
-            setIsDoubleChecking(false);
+            //setIsDoubleChecking(false);
+            setCheckEditUser("");
             setConfirmButton("");
+            setWarningUserDelete("");
         } else {
             setWarning("Résumé des modification :");
-            setConfirmButton(<button onClick={apiEditUser}>Confirmer la modification</button>);
-            setIsDoubleChecking(true);
+            setConfirmButton(<button onClick={() => apiEditUser(userWorkedOn)}>Confirmer la modification ? </button>);
+            setCheckEditUser(displayInputedUser(userWorkedOn));
             setWarningUserDelete("");
         }
-
-
+        console.log(userWorkedOn);
     }
 
 //------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
@@ -157,6 +164,8 @@ export default function ModifierUtilisateur() {
     const prepareSearchUserByName = () => {
         let nameToLookFor;
         resetWarning();
+        setDisableInput(true);
+        setCheckEditUser("");
         
         setSearchTool(
             <div>
@@ -182,6 +191,8 @@ export default function ModifierUtilisateur() {
     const prepareSearchUserByRole = () => {
         let roleToLookFor;
         resetWarning();
+        setDisableInput(true);
+        setCheckEditUser("");
         
         setSearchTool(
             <div>
@@ -205,8 +216,14 @@ export default function ModifierUtilisateur() {
     }
     
     const prepareChangeAccountActiveState = (userSelected) => {
+        userSelected = ({
+            ...userSelected,
+            droits: parseUserRights(userSelected)
+        });
+
         setWarningUserDelete("Vous allez supprimer cet utilisateur");
-        setIsDoubleChecking(true);
+        setCheckEditUser(displayInputedUser(userSelected));
+        //setIsDoubleChecking(true);
         setSearchTool("");
         
         //Si l'utilisateur veut activer/désactiver un compte, on évite de lui laisser la possibilité de modifier d'autres éléments du compte
@@ -227,8 +244,29 @@ export default function ModifierUtilisateur() {
         setConfirmButton(<button onClick={() => apiChangeUserActivation(userSelected)}>Confirmer la {userSelected.isActiveAccount ? "suppression" : "réactivation"}</button>);
     }
 
-//------------------------------------------------------------------------- METHODES DE TRAITEMENT 
+    const prepareEditUser = (userSelected) =>{
+        userSelected = ({
+            ...userSelected,
+            droits: parseUserRights(userSelected)
+        });
 
+        setUserWorkedOn(userSelected);
+
+        resetWarning();
+        setDisableInput(false);
+        setCheckEditUser("");
+        
+        if(userSelected.isActiveAccount){
+            setApiResponse("");
+        }else{
+            setApiResponse(" Cet utilisateur est actuellement INACTIF. Un administrateur peut le restaurer. ");
+        }
+
+        setOriginalUser(userSelected);
+        //↑ On aura besoin d'avoir une trace des informations utilisateur originelles
+        setCheckEditUser(displayInputedUser(userSelected));
+    }
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT et REQUÊTES
 
     //Dans la BdD les droits sont des booléens, on parse ceci.
     const parseUserRights = (thatUser) => {
@@ -268,6 +306,8 @@ export default function ModifierUtilisateur() {
             }
             
             resetWarning();
+            setDisableInput(true);
+            setCheckEditUser("");
             setApiResponse(data.message);
             
             userAfterEdit = data.updatedUser;
@@ -288,6 +328,9 @@ export default function ModifierUtilisateur() {
 
     const apiSearchUsersByRole = async (thatRole, isInactiveIncluded) => {
         resetWarning();
+        setDisableInput(true);
+        setCheckEditUser("");
+
         console.log("recherche " + thatRole);
         console.log("comptes inactifs ? " + isInactiveIncluded);
 
@@ -324,6 +367,9 @@ export default function ModifierUtilisateur() {
 
     const apiSearchUsersByName = async (thatName, isInactiveIncluded) => {
         resetWarning();
+        setDisableInput(true);
+        setCheckEditUser("");
+
         console.log("recherche " + thatName);
         console.log("comptes inactifs ? " + isInactiveIncluded);
 
@@ -355,6 +401,7 @@ export default function ModifierUtilisateur() {
     }
 
     const apiEditUser = async (thatUser) => {
+        
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
         setConfirmButton("");
         let userAfterEdit;
@@ -364,7 +411,13 @@ export default function ModifierUtilisateur() {
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
             body: JSON.stringify(
                 {
-                    isActiveAccount:!thatUser.isActiveAccount
+                    id: undefined,
+                    nom: thatUser.nom,
+                    prenom:thatUser.prenom,
+                    email:thatUser.email,
+                    isGerantBuvette:thatUser.isGerantBuvette,
+                    isGerantMateriel:thatUser.isGerantMateriel,
+                    isAdmin:thatUser.isAdmin
                 })
         })
         .then((res) => res.json())
@@ -377,6 +430,9 @@ export default function ModifierUtilisateur() {
             }
             
             resetWarning();
+            setDisableInput(true);
+            setCheckEditUser("");
+
             setApiResponse(data.message);
             
             userAfterEdit = data.updatedUser;
@@ -385,13 +441,11 @@ export default function ModifierUtilisateur() {
         })
         .catch((err) => console.log(err));
 
-        //https://stackoverflow.com/questions/37585309/replacing-objects-in-array
-        //Cette expression permet de *remplacer* un objet dans un array qui contient des objets. Inspiré du lien ci dessus
         setUserListResult(
             userListResult.map(
                 (user) => userAfterEdit.id ===  user.id 
-                ? userAfterEdit 
-                : user
+                    ? userAfterEdit 
+                    : user
             )
         );
     }
@@ -426,9 +480,14 @@ export default function ModifierUtilisateur() {
 
 //------------------------------------------------------------------------- AFFICHAGE
 
+        const doTheThing = () => {
+            console.log("nothing to do atm !");
+        }
 
   return (
     <div>
+        <button onClick={doTheThing}>Do the thing</button>
+
         <br/>
         <h1>MODIFIER OU SUPPRIMER UN UTILISATEUR</h1>
         <br/>
@@ -443,6 +502,7 @@ export default function ModifierUtilisateur() {
             setDisableInput={setDisableInput}
             setPasswordConfirm={setPasswordConfirm}
             passwordConfirm={passwordConfirm}  
+            refreshEditUserDisplay={displayInputedUser}
             /*
             doubleCheck={isDoubleChecking} 
             setDoubleChecking={setIsDoubleChecking} 
@@ -456,7 +516,8 @@ export default function ModifierUtilisateur() {
         <br/>
         {warningUserDelete || " ---- avertissement suppression utilisateur"}
         <br/>
-        {isDoubleChecking ? displayInputedUser() : " ---- informations utilisateur"}
+        {/*isDoubleChecking ? displayInputedUser() : " ---- informations utilisateur"*/}
+        {checkEditUser || " ---- informations utilisateur"}
         <br/>
         {confirmButton || " ---- bouton de confirmation"}
         <br/>

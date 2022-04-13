@@ -7,6 +7,7 @@ export default function UserForm(props) {
     let setUserEdit = props.setUser;
     let validateForm = props.formHandler;
     let resetWarning = props.resetWarning;
+    let refreshEditUser = props.refreshEditUserDisplay;
     //↓ Si on décide d'afficher le champ pour le mot de passe, ça fait true et true, et on l'affiche. Sinon false par défaut
     let displayPasswordField = props.editPassword && true;
     let passwordConfirm = props.passwordConfirm;
@@ -164,7 +165,7 @@ export default function UserForm(props) {
                 <br />
                 {warningCreateAdmin || " ---- avertissement création admin" }   
                 <br />
-                <button disabled={isInputDisabled}>Valider</button>
+                <button disabled={isInputDisabled}>Vérifier la saisie</button>
             </form>
 
         <br/>
