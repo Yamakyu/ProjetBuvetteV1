@@ -47,50 +47,25 @@ export default function TestDivers() {
         formData.append('published', published)
 
 
-    //await axios.post('/api/test/ping', formData, {
-    await axios.post('/api/test/upload', formData, {
-        headers: {
-            Authorization: "Bearer " + activeSession.userToken
-        }
-    }).then((res) => {
-        console.log(res.data.message);
-        console.log(res.data.image);
-        if (isUserTokenExpired(res.data)){
-            return myAppNavigator("/login");
-        }
-    })
-    .catch((err) => {
-        console.log(err);
-        console.log(err.message);
-        if (isUserTokenExpired(err)){
-            return myAppNavigator("/login");
-        }
-        //setImage("");
-    })
-
-        /*
-        await fetch(`/api/test/upload`,{
-            method: "POST",
-            //headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-            headers:{
-                'Accept': 'application/json',
-                'Content-Type': 'multipart/form-data',
-                "authorization" : `Bearer ${activeSession.userToken}`
-            },
-            body: formData
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("API response ↓");
-            console.log(data.message);
-            
-            if (isUserTokenExpired(data)){
-                myAppNavigator("/login");
+        await axios.post('/api/test/upload', formData, {
+            headers: {
+                Authorization: "Bearer " + activeSession.userToken
             }
-            
+        }).then((res) => {
+            console.log(res.data.message);
+            console.log(res.data.image);
+            if (isUserTokenExpired(res.data)){
+                return myAppNavigator("/login");
+            }
         })
-        .catch((err) => console.log(err));
-        */
+        .catch((err) => {
+            console.log(err);
+            console.log(err.message);
+            if (isUserTokenExpired(err)){
+                return myAppNavigator("/login");
+            }
+        })
+
     }
 
     const fetchArticle = async () => {

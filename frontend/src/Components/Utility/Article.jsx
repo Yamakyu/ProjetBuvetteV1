@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom'
 
 const Article = ({ product }) => {
 
-    //product.description="ptain"
-
     return (
         <>
         <br/>
@@ -20,7 +18,7 @@ const Article = ({ product }) => {
                     </Card.Text>
                  
                     <Link to={`product/${product.id}`}>
-                        <Button>Detail</Button>
+                        <Button>Detail (not functional)</Button>
                     </Link>
                 </Card.Body>
             </Card>

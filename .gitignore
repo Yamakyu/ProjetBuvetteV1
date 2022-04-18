@@ -88,10 +88,9 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# Les models temporaires
+# Les trucs temporaires
 backend/controllers/tutorialController.js
 backend/controllers/pictrureController.js
-backend/controllers/articleController.js
 backend/models/tutorialsModel.js
 backend/models/pictureModel.js
 backend/models/receiptModel.js
@@ -100,12 +99,6 @@ backend/Routes/RouteTutorial.js
 .vscode/launch.json
 
 backend/resources/static/assets/uploads
-
-backend/publicImages/1650283773823-BSOLIFE-Brofist.jpg
-
-backend/publicImages/1650286240131-BSOLIFE-IMG-20220408-WA0000.jpg
-
-backend/publicImagesBis/1650287416401-BSOLIFE-CrossCode_-_Echec_Critique_edited.png
 
 test backend à blanc/
 

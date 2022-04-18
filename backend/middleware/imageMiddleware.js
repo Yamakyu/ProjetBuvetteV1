@@ -34,10 +34,7 @@ var uploadFile = multer({
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./publicImagesBis");
-    //cb(null, "./publicImages");
-    //cb(null, "./resources/static/assets/uploads");
-    //cb(null, __basedir + "/resources/static/assets/uploads");
+    cb(null, "./images");
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-BSOLIFE-${file.originalname}`);
@@ -46,16 +43,16 @@ const storage = multer.diskStorage({
 
 const uploadFile = multer({
   storage: storage,
-  limits: { fileSize: "10000000" }, //← 10Mo
+  limits: { fileSize: "15000000" }, //← 15Mo
   fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png|gif/;
+    const fileTypes = /jpeg|jpg|png|gif|JPG|PNG|GIF/;
     const mimeType = fileTypes.test(file.mimetype);
     const extname = fileTypes.test(path.extname(file.originalname));
 
     if (mimeType && extname) {
       return cb(null, true);
     }
-    cb("Give proper files formate to upload");
+    cb("Le fichier fourni n'est pas une image");
   },
 });
 

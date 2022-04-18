@@ -9,13 +9,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
     nom: {
-      field: "name",
+      field: "nom",
       type: DataTypes.STRING,
-      //allowNull: false,
+      allowNull: false,
     },
     description: {
       type: DataTypes.STRING,
-      field: "prenom",
+      field: "description",
       allowNull: true,
     },
     isDisponible: {
@@ -26,15 +26,17 @@ module.exports = (sequelize, DataTypes) => {
     photo: {
       type: DataTypes.STRING,
       field: "photo",
+      allowNull: false,
+      defaultValue: "default.jpg",
     },
     prixUnitaire: {
       type: DataTypes.INTEGER,
       field: "prix_unitaire",
-      default: 1,
+      allowNull: false,
     },
     categorie: {
       type: DataTypes.STRING,
-      field: "catégorie",
+      field: "categorie",
       defaultValue: "snack",
     },
   });

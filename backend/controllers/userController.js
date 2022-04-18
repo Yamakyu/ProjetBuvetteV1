@@ -176,6 +176,7 @@ exports.editUser = async (req, res) => {
       .catch((err) => {
         return res.status(500).json({
           message: `Error updating user with id=${userToUpdateID} : + ${err}`,
+          error: err,
         });
       });
 
@@ -187,7 +188,6 @@ exports.editUser = async (req, res) => {
       });
     } else {
       return res.status(200).json({
-        //← ????????????
         message: "Utilisateur modifié avec succès.",
         updatedUser: thatUserUpdated,
       });
@@ -517,7 +517,7 @@ exports.findByName = async (req, res) => {
       req.thatRequestToken.id
     );
   } catch (error) {
-    displayThatError(res, err);
+    displayThatError(res, error);
   }
 };
 
