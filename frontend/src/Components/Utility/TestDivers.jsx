@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Container, Form, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext'
-import ip from 'ip';
 
 export default function TestDivers() {
 
@@ -94,9 +93,9 @@ export default function TestDivers() {
         */
     }
 
-    const doTheThing = async () => {
+    const fetchArticle = async () => {
         
-        await fetch(`/api/test/article/10`,{
+        await fetch(`/api/test/article/12`,{
             method: "GET",
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
         })
@@ -111,10 +110,7 @@ export default function TestDivers() {
             
             setThatArticle(data.article);
             console.log(data.article);
-            setThatImage("http://localhost:8080/images/"+ data.article.photo);
-            //thatImage = data.article.photo;
-            //thatImage = "http://localhost:8080/"+data.article.photo;
-            setThatArticleImage(<img src={thatImage} />);
+            setThatImage(data.ip + "/images/"+ data.article.photo);      //Permet d'avoir l'image avec l'ip du backend, pour utilisation sur le réseau
             console.log(thatImage);
 
             //thatArticle = data.article;
@@ -129,17 +125,17 @@ export default function TestDivers() {
     }
     
     
-    const momentDeVerite = () => {
+    const displayImage = () => {
         console.log(thatImage);
-        setThatArticleImage(<img src={thatImage}/>);
-        console.log(ip.address());
+        setThatArticleImage(<img src={`http://${thatImage}`}/>);
+        //setThatArticleImage(<img src={thatImage}/>);
     }
     
     return (
         <div>
 
-        <button onClick={doTheThing}>Récupérer l'article</button>
-        <button onClick={momentDeVerite}>Afficher l'image de l'article</button>
+        <button onClick={fetchArticle}>Récupérer l'article</button>
+        <button onClick={displayImage}>Afficher l'image de l'article</button>
 
         {thatArticleImage} 
             <Container className='mt-5 p-2'>

@@ -23,4 +23,6 @@ router.get(
   testController.getThatArticle
 );
 
+router.get("/ip", testController.getIp);
+
 module.exports = router;

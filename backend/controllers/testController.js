@@ -1,8 +1,8 @@
+require("dotenv").config();
 const db = require("../models");
-//const multer = require("multer");
-//const path = require("path");
 const Article = db.articles;
 const fs = require("fs");
+const os = require("os");
 
 // main work
 
@@ -66,11 +66,15 @@ exports.getThatArticle = async (req, res) => {
   try {
     let thatId = req.params.id;
 
+    const networkInterfaces = os.networkInterfaces();
+    const ip = networkInterfaces["Wi-Fi"][1]["address"];
+
     await Article.findByPk(thatId)
       .then((article) => {
         res.status(200).json({
           message: "success",
           article,
+          ip: `${ip}:${process.env.PORT}`,
         });
       })
       .catch((error) => {
@@ -85,6 +89,25 @@ exports.getThatArticle = async (req, res) => {
     res.status(500).json({
       error,
       message: "couldn't retrieve",
+    });
+  }
+};
+
+exports.getIp = async (req, res) => {
+  try {
+    const networkInterfaces = os.networkInterfaces();
+    const ip = networkInterfaces["Wi-Fi"][1]["address"];
+    //const ip = networkInterfaces["eth0"][0]["address"];    eth0 ??
+    res.status(200).json({
+      networkInterfaces,
+      ip,
+    });
+  } catch (error) {
+    console.log("Impossible d'obtenir l'IP");
+    console.log(error);
+    res.status(500).json({
+      message: "Impossibe d'avoir l'IP",
+      error,
     });
   }
 };
