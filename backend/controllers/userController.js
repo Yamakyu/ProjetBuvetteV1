@@ -235,7 +235,15 @@ exports.isLoggedIn = (req, res, next) => {
         .status(401) //← 401 = unauthorized
         .json({
           message:
-            "Accès refusé, token invalide, veuillez vous reconnecter. " + error,
+            "Accès refusé, token invalide, cette opération requiert une élévation, veuillez solliciter un administrateur. " +
+            error,
+          needLogout: true,
+        });
+    } else if (error instanceof TypeError) {
+      return res
+        .status(400) //← 400 = bad request
+        .json({
+          message: "Aucun token. Veuillez vous connecter. " + error,
           needLogout: true,
         });
     } else {
@@ -287,6 +295,8 @@ exports.checkAdmins = async (req, res) => {
     });
   }
 };
+
+//Aide pour eager loading https://sequelize.org/docs/v6/advanced-association-concepts/eager-loading/
 
 //------------- GET -------------- (testé)
 exports.findById = async (req, res) => {

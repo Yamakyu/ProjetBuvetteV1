@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link, /*useNavigate*/ } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 //import { useContext } from 'react/cjs/react.development';
 import { useContext } from 'react';
 import { SessionContext } from '../Contexts/SessionContext';
@@ -8,17 +8,23 @@ import { SessionContext } from '../Contexts/SessionContext';
 
 export default function Navbar() { 
 
+    const myAppNavigator = useNavigate() ;
+
+    const [confirmDropDatabaseBtn, setConfirmDropDatabaseBtn] = useState("")
+    const [cancelDropDatabaseBtn, setCancelDropDatabaseBtn] = useState("")
+
     const {activeSession, setActiveSession, getLocalStorage}= useContext(SessionContext); 
 
     const userLogout = () => {
         //setActiveSession(() => localStorage.removeItem('currentSession'));
 
-        setActiveSession(
-            localStorage.removeItem("currentSession"),
-            setActiveSession(() => ({
-              ...getLocalStorage("currentSession")            
-            }))
-        );
+        localStorage.removeItem("currentSession")
+
+        setActiveSession(() => ({
+          ...getLocalStorage("currentSession")            
+        }));
+
+        myAppNavigator("/login");
     }
 
     let generateNavbar = () =>{
@@ -87,12 +93,67 @@ export default function Navbar() {
         }
     }
 
+    const prepareDropDatabase = () => {
+        setConfirmDropDatabaseBtn(<button onClick={cancelDropDatabase}>ABORT ABORT ABORT</button>);
+        setCancelDropDatabaseBtn(<button onClick={dropDatabase}>Do it</button>);
+    }
+
+    const cancelDropDatabase = () => {
+        setConfirmDropDatabaseBtn("");
+        setCancelDropDatabaseBtn("");
+    }
+
+    const putBackAdmins = () => {
+        try{
+            fetch("/api/init/").then(res => res.json).then(data => console.log(data.message));
+            setCancelDropDatabaseBtn("");
+            userLogout();
+        }catch (error){
+            console.log(error);
+        }
+
+    }
+
+    const dropDatabase = () => {
+
+        setConfirmDropDatabaseBtn("");
+
+        fetch(`/api/reset`,{
+            method: "GET",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);           
+            if (!data.needLogout) {
+                setCancelDropDatabaseBtn(<button onClick={putBackAdmins}>Remettre admin</button>);
+            }
+        })
+        .catch((err) => console.log(err));
+        
+        setCancelDropDatabaseBtn("");
+
+    }
+
+    const displayActiveSession = () => {
+        try {
+            console.log(activeSession);
+        } catch (error) {
+            console.log("Pas d'activeSession");
+        }
+
+    }
+
 
     return (
 
         <div>
             {generateNavbar()}
-            <button onClick={() => console.log(activeSession.userConnexionStatus)}>Bon c'est quoi l'active session là</button>
+            {activeSession === undefined ? "" : <button onClick={displayActiveSession}>Bon c'est quoi l'active session là</button>}
+            {activeSession.userInfo.droits === "Admin" ? <button onClick={prepareDropDatabase}>Drop la BdD</button> : ""}
+            {confirmDropDatabaseBtn}
+            {cancelDropDatabaseBtn}
         </div>
     )
 }

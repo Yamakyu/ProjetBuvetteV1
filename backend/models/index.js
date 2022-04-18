@@ -1,5 +1,5 @@
 require("dotenv").config();
-const Sequelize = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 
 const myDbConfig = require("../config/dbConfig.js");
 const sequelize = new Sequelize(
@@ -23,8 +23,9 @@ const sequelize = new Sequelize(
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-//↑ Je sais pas pourquoi on fait ça
 
 //db.tutorials = require("./tutorialsModel.js")(sequelize, Sequelize);
 db.users = require("./userModel.js")(sequelize, Sequelize);
+//db.pictures = require("./pictureModel")(sequelize, Sequelize);
+db.articles = require("./articleModel")(sequelize, DataTypes);
 module.exports = db;

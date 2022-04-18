@@ -475,7 +475,7 @@ export default function ModifierUtilisateur() {
                 console.log(err.message);
                 console.log(err);
             });
-        }
+    }
 
 
 //------------------------------------------------------------------------- AFFICHAGE
@@ -508,7 +508,7 @@ export default function ModifierUtilisateur() {
             setDoubleChecking={setIsDoubleChecking} 
             confirmButton={confirmButton}
             setConfirmButton={setConfirmButton}*/
-            >    
+            >
         </UserForm>
 
         <br/>

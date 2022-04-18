@@ -1,9 +1,11 @@
 require("dotenv").config();
 
 const express = require("express");
+const monApp = express();
+const db = require("./models");
 const cors = require("cors");
 const PORT = process.env.PORT || 8081;
-const monApp = express();
+//global.__basedir = __dirname;
 
 var corsOptions = { origin: "http://localhost:8081/" };
 monApp.use(cors(corsOptions));
@@ -15,23 +17,32 @@ const userController = require("./controllers/userController");
 monApp.use(express.json());
 monApp.use(express.urlencoded({ extended: true }));
 
-const RouteUser = require("./Routes/RouteUser");
+monApp.use("/images", express.static("publicImages"));
+monApp.use("/images", express.static("publicImagesBis"));
 
-const db = require("./models");
+const RouteUser = require("./Routes/RouteUser");
+const RouteTest = require("./Routes/RouteTest");
 
 db.sequelize.sync();
 
 //Redirection des requêtes
 //monApp.use("/api/tutorials", RouteTutorial);
 monApp.use("/api/users", RouteUser);
+monApp.use("/api/test", RouteTest);
+
 monApp.use("/api/init", userController.checkAdmins);
-monApp.use("/api/reset", () => {
+monApp.use("/api/reset", userController.isLoggedIn, (req, res) => {
   db.sequelize
     .sync({ force: true })
     .then(() => {
       console.log("DROP and re-sync db.");
     })
     .catch((err) => console.log(`Error while dropping/syncing db : ${err}`));
+
+  return res.status(200).json({
+    message: "Database droped",
+    needLogout: false,
+  });
 });
 
 //On écoute le port 8080 pour les requêtes
