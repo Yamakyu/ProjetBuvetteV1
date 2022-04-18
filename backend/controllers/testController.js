@@ -39,7 +39,7 @@ exports.upload = async (req, res) => {
       //photo: req.file.path,
       //photo: fs.readFileSync(req.file.path),
       //photo: fs.readFileSync(req.file.path).buffer.toString("base64"),
-      nom: req.body.title,
+      nom: req.body.nom,
       prixUnitaire: req.body.price,
       description: req.body.description,
       isDisponible: req.body.published,

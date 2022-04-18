@@ -16,19 +16,14 @@ const Article = ({ product }) => {
                     <Card.Title>Title: {product.nom}</Card.Title>
                     <Card.Title>Price: ${product.prixUnitaire}</Card.Title>
                     <Card.Text>
-                        Description: nik
+                        Description: {product.description}
                     </Card.Text>
                  
                     <Link to={`product/${product.id}`}>
                         <Button>Detail</Button>
                     </Link>
                 </Card.Body>
- 
-                 
-               
             </Card>
-       
-           
         </>
     )
 }

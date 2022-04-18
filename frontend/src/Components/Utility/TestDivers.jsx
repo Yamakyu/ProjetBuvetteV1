@@ -95,7 +95,7 @@ export default function TestDivers() {
 
     const fetchArticle = async () => {
         
-        await fetch(`/api/test/article/12`,{
+        await fetch(`/api/test/article/13`,{
             method: "GET",
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
         })
@@ -110,25 +110,20 @@ export default function TestDivers() {
             
             setThatArticle(data.article);
             console.log(data.article);
-            setThatImage(data.ip + "/images/"+ data.article.photo);      //Permet d'avoir l'image avec l'ip du backend, pour utilisation sur le réseau
+            setThatImage("http://" + data.ip + "/images/"+ data.article.photo);      //Permet d'avoir l'image avec l'ip du backend, pour utilisation sur le réseau
             console.log(thatImage);
-
-            //thatArticle = data.article;
-
-            //var blob = new Blob([thatArticle.photo.data], {type: "image/jpg"});
-            
-            //thatImage = URL.createObjectURL(blob);
-            //console.log(URL.createObjectURL(blob));
-            //setThatArticleImage(<img className="blob-to-image" src={"data:image/png;base64," + URL.createObjectURL(blob)}/>);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err));      
     }
     
     
     const displayImage = () => {
         console.log(thatImage);
-        setThatArticleImage(<img src={`http://${thatImage}`}/>);
-        //setThatArticleImage(<img src={thatImage}/>);
+        //setThatArticleImage(<img src={`http://${thatImage}`}/>);
+        setThatArticle(() => ({
+            ...thatArticle, image : thatImage
+        }))
+        setThatArticleImage(<img src={thatImage}/>);
     }
     
     return (
