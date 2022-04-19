@@ -1,56 +1,20 @@
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import Article from './Article'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom';
-import { SessionContext } from '../../Contexts/SessionContext';
 
 export default function ListeArticles(props) {
 
-    const {activeSession, isUserTokenExpired} = useContext(SessionContext);
-    const myAppNavigator = useNavigate();
-    const [articleListResult, setArticleListResult] = useState([]);
-
-    useEffect(() => {
-        fetch("/api/articles/all",{
-            method: "POST",
-            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-            body: JSON.stringify(
-                {
-                    isOnlyAvailableArticles: null,
-                })
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("API response ↓");
-            console.log(data.message);
-            console.log(data.resultArray);
-
-            if (isUserTokenExpired(data)){
-                myAppNavigator("/login");
-            }
-            setArticleListResult(data.resultArray);
-        })
-        .catch((err) => {
-            console.log(err.message);
-            console.log(err);
-        });
-    
-      return () => {
-        //
-      }
-    }, [])
-    
+  let theseArticles = props.articles;
 
 
   return (
     <div>
         <br/>
-        <h3>Liste d'articles : </h3>
+        <h2>Liste d'articles : </h2>
         <br/>
-        {articleListResult 
-            ? articleListResult.map((article) =>
+        {theseArticles 
+            ? theseArticles.map((article) =>
             {
-                return(<Article key={article.id} article={article}/>)
+                return(<Article key={article.id} article={article} displayDetailsButton={true}/>)
             })
             :""}
     </div>

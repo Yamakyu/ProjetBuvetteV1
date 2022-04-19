@@ -13,7 +13,8 @@ import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
 import TestDivers from "./Components/Utility/TestDivers";
 import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 import AjouterArticle from "./Components/PagesBuvette/AjouterArticle";
-import ListeArticles from "./Components/Utility/ListeArticles";
+import GestionArticle from "./Components/PagesBuvette/GestionArticle";
+import ModifierArticle from "./Components/PagesBuvette/ModifierArticle";
 
 function App() {
   let isUserTokenExpired = (apiResponseData) => {
@@ -107,7 +108,18 @@ function App() {
           <Route path="/login" element={<Connexion />} />
           <Route path="/admin" element={<AdminMain />} />
           <Route path="/manage/buvette" element={<GestionBuvette />} />
-          <Route path="/manage/buvette/add" element={<AjouterArticle />} />
+          <Route
+            path="/manage/buvette/articles/add"
+            element={<AjouterArticle />}
+          />
+          <Route
+            path="/manage/buvette/articles/overview"
+            element={<GestionArticle />}
+          />
+          <Route
+            path="/manage/buvette/articles/:id"
+            element={<ModifierArticle />}
+          />
           <Route path="/manage/materiel" element={<GestionMateriel />} />
           <Route path="/manage/users" element={<GestionUtilisateurs />} />
           <Route path="/manage/users/add" element={<AjouterUtilisateur />} />

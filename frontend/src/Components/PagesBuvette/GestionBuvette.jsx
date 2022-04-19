@@ -10,12 +10,12 @@ export default function GestionBuvette() {
 
     const goToAddArticle = () =>
     {
-        myAppNavigator("/manage/buvette/add");
+        myAppNavigator("/manage/buvette/articles/add");
     }
 
-    const goToEditArticle = () =>
+    const gotToArticleOverview = () =>
     {
-        myAppNavigator("/manage/buvette/edit");
+        myAppNavigator("/manage/buvette/articles/overview");
     }
 
   return (
@@ -24,7 +24,7 @@ export default function GestionBuvette() {
         <br/>
         <hr/>
         <button onClick={goToAddArticle}> Ajouter un utilisateur </button>
-        <button onClick={goToEditArticle}> Bouton inactif </button>
+        <button onClick={gotToArticleOverview}> Gestion des articles </button>
     </div>
   )
 }
