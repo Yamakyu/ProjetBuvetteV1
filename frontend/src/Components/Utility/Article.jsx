@@ -14,7 +14,7 @@ export default function Article(props) {
         <>
         <br/>
             <Card className='shadow-lg m-2 p-3 rounded' style={{ width: '60rem' }}>
-                <Card.Img src={article.image} height="50" />
+                <Card.Img src={article.photo} height="100" />
                 <Card.Body> 
                     <Card.Title>Nom de l'article : {article.nom}</Card.Title>
                     <Card.Title>Prix unitaire: ${article.prixUnitaire}</Card.Title>

@@ -4,6 +4,9 @@ const Article = db.articles;
 const Op = db.Sequelize.Op;
 const os = require("os");
 
+const networkInterfaces = os.networkInterfaces();
+const ip = networkInterfaces["Wi-Fi"][1]["address"];
+
 //ENVISAGER SÉRIEUSEMENT de n'utiliser qu'un controleur pour la buvette et le stock.
 //HECK. Ca peut être le même model (il faudra une table différente, cela dit)
 //Plus tard, pas maintenant.
@@ -101,10 +104,6 @@ exports.findArticleById = async (req, res) => {
 
   try {
     let articleID = req.params.id;
-
-    const networkInterfaces = os.networkInterfaces();
-    const ip = networkInterfaces["Wi-Fi"][1]["address"];
-
     await Article.findByPk(articleID)
       .then((thatArticle) => {
         return res.status(200).json({
@@ -279,12 +278,23 @@ let displayResults = (requestResponse, resultArray) => {
       message: "Aucun résultat",
     });
   } else {
+    let fixedResultArray = []; //Fixed, car avec le bon lien de photo
+
+    resultArray.forEach((article) => {
+      article = {
+        ...article.dataValues,
+        photo: `http://${ip}:${process.env.PORT}/images/${article.dataValues.photo}`,
+      };
+      fixedResultArray.push(article);
+    });
+
     return requestResponse.status(200).json({
       message: "Résultats de la recherche : ",
-      resultArray,
+      resultArray: fixedResultArray,
     });
   }
 };
+
 //↑ REQUIERT UNE UPDATE POUR AFFICHER DES ARRAYS D'IMAGES.
 
 let displayThatError = (requestResponse, thatError) => {

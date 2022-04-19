@@ -62,7 +62,7 @@ export default function AjouterArticle() {
 
         setResAPIMessage("Ajout en cours. Cela peut prendre quelques instants....");
 
-        await axios.post('/api/articles/add', null, {
+        await axios.post('/api/articles/add', formData, {
             headers: {
                 Authorization: "Bearer " + activeSession.userToken
             }

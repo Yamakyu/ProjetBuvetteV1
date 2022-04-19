@@ -5,6 +5,11 @@ const monApp = express();
 const db = require("./models");
 const cors = require("cors");
 const PORT = process.env.PORT || 8081;
+
+const os = require("os");
+const networkInterfaces = os.networkInterfaces();
+const ip = networkInterfaces["Wi-Fi"][1]["address"];
+
 //global.__basedir = __dirname;
 
 var corsOptions = { origin: "http://localhost:8081/" };
@@ -48,5 +53,9 @@ monApp.use("/api/reset", userController.isLoggedIn, (req, res) => {
 
 //On écoute le port 8080 pour les requêtes
 monApp.listen(PORT, () => {
-  console.log(`Listenning to port ${PORT}.`);
+  console.log(`À l'écoute du ${PORT}.`);
+  console.log(
+    ` ------- Pour tester sur une autre machine (téléphone, tablette), d'abord assurez vous d'être sur le même réseau Wi-Fi`
+  );
+  console.log(` ------- puis entrez ceci dans le navigateur ${ip}:3000 `);
 });
