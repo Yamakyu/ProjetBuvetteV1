@@ -37,7 +37,6 @@ export default function TestDivers() {
         //     published: published
         // }
 
-
         //const formData = new FormData()
 
         formData.append('file', image)
@@ -47,7 +46,7 @@ export default function TestDivers() {
         formData.append('published', published)
 
 
-        await axios.post('/api/test/upload', formData, {
+        await axios.post('/api/articles/add', formData, {
             headers: {
                 Authorization: "Bearer " + activeSession.userToken
             }
@@ -108,6 +107,7 @@ export default function TestDivers() {
         <button onClick={displayImage}>Afficher l'image de l'article</button>
 
         {thatArticleImage} 
+        
             <Container className='mt-5 p-2'>
                 <h1>Add Product</h1>
                 <hr />
@@ -168,7 +168,7 @@ export default function TestDivers() {
 
 
 
-        <Article product={thatArticle}/>
+        <Article article={thatArticle}/>
     </div>
   )
 }

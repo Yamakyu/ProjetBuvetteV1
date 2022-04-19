@@ -1,13 +1,14 @@
 require("dotenv").config();
 const db = require("../models");
 const Article = db.articles;
+const Op = db.Sequelize.Op;
 const os = require("os");
 
 //ENVISAGER SÉRIEUSEMENT de n'utiliser qu'un controleur pour la buvette et le stock.
 //HECK. Ca peut être le même model (il faudra une table différente, cela dit)
 //Plus tard, pas maintenant.
 
-// ---------- GET ----------- ()
+// ---------- GET ----------- (testé)
 exports.initSomeArticles = async (req, res) => {
   console.log("ARTICLE controller : initSomeArticles -------");
 
@@ -28,14 +29,14 @@ exports.initSomeArticles = async (req, res) => {
         nom: "Awoken Yamakyu",
         description: "100% potato, 200% awoken",
         isDisponible: true,
-        photo: "Awoken_Yamakyu.png",
+        photo: "default/Awoken_Yamakyu.png",
         prixUnitaire: 20,
       };
 
       let newArticle2 = {
         nom: "Current mood",
         prixUnitaire: 10,
-        photo: "Hifumi_but_NOT_FINE.jpg",
+        photo: "default/Hifumi_but_NOT_FINE.jpg",
       };
 
       let newArticle3 = {
@@ -57,12 +58,12 @@ exports.initSomeArticles = async (req, res) => {
   }
 };
 
-// ---------- POST ----------- ()
+// ---------- POST ----------- (testé sans nouvelle image)
 exports.addArticle = async (req, res) => {
   console.log("ARTICLE controller : addArticle -------");
   try {
     if (
-      !req.thatRequestToken.isAdmin ||
+      !req.thatRequestToken.isAdmin &&
       !req.thatRequestToken.isGerantBuvette
     ) {
       return res.status(401).json({
@@ -70,10 +71,12 @@ exports.addArticle = async (req, res) => {
       });
     }
 
+    let isPhotoAttached = req.file ? true : false;
+
     let articleInfo = {
       nom: req.body.nom,
       description: req.body.description,
-      photo: req.file.filename,
+      photo: isPhotoAttached ? `picsBuvette/${req.file.filename}` : undefined,
       prixUnitaire: req.body.price,
       isDisponible: req.body.published,
       categorie: req.body.categorie,
@@ -92,8 +95,8 @@ exports.addArticle = async (req, res) => {
   }
 };
 
-// ---------- GET ----------- ()
-exports.getArticleById = async (req, res) => {
+// ---------- GET ----------- (testé)
+exports.findArticleById = async (req, res) => {
   console.log("ARTICLE controller : getArticleById -------");
 
   try {
@@ -104,11 +107,10 @@ exports.getArticleById = async (req, res) => {
 
     await Article.findByPk(articleID)
       .then((thatArticle) => {
-        res.status(200).json({
-          message: "success",
+        return res.status(200).json({
           article: {
-            ...thatArticle,
-            photo: `http://${ip}:${process.env.PORT}/images/${thatArticle.photo}`,
+            ...thatArticle.dataValues,
+            photo: `http://${ip}:${process.env.PORT}/images/${thatArticle.dataValues.photo}`,
           },
         });
       })
@@ -118,7 +120,7 @@ exports.getArticleById = async (req, res) => {
   }
 };
 
-// ---------- GET ----------- ()
+// ---------- POST ----------- (testé)
 exports.findArticleByName = async (req, res) => {
   console.log("ARTICLE controller : findArticleByName -------");
 
@@ -126,7 +128,7 @@ exports.findArticleByName = async (req, res) => {
     let enteredName = req.query.name;
     let theseArticles;
 
-    if (req.body.isOnlyFetchingAvailableArticles) {
+    if (req.body.isOnlyAvailableArticles) {
       theseArticles = await Article.findAll({
         where: {
           [Op.and]: [
@@ -135,9 +137,21 @@ exports.findArticleByName = async (req, res) => {
           ],
         },
       });
-    } else {
+    } else if (
+      req.body.isOnlyAvailableArticles === null ||
+      req.body.isOnlyAvailableArticles === undefined
+    ) {
       theseArticles = await Article.findAll({
         where: { nom: { [Op.like]: `%${enteredName}%` } },
+      });
+    } else {
+      theseArticles = await Article.findAll({
+        where: {
+          [Op.and]: [
+            { nom: { [Op.like]: `%${enteredName}%` } },
+            { isDisponible: false },
+          ],
+        },
       });
     }
     displayResults(res, theseArticles);
@@ -146,7 +160,7 @@ exports.findArticleByName = async (req, res) => {
   }
 };
 
-// ---------- GET ----------- ()
+// ---------- POST ----------- (testé)
 exports.findArticleByCategory = async (req, res) => {
   console.log("ARTICLE controller : findArticleByCategory -------");
 
@@ -154,15 +168,25 @@ exports.findArticleByCategory = async (req, res) => {
     let theseArticles;
     let searchFilter = req.body.filter;
 
-    if (req.body.isOnlyFetchingAvailableArticles) {
+    if (req.body.isOnlyAvailableArticles) {
       theseArticles = await Article.findAll({
         where: {
           [Op.and]: [{ categorie: searchFilter }, { isDisponible: true }],
         },
       });
-    } else {
+    } else if (
+      req.body.isOnlyAvailableArticles === null ||
+      req.body.isOnlyAvailableArticles === undefined
+    ) {
+      console.log(req.body.isOnlyAvailableArticles);
       theseArticles = await Article.findAll({
         where: { categorie: searchFilter },
+      });
+    } else {
+      theseArticles = await Article.findAll({
+        where: {
+          [Op.and]: [{ categorie: searchFilter }, { isDisponible: false }],
+        },
       });
     }
 
@@ -172,19 +196,26 @@ exports.findArticleByCategory = async (req, res) => {
   }
 };
 
-// ---------- GET ----------- ()
+// ---------- POST ----------- (testé)
 exports.findAllArticles = async (req, res) => {
   console.log("ARTICLE controller : findAllArticles -------");
 
   try {
     let theseArticles;
 
-    if (req.body.isOnlyFetchingAvailableArticles) {
+    if (req.body.isOnlyAvailableArticles) {
       theseArticles = await Article.findAll({
         where: { isDisponible: true },
       });
-    } else {
+    } else if (
+      req.body.isOnlyAvailableArticles === null ||
+      req.body.isOnlyAvailableArticles === undefined
+    ) {
       theseArticles = await Article.findAll();
+    } else {
+      theseArticles = await Article.findAll({
+        where: { isDisponible: false },
+      });
     }
 
     displayResults(res, theseArticles);
@@ -193,7 +224,7 @@ exports.findAllArticles = async (req, res) => {
   }
 };
 
-// ---------- PUT ----------- ()
+// ---------- PUT ----------- (testé (pas nouvelle image))
 exports.editArticle = async (req, res) => {
   console.log("ARTICLE controller : editArticle -------");
 
@@ -253,6 +284,7 @@ let displayResults = (requestResponse, resultArray) => {
     });
   }
 };
+//↑ REQUIERT UNE UPDATE POUR AFFICHER DES ARRAYS D'IMAGES.
 
 let displayThatError = (requestResponse, thatError) => {
   console.log("↓ ------- Une erreur s'est produite ↓");

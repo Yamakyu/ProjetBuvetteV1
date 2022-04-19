@@ -34,7 +34,7 @@ var uploadFile = multer({
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./images");
+    cb(null, "./images/picsBuvette");
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-BSOLIFE-${file.originalname}`);

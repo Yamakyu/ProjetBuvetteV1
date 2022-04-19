@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       field: "photo",
       allowNull: false,
-      defaultValue: "default.jpg",
+      defaultValue: "default/default.jpg",
     },
     prixUnitaire: {
       type: DataTypes.INTEGER,

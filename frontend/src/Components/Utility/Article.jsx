@@ -3,21 +3,21 @@ import React from 'react'
 import { Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
-const Article = ({ product }) => {
+const Article = ({ article }) => {
 
     return (
         <>
         <br/>
             <Card className='shadow-lg m-2 p-3 rounded' style={{ width: '18rem' }}>
-                <Card.Img src={product.image} height="200" />
+                <Card.Img src={article.image} height="200" />
                 <Card.Body> 
-                    <Card.Title>Title: {product.nom}</Card.Title>
-                    <Card.Title>Price: ${product.prixUnitaire}</Card.Title>
+                    <Card.Title>Title: {article.nom}</Card.Title>
+                    <Card.Title>Price: ${article.prixUnitaire}</Card.Title>
                     <Card.Text>
-                        Description: {product.description}
+                        Description: {article.description}
                     </Card.Text>
                  
-                    <Link to={`product/${product.id}`}>
+                    <Link to={`article/${article.id}`}>
                         <Button>Detail (not functional)</Button>
                     </Link>
                 </Card.Body>

@@ -21,6 +21,10 @@ export default function GestionUtilisateurs() {
 
   return (
     <div>
+      <h1>Super page gestion d'utilisateur</h1>
+      <br/>
+      <br/>
+
         <button onClick={goToAddUser}> Ajouter un utilisateur </button>
         <button onClick={goToEditUser}> Modifier ou supprimer un utilisateur </button>
     </div>
