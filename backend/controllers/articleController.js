@@ -7,7 +7,7 @@ const os = require("os");
 //HECK. Ca peut être le même model (il faudra une table différente, cela dit)
 //Plus tard, pas maintenant.
 
-// ---------- POST ----------- ()
+// ---------- GET ----------- ()
 exports.initSomeArticles = async (req, res) => {
   console.log("ARTICLE controller : initSomeArticles -------");
 

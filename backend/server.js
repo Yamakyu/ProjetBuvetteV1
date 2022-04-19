@@ -17,11 +17,11 @@ const userController = require("./controllers/userController");
 monApp.use(express.json());
 monApp.use(express.urlencoded({ extended: true }));
 
-monApp.use("/images", express.static("publicImages"));
-monApp.use("/images", express.static("publicImagesBis"));
+monApp.use("/images", express.static("images"));
 
 const RouteUser = require("./Routes/RouteUser");
 const RouteTest = require("./Routes/RouteTest");
+const RouteArticle = require("./Routes/RouteArticle");
 
 db.sequelize.sync();
 
@@ -29,6 +29,7 @@ db.sequelize.sync();
 //monApp.use("/api/tutorials", RouteTutorial);
 monApp.use("/api/users", RouteUser);
 monApp.use("/api/test", RouteTest);
+monApp.use("/api/articles", RouteArticle);
 
 monApp.use("/api/init", userController.checkAdmins);
 monApp.use("/api/reset", userController.isLoggedIn, (req, res) => {
