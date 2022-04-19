@@ -13,7 +13,7 @@ import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
 import TestDivers from "./Components/Utility/TestDivers";
 import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 import AjouterArticle from "./Components/PagesBuvette/AjouterArticle";
-import GestionArticle from "./Components/PagesBuvette/GestionArticle";
+import GestionArticles from "./Components/PagesBuvette/GestionArticles";
 import ModifierArticle from "./Components/PagesBuvette/ModifierArticle";
 
 function App() {
@@ -114,7 +114,7 @@ function App() {
           />
           <Route
             path="/manage/buvette/articles/overview"
-            element={<GestionArticle />}
+            element={<GestionArticles />}
           />
           <Route
             path="/manage/buvette/articles/:id"

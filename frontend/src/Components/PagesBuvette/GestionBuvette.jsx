@@ -23,7 +23,7 @@ export default function GestionBuvette() {
         <h1>Super page gestion de buvette</h1>
         <br/>
         <hr/>
-        <button onClick={goToAddArticle}> Ajouter un utilisateur </button>
+        <button onClick={goToAddArticle}> Ajouter un article </button>
         <button onClick={gotToArticleOverview}> Gestion des articles </button>
     </div>
   )

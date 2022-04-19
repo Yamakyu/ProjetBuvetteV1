@@ -480,14 +480,9 @@ export default function ModifierUtilisateur() {
 
 //------------------------------------------------------------------------- AFFICHAGE
 
-        const doTheThing = () => {
-            console.log("nothing to do atm !");
-        }
 
   return (
     <div>
-        <button onClick={doTheThing}>Do the thing</button>
-
         <br/>
         <h1>MODIFIER OU SUPPRIMER UN UTILISATEUR</h1>
         <br/>

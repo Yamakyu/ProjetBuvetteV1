@@ -4,12 +4,13 @@ import Article from './Article'
 export default function ListeArticles(props) {
 
   let theseArticles = props.articles;
+  let apiSearchResponse = props.apiSearchResponse;
 
 
   return (
     <div>
         <br/>
-        <h2>Liste d'articles : </h2>
+        <h2>{apiSearchResponse || " Liste des articles :"}</h2>
         <br/>
         {theseArticles 
             ? theseArticles.map((article) =>

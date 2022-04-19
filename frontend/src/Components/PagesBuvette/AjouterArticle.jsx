@@ -60,6 +60,8 @@ export default function AjouterArticle() {
         formData.append('description', articleDescription);
         formData.append('published', isArticlePublished);
 
+        setResAPIMessage("Ajout en cours. Cela peut prendre quelques instants....");
+
         await axios.post('/api/articles/add', null, {
             headers: {
                 Authorization: "Bearer " + activeSession.userToken
@@ -140,7 +142,7 @@ export default function AjouterArticle() {
                         <Form.Check
                             type="checkbox"
                             onChange={(e) => setIsArticlePublished(e.target.checked)}
-                            label="Article disponible ?"
+                            label="Article immédiatement disponible ?"
                             defaultChecked={true}
                            />
                     </Form.Group>
@@ -154,6 +156,11 @@ export default function AjouterArticle() {
 
 
         {validateArticle} {resAPIMessage}
+
+        <br/>
+        <br/>
+        <br/>
+        <button onClick={() => myAppNavigator("/manage/buvette/articles/overview")}>Accéder à la liste des articles</button>
 
 
     </div>

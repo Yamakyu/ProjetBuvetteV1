@@ -128,6 +128,7 @@ exports.findArticleByName = async (req, res) => {
     let enteredName = req.query.name;
     let theseArticles;
 
+    //Si on fait une recherche en mettant le paramitre isOnlyAvailableArticles à true, on retourne EXCLUSIVEMENT les articles disponibles. Si on veut EXCLUSIVEMENT les articles non disponible, on met à false. Pour obtenir tout les articles, on mets à null ou undefined.
     if (req.body.isOnlyAvailableArticles) {
       theseArticles = await Article.findAll({
         where: {

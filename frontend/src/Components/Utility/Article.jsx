@@ -18,12 +18,12 @@ export default function Article(props) {
                 <Card.Body> 
                     <Card.Title>Nom de l'article : {article.nom}</Card.Title>
                     <Card.Title>Prix unitaire: ${article.prixUnitaire}</Card.Title>
-                    <Card.Text>Description: {article.description}</Card.Text>
+                    <Card.Title>Disponible : {article.isDisponible ? "oui" : "non" } </Card.Title>
+                    <Card.Text >Description: {article.description}</Card.Text>
                         
                         {displayDetailsButton
                             ? <Button onClick={() => myAppNavigator(`/manage/buvette/articles/${article.id}`)}>Details</Button>
                             : ""}
-                    <Card.Title>Disponible : {article.isDisponible ? "oui" : "non" } </Card.Title>
                 </Card.Body>
             </Card>
         </>

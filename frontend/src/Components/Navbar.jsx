@@ -154,6 +154,8 @@ export default function Navbar() {
             {activeSession.userInfo.droits === "Admin" ? <button onClick={prepareDropDatabase}>Drop la BdD</button> : ""}
             {confirmDropDatabaseBtn}
             {cancelDropDatabaseBtn}
+            <hr/>
+            <hr/>
         </div>
     )
 }
