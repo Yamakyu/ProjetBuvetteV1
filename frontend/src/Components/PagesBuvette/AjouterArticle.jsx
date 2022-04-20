@@ -98,24 +98,25 @@ export default function AjouterArticle() {
 
         
         <Container className='mt-5 p-2'>
-                <hr />
+            <hr />
                 <Form onSubmit={prepareAddArticle}>
 
-                <Form.Group controlId="fileName" className="mb-3">
-                    <Form.Label>Choississez une photo ou une image </Form.Label>
-                    <Form.Control
-                        type="file"
-                        name='image'
-                        onChange={(e) => setArticleImage(e.target.files[0])}
-                        size="lg" />
-                </Form.Group>
+                    <Form.Group controlId="fileName" className="mb-3">
+                        <Form.Label>Choississez une photo ou une image </Form.Label>
+                        <Form.Control
+                            type="file"
+                            name='image'
+                            onChange={(e) => setArticleImage(e.target.files[0])}
+                            size="lg" />
+                    </Form.Group>
+                    
                     <Form.Group className="mb-3" controlId="title">
                         <Form.Label>Nom de l'article : </Form.Label>
                         <Form.Control
                             value={articleName}
                             onChange={(e) => setArticleName(e.target.value)}
                             type="text"
-                          />
+                        />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="price">
@@ -124,10 +125,10 @@ export default function AjouterArticle() {
                             value={articlePrice}
                             onChange={(e) => setArticlePrice(e.target.value)}
                             type="number"
-                             />
+                            />
                     </Form.Group>
 
-                  
+                
                     <Form.Group className="mb-3" controlId="description">
                         <Form.Label>Description de l'article</Form.Label>
                         <br/>
@@ -144,7 +145,7 @@ export default function AjouterArticle() {
                             onChange={(e) => setIsArticlePublished(e.target.checked)}
                             label="Article immédiatement disponible ?"
                             defaultChecked={true}
-                           />
+                        />
                     </Form.Group>
 
 

@@ -154,6 +154,7 @@ export default function Navbar() {
             {activeSession.userInfo.droits === "Admin" ? <button onClick={prepareDropDatabase}>Drop la BdD</button> : ""}
             {confirmDropDatabaseBtn}
             {cancelDropDatabaseBtn}
+            <a href='https://trello.com/b/Op3lCEVw/stage-doranco-application-gestion-buvette-stock'> - TRELLO - </a>
             <hr/>
             <hr/>
         </div>

@@ -30,8 +30,6 @@ export default function ModifierArticle() {
       }
     }, [])  
 
-//------------------------------------------------------------------------- METHODES D'AFFICHAGE
-
 //------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
 
     const prepareSearchArticleByName = () => {

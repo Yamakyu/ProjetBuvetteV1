@@ -74,12 +74,12 @@ exports.addArticle = async (req, res) => {
       });
     }
 
-    let isPhotoAttached = req.file ? true : false;
+    //let isPhotoAttached = req.file ? true : false;
 
     let articleInfo = {
       nom: req.body.nom,
       description: req.body.description,
-      photo: isPhotoAttached ? `picsBuvette/${req.file.filename}` : undefined,
+      photo: req.file ? `picsBuvette/${req.file.filename}` : undefined,
       prixUnitaire: req.body.price,
       isDisponible: req.body.published,
       categorie: req.body.categorie,
@@ -89,7 +89,7 @@ exports.addArticle = async (req, res) => {
       .then((thatArticle) => {
         return res.status(200).json({
           message: `${thatArticle.nom} ajouté avec succès !`,
-          article: thatArticle,
+          article: getArticleWithPhoto(thatArticle),
         });
       })
       .catch((err) => displayThatError(res, err));
@@ -107,10 +107,8 @@ exports.findArticleById = async (req, res) => {
     await Article.findByPk(articleID)
       .then((thatArticle) => {
         return res.status(200).json({
-          article: {
-            ...thatArticle.dataValues,
-            photo: `http://${ip}:${process.env.PORT}/images/${thatArticle.dataValues.photo}`,
-          },
+          message: "Article trouvé",
+          article: getArticleWithPhoto(thatArticle),
         });
       })
       .catch((error) => displayThatError(res, error));
@@ -154,7 +152,7 @@ exports.findArticleByName = async (req, res) => {
         },
       });
     }
-    displayResults(res, theseArticles);
+    displayTheseResults(res, theseArticles);
   } catch (error) {
     displayThatError(res, error);
   }
@@ -190,7 +188,7 @@ exports.findArticleByCategory = async (req, res) => {
       });
     }
 
-    displayResults(res, theseArticles);
+    displayTheseResults(res, theseArticles);
   } catch (error) {
     displayThatError(res, error);
   }
@@ -218,7 +216,7 @@ exports.findAllArticles = async (req, res) => {
       });
     }
 
-    displayResults(res, theseArticles);
+    displayTheseResults(res, theseArticles);
   } catch (err) {
     displayThatError(res, err);
   }
@@ -230,6 +228,12 @@ exports.editArticle = async (req, res) => {
 
   try {
     const articleToUpdateID = req.params.id;
+
+    console.log(req.body);
+
+    if (req.file !== undefined || req.file !== null || req.file !== "") {
+      req.body.photo = `picsBuvette/${req.file.filename}`;
+    }
 
     await Article.update(req.body, {
       where: { id: articleToUpdateID },
@@ -259,6 +263,8 @@ exports.editArticle = async (req, res) => {
         message: `Impossible de retourner l'article modifié dont l'id est l'id=${articleToUpdateID}.`,
       });
     } else {
+      thatArticleUpdated = getArticleWithPhoto(thatArticleUpdated);
+
       return res.status(200).json({
         message: "Article modifié avec succès.",
         updatedArticle: thatArticleUpdated,
@@ -272,30 +278,47 @@ exports.editArticle = async (req, res) => {
 //-----------------------------------------
 //--------------FUNCTIONS------------------
 //-----------------------------------------
-let displayResults = (requestResponse, resultArray) => {
-  if (resultArray.length === 0) {
-    return requestResponse.status(200).json({
-      message: "Aucun résultat",
-    });
-  } else {
-    let fixedResultArray = []; //Fixed, car avec le bon lien de photo
-
-    resultArray.forEach((article) => {
-      article = {
-        ...article.dataValues,
-        photo: `http://${ip}:${process.env.PORT}/images/${article.dataValues.photo}`,
-      };
-      fixedResultArray.push(article);
-    });
-
-    return requestResponse.status(200).json({
-      message: "Résultats de la recherche : ",
-      resultArray: fixedResultArray,
-    });
+let getArticleWithPhoto = (articleFromDatabase) => {
+  try {
+    return {
+      ...articleFromDatabase.dataValues,
+      photo: `http://${ip}:${process.env.PORT}/images/${articleFromDatabase.dataValues.photo}`,
+    };
+  } catch (error) {
+    console.log("---------- !!!!! Erreur en retournant l'article avec photo");
+    console.log(error);
   }
 };
+/* 
+↑ La base de données SQL retourne l'adresse de l'article dans le backend (pour l'image par défaut, par exemple, le retour est default/default.jpg). 
+Pour pouvoir être affichable sur le frontend, il faut y attacher l'ip actuelle de la machine qui host le backend. 
+On ne peut pas la stocker dans la base de données, car les images deviendraient illisible dans l'éventualité d'un reset Wifi, ou changement de réseau. 
+Donc chaque fois qu'un article est demandé, on y ajoute dynamiquement la bonne URL de l'image qui l'accompagne.
+*/
 
-//↑ REQUIERT UNE UPDATE POUR AFFICHER DES ARRAYS D'IMAGES.
+let displayTheseResults = (requestResponse, resultArray) => {
+  try {
+    if (resultArray.length === 0) {
+      return requestResponse.status(200).json({
+        message: "Aucun résultat",
+      });
+    } else {
+      let fixedResultArray = []; //Fixed, car avec le bon lien de photo
+
+      resultArray.forEach((article) => {
+        article = getArticleWithPhoto(article); //Méthode déclarée juste au dessus, qui insère la photo avec l'ip dans l'article
+        fixedResultArray.push(article);
+      });
+
+      return requestResponse.status(200).json({
+        message: "Résultats de la recherche : ",
+        resultArray: fixedResultArray,
+      });
+    }
+  } catch (error) {
+    displayThatError(requestResponse, error);
+  }
+};
 
 let displayThatError = (requestResponse, thatError) => {
   console.log("↓ ------- Une erreur s'est produite ↓");
