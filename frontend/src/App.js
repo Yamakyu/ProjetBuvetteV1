@@ -15,8 +15,11 @@ import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 import AjouterArticle from "./Components/PagesBuvette/AjouterArticle";
 import GestionArticles from "./Components/PagesBuvette/GestionArticles";
 import ModifierArticle from "./Components/PagesBuvette/ModifierArticle";
+import NouvelleCommande from "./Components/PagesBuvette/NouvelleCommande";
 
 function App() {
+  const [currentOrder, setCurrentOrder] = useState([]);
+
   let isUserTokenExpired = (apiResponseData) => {
     //Si le backend retourne que le token est expiré, on vide la session actuelle (removeItem) et on y ajoute le message (le backend retourne l'erreur : la plupart du temps, Token expiré).
     /*
@@ -86,7 +89,7 @@ function App() {
   };
 
   //Si on a une session dispo dans le localStorage, on l'utilise comme activeSession, sinon on a une session vide.
-  let [activeSession, setActiveSession] = useState(
+  const [activeSession, setActiveSession] = useState(
     getLocalStorage("currentSession")
   );
 
@@ -99,6 +102,8 @@ function App() {
         setActiveSession,
         getLocalStorage,
         isUserTokenExpired,
+        currentOrder,
+        setCurrentOrder,
       }}
     >
       <BrowserRouter>
@@ -108,6 +113,10 @@ function App() {
           <Route path="/login" element={<Connexion />} />
           <Route path="/admin" element={<AdminMain />} />
           <Route path="/manage/buvette" element={<GestionBuvette />} />
+          <Route
+            path="/manage/buvette/orders/new"
+            element={<NouvelleCommande />}
+          />
           <Route
             path="/manage/buvette/articles/add"
             element={<AjouterArticle />}

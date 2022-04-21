@@ -7,15 +7,18 @@ import { useNavigate } from 'react-router-dom'
 export default function Article(props) {
 
     let article = props.article;
-    let displayDetailsButton = props.displayDetailsButton; 
     let isEditingArticle = props.isEditingArticle;
     let newArticle = props.newArticle;
+    let addToOrder = props.addToOrder;
+
+    let displayDetailsButton = props.displayDetailsButton; 
+    let displayAddToOrderButton = props.displayAddToOrderButton;
 
     const myAppNavigator = useNavigate();
 
     return (
         <>
-        <br/>
+            <br/>
             <Card className='shadow-lg m-2 p-3 rounded' style={{ width: '60rem' }}>
                 <Card.Img src={article.photo} height="100" />
                 <Card.Body> 
@@ -44,9 +47,9 @@ export default function Article(props) {
                             : ""}
                     </Card.Text>    
                     
-                    {displayDetailsButton
-                        ? <Button onClick={() => myAppNavigator(`/manage/buvette/articles/${article.id}`)}>Details</Button>
-                        : ""}
+                    <Button hidden={!displayDetailsButton} onClick={() => myAppNavigator(`/manage/buvette/articles/${article.id}`)}>Details</Button>
+
+                    <Button hidden={!displayAddToOrderButton} onClick={() => addToOrder(article)}>Ajouter à la commande</Button>
                 </Card.Body>
             </Card>
         </>

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useContext } from 'react';
 import { SessionContext } from '../Contexts/SessionContext';
 
-// Pour rappel, l'avantage d'utiliser Link au lieu de juste une liste d'ancres, c'est que Link ne refresh pas la page.
+const os = require("os");
 
 export default function Navbar() { 
 
@@ -142,8 +142,8 @@ export default function Navbar() {
         } catch (error) {
             console.log("Pas d'activeSession");
         }
-
     }
+
 
 
     return (

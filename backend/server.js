@@ -7,8 +7,20 @@ const cors = require("cors");
 const PORT = process.env.PORT || 8081;
 
 const os = require("os");
-const networkInterfaces = os.networkInterfaces();
-const ip = networkInterfaces["Wi-Fi"][1]["address"];
+const networkInterfaces = os.networkInterfaces()["Wi-Fi"];
+let ip;
+
+try {
+  networkInterfaces.forEach((interface) => {
+    if (interface.family === "IPv4") {
+      ip = interface.address;
+    }
+  });
+} catch (error) {
+  console.log(
+    "!!!!!!!!! Impossible d'obtenir l'adresse IP de l'application, les images ne s'afficheront pas"
+  );
+}
 
 //global.__basedir = __dirname;
 
@@ -55,7 +67,7 @@ monApp.use("/api/reset", userController.isLoggedIn, (req, res) => {
 monApp.listen(PORT, () => {
   console.log(`À l'écoute du ${PORT}.`);
   console.log(
-    ` ------- Pour tester sur une autre machine (téléphone, tablette), d'abord assurez vous d'être sur le même réseau Wi-Fi`
+    ` ------- Pour tester sur une autre machine (téléphone, tablette), assurez d'abord vous d'être sur le même réseau Wi-Fi`
   );
   console.log(` ------- puis entrez ceci dans le navigateur ${ip}:3000 `);
 });

@@ -15,15 +15,13 @@ export default function ModifierArticle() {
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [searchWarning, setSearchWarning] = useState("");
     const [isListFiltered, setIsListFiltered] = useState(false);
-    const [cancelSearchButton, setCancelSearchButton] = useState();
 
 //------------------------------------------------------------------------- USE EFFECT
 
     useEffect(() => {
         
         apiGetAllArticles();
-        setCancelSearchButton(<button onClick={apiGetAllArticles}>Annuler la recherche et afficher la liste de tout les articles</button>);
-        //Le bouton est set dans useEffect car "apiGetAllArticles" n'est déclaré qu'en fin de script, ce qui oblige à assigner le bouton en fin de script.
+        //Le bouton est set dans useEffect car "apiGetAllArticles" n'est déclaré qu'en fin de script, ce qui obligerai à assigner le bouton en fin de script.
 
       return () => {
         //
@@ -208,15 +206,19 @@ export default function ModifierArticle() {
             <button onClick={prepareSearchArticleByName}>Rechercher des article par leur nom</button>
             <button onClick={prepareSearchArticleByCategory}>Rechercher des article par catégorie</button>
         </h3>
-        {searchTool}
+        { searchTool }
         { searchWarning }
         { isListFiltered 
-            ? cancelSearchButton
+            ? <button onClick={apiGetAllArticles}>Annuler la recherche et afficher la liste de tout les articles</button>
             : "" }
         <br/>
         <br/>
         <hr color='#adadad'/>
-        <ListeArticles articles={articleListResult} apiSearchResponse={apiSearchResponse} />
+        <ListeArticles 
+            articles={articleListResult} 
+            apiSearchResponse={apiSearchResponse} 
+            displayDetailsButtonChild={true}
+            />
     </div>
   )
 }

@@ -19,6 +19,14 @@ export default function GestionBuvette() {
     myAppNavigator("/manage/buvette/articles/overview");
   }
 
+  const goToNewOrder = () => {
+    myAppNavigator("/manage/buvette/orders/new")
+  }
+  
+  const goToOrderHistory = () => {
+    console.log("Bouton inactif !");
+  }
+
   const initSomeArticles = () =>
   {
     fetch("/api/articles/init",{
@@ -48,6 +56,12 @@ export default function GestionBuvette() {
         <hr/>
         <button onClick={goToAddArticle}> Ajouter un article </button>
         <button onClick={gotToArticleOverview}> Gestion des articles </button>
+        <br/>
+        <br/>
+        <button onClick={goToNewOrder}> Nouvelle commande </button>
+        <button onClick={goToOrderHistory}> Consultez l'historique des commandes (bouton inactif !) </button>
+        <br/>
+        <br/>
         <button onClick={initSomeArticles}> Initialiser des articles </button>
 
         <br/>

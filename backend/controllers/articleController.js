@@ -4,12 +4,22 @@ const Article = db.articles;
 const Op = db.Sequelize.Op;
 const os = require("os");
 
-const networkInterfaces = os.networkInterfaces();
-const ip = networkInterfaces["Wi-Fi"][1]["address"];
-
 //ENVISAGER SÉRIEUSEMENT de n'utiliser qu'un controleur pour la buvette et le stock.
 //HECK. Ca peut être le même model (il faudra une table différente, cela dit)
 //Plus tard, pas maintenant.
+
+// ---------- GET ----------- (testé)
+exports.getNetworkInfo = async (req, res) => {
+  try {
+    let ip = getCurrentIp();
+
+    return res.status(200).json({
+      ip,
+    });
+  } catch (error) {
+    displayThatError(res, error);
+  }
+};
 
 // ---------- GET ----------- (testé)
 exports.initSomeArticles = async (req, res) => {
@@ -222,7 +232,7 @@ exports.findAllArticles = async (req, res) => {
   }
 };
 
-// ---------- PUT ----------- (testé (pas nouvelle image))
+// ---------- PUT ----------- (testé)
 exports.editArticle = async (req, res) => {
   console.log("ARTICLE controller : editArticle -------");
 
@@ -231,7 +241,7 @@ exports.editArticle = async (req, res) => {
 
     console.log(req.body);
 
-    if (req.file !== undefined || req.file !== null || req.file !== "") {
+    if (req.file !== undefined && req.file !== null && req.file !== "") {
       req.body.photo = `picsBuvette/${req.file.filename}`;
     }
 
@@ -278,8 +288,28 @@ exports.editArticle = async (req, res) => {
 //-----------------------------------------
 //--------------FUNCTIONS------------------
 //-----------------------------------------
+
+let getCurrentIp = () => {
+  try {
+    const networkInterfaces = os.networkInterfaces()["Wi-Fi"];
+    //const ip = networkInterfaces["Wi-Fi"][1]["address"];
+    let ip;
+    networkInterfaces.forEach((interface) => {
+      if (interface.family === "IPv4") {
+        ip = interface.address;
+      }
+    });
+
+    return ip;
+  } catch (error) {
+    displayThatError(error);
+  }
+};
+
 let getArticleWithPhoto = (articleFromDatabase) => {
   try {
+    let ip = getCurrentIp();
+
     return {
       ...articleFromDatabase.dataValues,
       photo: `http://${ip}:${process.env.PORT}/images/${articleFromDatabase.dataValues.photo}`,
