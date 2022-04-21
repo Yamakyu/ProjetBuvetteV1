@@ -172,7 +172,7 @@ export default function ModifierArticle() {
         console.log("API response ↓");
         console.log(err.response.data.message);
         console.log(err);
-        if (isUserTokenExpired(err)){
+        if (isUserTokenExpired(err.response.data)){
             return myAppNavigator("/login");
         }
         setApiResponse(err.response.data.message);

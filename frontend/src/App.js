@@ -1,21 +1,22 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SessionContext } from "./Contexts/SessionContext";
-import Navbar from "./Components/Navbar";
-import Connexion from "./Components/Connexion";
 import { useState } from "react";
-import AdminMain from "./Components/PagesAdmin/AdminMain";
-import GestionBuvette from "./Components/PagesBuvette/GestionBuvette";
-import GestionMateriel from "./Components/PagesMateriel/GestionMateriel";
+import { SessionContext } from "./Contexts/SessionContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./Components/Navbar";
 import Accueil from "./Components/Accueil";
-import GestionUtilisateurs from "./Components/PagesAdmin/GestionUtilisateurs";
-import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
+import Connexion from "./Components/Connexion";
 import TestDivers from "./Components/Utility/TestDivers";
-import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
+import AdminMain from "./Components/PagesAdmin/AdminMain";
+import GestionMateriel from "./Components/PagesMateriel/GestionMateriel";
+import GestionBuvette from "./Components/PagesBuvette/GestionBuvette";
 import AjouterArticle from "./Components/PagesBuvette/AjouterArticle";
 import GestionArticles from "./Components/PagesBuvette/GestionArticles";
 import ModifierArticle from "./Components/PagesBuvette/ModifierArticle";
 import NouvelleCommande from "./Components/PagesBuvette/NouvelleCommande";
+import VerifierCommande from "./Components/PagesBuvette/VerifierCommande";
+import GestionUtilisateurs from "./Components/PagesAdmin/GestionUtilisateurs";
+import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
+import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -116,6 +117,10 @@ function App() {
           <Route
             path="/manage/buvette/orders/new"
             element={<NouvelleCommande />}
+          />
+          <Route
+            path="/manage/buvette/orders/check"
+            element={<VerifierCommande />}
           />
           <Route
             path="/manage/buvette/articles/add"

@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SessionContext } from '../../Contexts/SessionContext'
+import DoTheThings from '../Utility/DoTheThings';
+import FiltreArticle from '../Utility/FiltreArticle';
 import ListeArticles from '../Utility/ListeArticles';
 
 
@@ -13,12 +15,12 @@ export default function NouvelleCommande() {
   const myAppNavigator = useNavigate();
 
     const [articleListResult, setArticleListResult] = useState([]);
-    const [myOrder, setMyOrder] = useState([]);
-    const [searchTool, setSearchTool] = useState();
+    const [myOrder, setMyOrder] = useState(currentOrder);
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [searchWarning, setSearchWarning] = useState("");
     const [isListFiltered, setIsListFiltered] = useState(false);
-    const [cancelSearchButton, setCancelSearchButton] = useState();
+    const [isOrderSorted, setisOrderSorted] = useState(false);
+    const [isCancellingOrder, setIsCancellingOrder] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
 
 //------------------------------------------------------------------------- USE EFFECT
@@ -26,8 +28,14 @@ export default function NouvelleCommande() {
   useEffect(() => {
           
     apiGetAllArticles();
-    setCancelSearchButton(<button onClick={apiGetAllArticles}>Annuler la recherche et afficher la liste de tout les articles</button>);
-    //Le bouton est set dans useEffect car "apiGetAllArticles" n'est déclaré qu'en fin de script, ce qui obligerai à assigner le bouton en fin de script.
+    sortOrder();
+
+    let tempTotal = 0;
+        myOrder.forEach(article => {
+            tempTotal += article.prixUnitaire
+        }) 
+    
+        setTotalAmount(tempTotal);
 
   return () => {
     //
@@ -36,9 +44,17 @@ export default function NouvelleCommande() {
 
 //------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
 
+const isFilterValid = (filter) => {
+  if (filter === null || filter === undefined || filter === "" || filter.replace(/\s+/g, '') === ""){
+      setSearchWarning(" Vous ne pouvez pas faire de recherche vide")
+      return false;
+  }else{
+      setSearchWarning("")
+      return true;
+  }
+}
 
-
-//------------------------------------------------------------------------- METHODES DE TRAITEMENT et REQUÊTES
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
   const addToOrder = (article) => {
     setMyOrder((prevState) => ([
@@ -48,6 +64,9 @@ export default function NouvelleCommande() {
     setTotalAmount(() => {
       return (totalAmount + article.prixUnitaire)
     })
+
+    setisOrderSorted(false);
+    setIsCancellingOrder(false);
   }
 
   const removeFromOrder = (indexToRemove) => {
@@ -70,6 +89,108 @@ export default function NouvelleCommande() {
     setTotalAmount(() => {
       return (totalAmount - thatArticleRemoved.prixUnitaire)
     })
+
+    setisOrderSorted(false);
+    setIsCancellingOrder(false);
+  }
+
+  const cancelOrder = () => {
+    setMyOrder([]);
+    setTotalAmount(0);
+    setIsCancellingOrder(false);
+  }
+
+  //Permet de trier les articles par leur ID, ce qui facilite la lecture par l'humain.
+  const sortOrder = () => {
+    setMyOrder(() => [
+      ...(myOrder.sort((a, b) => {
+        return a.id - b.id;
+      }))
+    ])
+      
+    setisOrderSorted(true);
+  }    
+  
+  const checkOrder = () => {
+    setCurrentOrder(myOrder);
+    myAppNavigator("/manage/buvette/orders/check");
+
+  }
+
+//-------------------------------------------------------------------------  REQUÊTES
+
+
+  const apiSearchArticlesByName = (searchFilter, checkUnavailableArticles) => {
+
+    if (!isFilterValid(searchFilter)){
+        return;
+    }
+    
+    fetch("/api/articles/search?name="+searchFilter,{
+        method: "POST",
+        headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+        body: JSON.stringify(
+            {
+                //Si on demande à vérifier les articles non disponible, on retourne tout les articles. Cela correspond à "null" dans le backend. Si on veut exclusivement les articles disponibles (checkUnavailableArticles = false) cela correspond à true dans le backend.
+                isOnlyAvailableArticles: checkUnavailableArticles ? null : true 
+            }
+        )
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        console.log("API response ↓");
+        console.log(data.message);
+
+        if (isUserTokenExpired(data)){
+            myAppNavigator("/login");
+        }
+
+        setApiSearchResponse(data.message);
+        setArticleListResult(data.resultArray);
+        setIsListFiltered(true);
+    })
+    .catch((err) => {
+        console.log(err.message);
+        console.log(err);
+    });
+  }
+
+  const apiSearchArticlesByCategory = (searchFilter, checkUnavailableArticles) => {
+    
+    if (!isFilterValid(searchFilter)){
+        return;
+    }
+    
+    fetch("/api/articles/category",{
+        method: "POST",
+        headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+        body: JSON.stringify(
+            {
+                //Si on demande à vérifier les articles non disponible, on retourne tout les articles. Cela correspond à "null" dans le backend. Si on veut exclusivement les articles disponibles (checkUnavailableArticles = false) cela correspond à true dans le backend.
+                filter: searchFilter,
+                isOnlyAvailableArticles: checkUnavailableArticles ? null : true 
+            }
+        )
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        console.log("API response ↓");
+        console.log(data.message);
+
+        if (isUserTokenExpired(data)){
+            myAppNavigator("/login");
+        }
+
+        setApiSearchResponse(data.message);
+        setArticleListResult(data.resultArray);
+        setIsListFiltered(true);
+    })
+    .catch((err) => {
+        console.log(err.message);
+        console.log(err);
+    });
+
+
   }
 
   const apiGetAllArticles = () => {
@@ -103,36 +224,62 @@ export default function NouvelleCommande() {
 
 //------------------------------------------------------------------------- AFFICHAGE
 
-  const doTheThing = () => {
-    //console.log("did the thing !");
-    console.log(myOrder);
+  const thatThing = () => {
+    console.log(myOrder.length);
   }
 
-  const doTheOtherThing = () => {
-    console.log("did the OTHER thing !");
+  const thatOtherThing = () => {
+    console.log("the OTHER thing");
   }
 
   return (
     <div> 
-      <button onClick={doTheThing}>Do the thing</button>
+      
+      <DoTheThings
+        theThing={thatThing}
+        //theThing={null}
+        theOtherThing={null}
+        />
 
-
-      <h1>Nouvelle commande</h1>
+      <h1><u>Nouvelle commande</u></h1>
       <br />
-      <br />
-      <h2>Votre commande : </h2>
+      <h2>Contenu de la commande : </h2>
         <ul>
-          {myOrder.map((article, index) => {
+          {myOrder 
+          ?myOrder.map((article, index) => {
             return(
               <li key={index}> 1 {article.nom} : {article.prixUnitaire}€ <button onClick={() => removeFromOrder(index)}>Retirer de la commande</button>
               </li>
             )
-          })}
+          })
+          :""}
           <h4>Montant total : {totalAmount} €</h4>
         </ul>
 
+          <br />
+          <button disabled={isOrderSorted} onClick={sortOrder}>Trier les articles</button>
+          <button disabled={myOrder.length === 0} onClick={() => setIsCancellingOrder(true)}>Annuler la commande</button>
+          <button disabled={myOrder.length === 0} onClick={checkOrder}>Valider la commande</button>
+          <br />
+          <br />
+          <div hidden={!isCancellingOrder}> Voulez vous vraiment retirer tout les articles de cette commande ? </div>
+          <button hidden={!isCancellingOrder} onClick={cancelOrder}>Confirmer l'annulation de la commande</button>
+
         <hr />
-        <h3>Le filtre ici</h3>
+        <FiltreArticle 
+          isListFiltered = {isListFiltered}
+          setIsListFiltered = {setIsListFiltered}
+      
+          searchWarning = {searchWarning}
+          setSearchWarning = {setSearchWarning}
+      
+          apiSearchByName = {apiSearchArticlesByName}
+          apiSearchByCategory = {apiSearchArticlesByCategory}
+          apiGetAllArticles = {apiGetAllArticles}
+
+
+          />
+          <br />
         <ListeArticles 
           articles={articleListResult} 
           apiSearchResponse={apiSearchResponse} 

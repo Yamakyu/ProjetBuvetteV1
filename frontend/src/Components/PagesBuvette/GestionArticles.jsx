@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ListeArticles from '../Utility/ListeArticles'
 import { SessionContext } from '../../Contexts/SessionContext';
+import FiltreArticle from '../Utility/FiltreArticle';
 
 export default function ModifierArticle() {
     
@@ -200,17 +201,17 @@ export default function ModifierArticle() {
   return (
     <div>
         <br/>
-        <h3>
-            Filtrer les articles
-            <br/>
-            <button onClick={prepareSearchArticleByName}>Rechercher des article par leur nom</button>
-            <button onClick={prepareSearchArticleByCategory}>Rechercher des article par catégorie</button>
-        </h3>
-        { searchTool }
-        { searchWarning }
-        { isListFiltered 
-            ? <button onClick={apiGetAllArticles}>Annuler la recherche et afficher la liste de tout les articles</button>
-            : "" }
+        <FiltreArticle 
+            isListFiltered = {isListFiltered}
+            setIsListFiltered = {setIsListFiltered}
+        
+            searchWarning = {searchWarning}
+            setSearchWarning = {setSearchWarning}
+        
+            apiSearchByName = {apiSearchArticlesByName}
+            apiSearchByCategory = {apiSearchArticlesByCategory}
+            apiGetAllArticles = {apiGetAllArticles}
+            />
         <br/>
         <br/>
         <hr color='#adadad'/>

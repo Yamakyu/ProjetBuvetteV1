@@ -15,7 +15,6 @@ export default function ListeArticles(props) {
     <div>
 
         <h2>{apiSearchResponse || " Liste des articles :"}</h2>
-        <br/>
         {theseArticles 
           ? theseArticles.map((article) =>{
             return(
