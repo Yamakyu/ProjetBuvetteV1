@@ -4,8 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useContext } from 'react';
 import { SessionContext } from '../Contexts/SessionContext';
 
-const os = require("os");
-
 export default function Navbar() { 
 
     const myAppNavigator = useNavigate() ;
