@@ -102,6 +102,14 @@ export default function AjouterUtilisateur() {
     
                 resetWarning();
                 setApiResponse(data.message);
+                setUserWorkedOn({
+                    nom:"",
+                    prenom:"",
+                    email:"",
+                    password:"",
+                    droits:"Aucun"
+                })
+                setPasswordConfirm("");
                 
             })
             .catch((err) => console.log(err));

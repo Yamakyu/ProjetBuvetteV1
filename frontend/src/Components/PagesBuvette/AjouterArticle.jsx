@@ -74,7 +74,12 @@ export default function AjouterArticle() {
             if (isUserTokenExpired(res.data)){
                 return myAppNavigator("/login");
             }else{
-                setResAPIMessage(" Article " + res.data.message);
+                setResAPIMessage("→ Article " + res.data.message);
+                setArticleName("");
+                setArticlePrice("");
+                setArticleDescription("");
+                setArticleImage({});
+                setValidateArticle("");
             }
         })
         .catch((err) => {
