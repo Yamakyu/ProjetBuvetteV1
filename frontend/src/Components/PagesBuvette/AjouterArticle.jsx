@@ -47,7 +47,7 @@ export default function AjouterArticle() {
             file: articleImage,
             disponible: isArticlePublished ? "oui" : "non"        //← Ici je parse le booléen en "oui" ou "non", pour la vérification
         }
-
+        setResAPIMessage("");
         setValidateArticle(displayInputedArticle(articleWorkedOn))
     }
 

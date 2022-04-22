@@ -90,7 +90,7 @@ export default function VerifierCommande() {
 
     const handleDiscountInputSelect = (inputEvent) => {
         setTotalAmountDiscounted(totalAmount * inputEvent.target.value)
-        setDiscount(inputEvent.target.value);
+        setDiscount(1-inputEvent.target.value);
     }
 
     const handleCustomerInputSelect = (inputEvent) => {
@@ -195,11 +195,11 @@ export default function VerifierCommande() {
         .then((data) => {
             console.log("API response ↓");
             console.log(data.message);
+            setApiResponse(data.message);
 
             if (isUserTokenExpired(data)){
                 myAppNavigator("/login");
             }
-            setApiResponse(data.message);
             setUserListResult(data.resultArray);
         })
         .catch((err) => {
@@ -252,6 +252,7 @@ export default function VerifierCommande() {
         .then((data) => {
             console.log("API response ↓");
             console.log(data.message);
+            setApiResponse(data.message);
 
             if (isUserTokenExpired(data)){
                 myAppNavigator("/login");
@@ -259,7 +260,6 @@ export default function VerifierCommande() {
 
             if (data.addedUser !== undefined){
                 console.log(data.addedUser);
-                setApiResponse(data.message);
                 setCustomer(data.addedUser);  
                 setIsOrderReady(true);
             }
@@ -268,7 +268,54 @@ export default function VerifierCommande() {
     }
 
     const apiCompleteOrder = async () => {    
-        setValidateOrderResponse(`Pas d'API pour le moment, mais la commande d'un montent de ${totalAmountDiscounted} € pour ${customer.nom} ${customer.prenom} est prête`);
+        //setValidateOrderResponse(`Pas d'API pour le moment, mais la commande d'un montent de ${totalAmountDiscounted} € pour ${customer.nom} ${customer.prenom} est prête`);
+
+        setValidateOrderResponse("L'opération peut prendre quelques instants. Veuillez patienter... ");
+
+        let completeOrder = {
+            customerId: customer.id,
+            customer: `${customer.nom} ${customer.prenom}`,
+            gerantId: activeSession.userInfo.id,
+            commentaire:"Pas de commentaire pour le moment",
+            totalAmount: totalAmount,
+            totalAmountDiscounted: totalAmountDiscounted,
+            discount: discount * 100,
+            orderLines: reducedOrder
+        };
+
+
+        await fetch("/api/invoices/add",{
+            method: "POST",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+            body: JSON.stringify(
+                {
+                    customerId: customer.id,
+                    customer: `${customer.nom} ${customer.prenom}`,
+                    gerantId: activeSession.userInfo.id,
+                    gerant: `${activeSession.userInfo.nom} ${activeSession.userInfo.prenom}`,
+                    commentaire:"Pas de commentaire pour le moment",
+                    totalAmount: totalAmount,
+                    totalAmountDiscounted: totalAmountDiscounted,
+                    discount: discount * 100,
+                    orderLines: reducedOrder
+                })
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);
+            setValidateOrderResponse(data.message);
+
+            if (isUserTokenExpired(data)){
+                myAppNavigator("/login");
+            }
+
+            if (data.invoiceLines !== undefined){
+                console.log(data.invoiceLines);
+            }
+        })
+        .catch((err) => console.log(err));
+
     }
 
 //------------------------------------------------------------------------- AFFICHAGE
@@ -316,6 +363,7 @@ export default function VerifierCommande() {
 
     const thatOtherThing = () => {
         console.log(customer);
+        console.log(reducedOrder);
     }
 
 
@@ -393,7 +441,7 @@ export default function VerifierCommande() {
                     onChange={(e) => setNameToLookFor(e.target.value)}
                     name="searchName"
                     />
-                    <button onClick={() => apiSearchUsersByName(nameToLookFor)}>Lancer la rechercehe</button>
+                    <button onClick={() => apiSearchUsersByName(nameToLookFor)}>Lancer la recherche</button>
                     <br/>
                     <br/>
 

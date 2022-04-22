@@ -11,7 +11,7 @@ export default function Navbar() {
     const [confirmDropDatabaseBtn, setConfirmDropDatabaseBtn] = useState("")
     const [cancelDropDatabaseBtn, setCancelDropDatabaseBtn] = useState("")
 
-    const {activeSession, setActiveSession, getLocalStorage}= useContext(SessionContext); 
+    const {activeSession, setActiveSession, getLocalStorage, setCurrentOrder}= useContext(SessionContext); 
 
     const userLogout = () => {
         //setActiveSession(() => localStorage.removeItem('currentSession'));
@@ -21,6 +21,8 @@ export default function Navbar() {
         setActiveSession(() => ({
           ...getLocalStorage("currentSession")            
         }));
+
+        setCurrentOrder([]);
 
         myAppNavigator("/login");
     }

@@ -36,17 +36,19 @@ monApp.use(express.urlencoded({ extended: true }));
 
 monApp.use("/images", express.static("images"));
 
-const RouteUser = require("./Routes/RouteUser");
 const RouteTest = require("./Routes/RouteTest");
+const RouteUser = require("./Routes/RouteUser");
 const RouteArticle = require("./Routes/RouteArticle");
+const RouteInvoice = require("./Routes/RouteInvoice");
 
 db.sequelize.sync();
 
 //Redirection des requêtes
 //monApp.use("/api/tutorials", RouteTutorial);
-monApp.use("/api/users", RouteUser);
 monApp.use("/api/test", RouteTest);
+monApp.use("/api/users", RouteUser);
 monApp.use("/api/articles", RouteArticle);
+monApp.use("/api/invoices", RouteInvoice);
 
 monApp.use("/api/init", userController.checkAdmins);
 monApp.use("/api/reset", userController.isLoggedIn, (req, res) => {

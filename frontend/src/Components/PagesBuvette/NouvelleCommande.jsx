@@ -96,6 +96,7 @@ const isFilterValid = (filter) => {
 
   const cancelOrder = () => {
     setMyOrder([]);
+    setCurrentOrder([]);
     setTotalAmount(0);
     setIsCancellingOrder(false);
   }

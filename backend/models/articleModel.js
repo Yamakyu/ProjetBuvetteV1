@@ -29,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: "default/default.jpg",
     },
-    //Changer en réel, sinon pas de virgule
     prixUnitaire: {
       type: DataTypes.FLOAT,
       field: "prix_unitaire",

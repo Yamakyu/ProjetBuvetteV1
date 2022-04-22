@@ -54,6 +54,7 @@ function App() {
       console.log("statut de ActiveSession :");
       console.log(activeSession);
 
+      setCurrentOrder([]);
       return true;
     } else {
       return false;
