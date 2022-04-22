@@ -5,6 +5,11 @@ const userController = require("../controllers/userController");
 
 router.post("/login", userController.login);
 router.post("/signup", userController.isLoggedIn, userController.addUser);
+router.post(
+  "/signup/customer",
+  userController.isLoggedIn,
+  userController.addCustomer
+);
 
 router.put("/edit/:id", userController.isLoggedIn, userController.editUser);
 

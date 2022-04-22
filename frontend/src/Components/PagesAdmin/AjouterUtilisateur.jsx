@@ -65,7 +65,7 @@ export default function AjouterUtilisateur() {
 
     }
 
-//------------------------------------------------------------------------- METHODES DE TRAITEMENT
+//------------------------------------------------------------------------- REQUÊTES
 
     const apiAddUser = async () => {
 

@@ -58,6 +58,42 @@ exports.addUser = async (req, res) => {
   }
 };
 
+// ---------- POST ----------- (testé)
+exports.addCustomer = async (req, res) => {
+  console.log("USER controller : addCustomer -------");
+
+  try {
+    if (
+      !req.thatRequestToken.isAdmin &&
+      !req.thatRequestToken.isGerantBuvette
+    ) {
+      return res.status(401).json({
+        message:
+          "Non-authorisé, seul un gérant buvette ou un administrateur peut réaliser cette opération",
+      });
+    }
+
+    //↓ Si l'utilisateur est créé avec des droits particuliers, on vérifie que la requête est bien faite par un admin
+    req.body.isAdmin = false;
+    req.body.isGerantBuvette = false;
+    req.body.isGerantMateriel = false;
+    req.body.password = "user";
+
+    await User.create(req.body)
+      .then((data) => {
+        return res.status(200).json({
+          message: "Inscription réussie",
+          addedUser: data,
+        });
+      })
+      .catch((err) => {
+        displayThatError(res, err);
+      });
+  } catch (err) {
+    displayThatError(res, err);
+  }
+};
+
 //------------- POST -------------- (testé)
 exports.login = async (req, res) => {
   console.log("USER controller : login -------");

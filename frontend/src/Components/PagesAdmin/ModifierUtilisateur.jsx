@@ -159,6 +159,7 @@ export default function ModifierUtilisateur() {
     }
 
 //------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
+
     let checkInactiveAccounts = false;
 
     const prepareSearchUserByName = () => {
