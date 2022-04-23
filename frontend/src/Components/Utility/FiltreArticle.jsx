@@ -47,7 +47,7 @@ export default function FiltreArticle(props) {
                    <label>
                         Rechercher un article de quelle catégorie ? 
                         <select onChange={(e) => categoryToLookFor = e.target.value}>
-                            <option value=""></option>
+                            <option value="">*Pour le moment* tout les articles sont des "snacks" donc ce filtre ne sert à rien</option>
                             <option value="snack">Snack</option>
                             <option value="friandise">friandise</option>
                             <option value="boisson chaude">Boisson chaude</option>

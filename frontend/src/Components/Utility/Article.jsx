@@ -20,7 +20,7 @@ export default function Article(props) {
         <>
             <br/>
             <Card className='shadow-lg m-2 p-3 rounded' style={{ width: '60rem' }}>
-                <Card.Img src={article.photo} height="100" />
+                <Card.Img src={article.photo} height="200" />
                 <Card.Body> 
                     <Card.Title>Nom de l'article : {article.nom}
                         {(isEditingArticle && (newArticle.nom !== article.nom)) 

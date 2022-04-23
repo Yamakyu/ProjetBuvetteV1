@@ -161,19 +161,21 @@ export default function VerifierCommande() {
 
         let userAlreadyExists = false;
         
-        userListFull.forEach((user) => {
-            if (user.email === newCustomer.email){
-                console.log("mail match !");
-                setApiResponse(`L'email ${newCustomer.email} est déjà utilisé !`);
-                userAlreadyExists = true;
-                return ;
-            } else if ((user.nom === newCustomer.nom) && (user.prenom === newCustomer.prenom)){
-                console.log("name  match !");
-                setApiResponse(`${newCustomer.nom} ${newCustomer.prenom} a déjà effectué une commande auparavant !`);
-                userAlreadyExists = true;
-                return ;
-            }
-        })
+        if(userListFull){
+            userListFull.forEach((user) => {
+                if (user.email === newCustomer.email){
+                    console.log("mail match !");
+                    setApiResponse(`L'email ${newCustomer.email} est déjà utilisé !`);
+                    userAlreadyExists = true;
+                    return ;
+                } else if ((user.nom === newCustomer.nom) && (user.prenom === newCustomer.prenom)){
+                    console.log("name  match !");
+                    setApiResponse(`${newCustomer.nom} ${newCustomer.prenom} a déjà effectué une commande auparavant !`);
+                    userAlreadyExists = true;
+                    return ;
+                }
+            })
+        }
 
         if (!userAlreadyExists){
             setApiResponse("");
@@ -371,7 +373,7 @@ export default function VerifierCommande() {
     <div>
         <DoTheThings
         theThing={thatThing}
-        theOtherThing={thatOtherThing}       
+        theOtherThing={thatOtherThing}
         />
 
         <h2><u>Veuillez vérifier la saisie</u></h2>

@@ -7,12 +7,37 @@ const invoiceController = require("../controllers/invoiceController");
 
 router.post("/add", userController.isLoggedIn, invoiceController.addInvoice);
 
-//router.post("/category", articleController.findArticleByCategory);
-//router.post("/all", articleController.findAllArticles);
-//router.post("/search", articleController.findArticleByName);
+router.get(
+  "/details/:id",
+  userController.isLoggedIn,
+  invoiceController.findInvoiceDetailsByInvoiceID
+);
+router.get(
+  "/customer/:id",
+  userController.isLoggedIn,
+  invoiceController.findInvoiceByCustomerID
+);
+router.get(
+  "/gerant/:id",
+  userController.isLoggedIn,
+  invoiceController.findInvoiceByGerantID
+);
+router.get(
+  "/all",
+  userController.isLoggedIn,
+  invoiceController.findAllInvoices
+);
 
-//router.get("/ip", articleController.getNetworkInfo);
-//router.get("/init", articleController.initSomeArticles);
-//router.get("/:id", articleController.findArticleById);
+router.get(
+  "/:id",
+  userController.isLoggedIn,
+  invoiceController.findInvoiceByID
+);
+
+router.put(
+  "/edit/:id",
+  userController.isLoggedIn,
+  invoiceController.editInvoice
+);
 
 module.exports = router;

@@ -31,11 +31,10 @@ export default function NouvelleCommande() {
     sortOrder();
 
     let tempTotal = 0;
-        myOrder.forEach(article => {
-            tempTotal += article.prixUnitaire
-        }) 
-    
-        setTotalAmount(tempTotal);
+    myOrder.forEach(article => {
+        tempTotal += article.prixUnitaire
+    }) 
+    setTotalAmount(tempTotal);
 
   return () => {
     //
@@ -237,10 +236,9 @@ const isFilterValid = (filter) => {
     <div> 
       
       <DoTheThings
-        theThing={thatThing}
-        //theThing={null}
+        theThing={null}
         theOtherThing={null}
-        />
+      />
 
       <h1><u>Nouvelle commande</u></h1>
       <br />
@@ -277,16 +275,15 @@ const isFilterValid = (filter) => {
           apiSearchByName = {apiSearchArticlesByName}
           apiSearchByCategory = {apiSearchArticlesByCategory}
           apiGetAllArticles = {apiGetAllArticles}
-
-
-          />
-          <br />
+        />
+        <br />
         <ListeArticles 
           articles={articleListResult} 
           apiSearchResponse={apiSearchResponse} 
           displayAddToOrderButtonChild={true} 
           displayDetailsButtonChild={false}
-          addToOrderChild={addToOrder}/>
+          addToOrderChild={addToOrder}
+        />
         {/* Ce composant appelle lui même le composant Article. L'indication "Child" sur un nom de props indique que cet élément est réceptionné par le composant Article, enfant du composant ListeArticle */}
     </div>
   )

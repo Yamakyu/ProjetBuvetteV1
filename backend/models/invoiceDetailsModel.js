@@ -23,14 +23,20 @@ module.exports = (sequelize, DataTypes) => {
     gerantId: {
       //FK
       //ID (utilisateur) de la personne qui était gérant buvette pour cette commande
-      type: DataTypes.INTEGER,
       field: "gerant_id",
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     articleId: {
       //L'article indiqué sur cette ligne de facture.
       type: DataTypes.INTEGER,
       field: "article_id",
+      allowNull: false,
+    },
+    article: {
+      //Son nom
+      type: DataTypes.STRING,
+      field: "article",
       allowNull: false,
     },
     quantite: {
