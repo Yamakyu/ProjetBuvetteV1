@@ -58,9 +58,10 @@ exports.addInvoice = async (req, res) => {
       await InvoiceLines.bulkCreate(invoiceLines)
         .then((data) => {
           console.log(`------- Détails de factures ajoutés`);
-          return res
-            .status(200)
-            .json({ message: "Factures ajoutées à la BdD !", invoiceLines });
+          return res.status(200).json({
+            message: "La commande a bien été enregistrée !",
+            invoiceLines,
+          });
         })
         .catch((error) => displayThatError(res, error));
 

@@ -123,7 +123,7 @@ const isFilterValid = (filter) => {
   const apiSearchArticlesByName = (searchFilter, checkUnavailableArticles) => {
 
     if (!isFilterValid(searchFilter)){
-        return;
+      return;
     }
     
     fetch("/api/articles/search?name="+searchFilter,{

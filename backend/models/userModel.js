@@ -53,6 +53,11 @@ module.exports = (sequelize, Sequelize) => {
         field: "is_gerant_materiel",
         defaultValue: false,
       },
+      droits: {
+        type: Sequelize.STRING,
+        field: "droits",
+        allowNull: true,
+      },
     },
 
     {

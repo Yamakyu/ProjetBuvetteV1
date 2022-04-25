@@ -7,27 +7,161 @@ export default function HistoriqueCommandes() {
 
     const {activeSession, isUserTokenExpired} = useContext(SessionContext)
 
-    const [invoiceList, setInvoiceList] = useState([]);
+    const [invoiceListFull, setInvoiceListFull] = useState([]);     //invoiceListFull est la liste complète des commandes, et ne sera jamais changé
+    const [invoiceListResult, setInvoiceListResult] = useState([]);             //invoiceList est la liste affichée des commandes, et est susceptible d'être filtrée
+    const [userListResult, setUserListResult] = useState([]);
+    const [userListFull, setUserListFull] = useState([]);
+    const [apiSearchResponse, setApiSearchResponse] = useState("");
+    const [searchTool, setSearchTool] = useState("");
+    const [searchWarning, setSearchWarning] = useState("");
+    const [searchType, setSearchType] = useState("all");
+    const [isListFiltered, setIsListFiltered] = useState(false);
+    const [searchGerant, setSearchGerant] = useState(null);
+    const [isSearchByDate, setIsSearchByDate] = useState(false);
 
     const myAppNavigator = useNavigate();
     
 //------------------------------------------------------------------------- USE EFFECT
 
+    useEffect(() => {
+        apiGetAllInvoices();
+        apiGetAllUsers();
+        
+        return () => {}
+    }, [])
+
+
 
     useEffect(() => {
-      
-        apiGetAllInvoices();
-    
+        setUserListResult(userListFull);
       return () => {}
-    }, [])
+    }, [userListFull])
     
+
+
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT
+
+    const handleDateInputSelect = (inputEvent) => {
+        setSearchTool("");
+        const spanOfTime = inputEvent.target.value;
+        console.log(spanOfTime);
+    }
+
+    const handleInputSelect = async (inputEvent) => { 
+        setSearchType(inputEvent.target.value);
+
+        setSearchWarning("");
+        setIsSearchByDate(inputEvent.target.value === "date");
+
+        if (inputEvent.target.value === "all" || inputEvent.target.value === "date" ){
+            setApiSearchResponse('');
+            setSearchTool("");
+            setUserListResult([]);
+            setInvoiceListResult(invoiceListFull)
+            setIsListFiltered(false);
+            return;
+        }
+        else if (inputEvent.target.value === "gerant") {
+            await apiGetGerantID();
+        }
+        else if (inputEvent.target.value === "myself"){
+            handleFilterUsers(activeSession.userInfo, inputEvent.target.value);
+        }
+        else {
+            setUserListResult(userListFull);
+            displaySearchTool();
+        }
+    }
+
+    const handleFilterUsers = (thatUser, search) => {
+        let filteredInvoiceList = [];
+        setIsListFiltered(true);
+        setApiSearchResponse("Résultats de la recherche : ")
+
+        invoiceListFull.forEach(facture => {
+            if(((facture.customerId === thatUser.id) && (search==="customer")) 
+            || ((facture.gerantId === thatUser.id) && (search==="gerant"))
+            || ((facture.gerantId === thatUser.id) && (search==="myself"))){
+                filteredInvoiceList.push(facture);
+            }
+        });
+
+
+        if (filteredInvoiceList.length !==0)
+        {
+            setInvoiceListResult(filteredInvoiceList)
+        }else{
+            setInvoiceListResult([]);
+            setApiSearchResponse("Aucun résultat")
+        }
+    }
+
+    const cancelFilter = () => {
+        setInvoiceListResult(invoiceListFull);
+        setIsListFiltered(false);
+        setApiSearchResponse("");
+    }
+
+    const filterUserResults = (searchFilter) => {
+        let filteredUserList = [];
+
+        //Si le filtre est vide, on retourne les utilisateurs tels quels
+        if(!isFilterNotEmpty(searchFilter)){
+            return;
+        }
+
+        userListResult.forEach(user => {
+            if(user.nom.includes(searchFilter) || user.prenom.includes(searchFilter)){
+                filteredUserList.push(user);
+            }
+        })
+
+        if (filteredUserList.length !==0)
+        {
+            setUserListResult(filteredUserList);
+            setSearchWarning("");
+        }else{
+            setSearchWarning("Aucun résultat pour ce nom ou prénom");
+        }
+    }
+
+    const displaySearchTool = () => {
+        let nameToLookFor;
+
+        setSearchTool(
+            <div>
+                Vous pouvez chercher un nom ou prénom
+
+                <input
+                placeholder="Entrez un nom"
+                value={nameToLookFor}
+                type="text"
+                onChange={(e) => nameToLookFor = e.target.value}
+                name="searchName"
+                />
+                <br/>
+            
+                <button onClick={() => filterUserResults(nameToLookFor)}>Lancer la recherche</button>
+            </div>
+        );
+    }
+
+    const isFilterNotEmpty = (filter) => {
+        if (filter === null || filter === undefined || filter === "" || filter.replace(/\s+/g, '') === ""){
+            setSearchWarning(" Vous ne pouvez pas faire de recherche vide")
+            return false;
+        }else{
+            setSearchWarning("")
+            return true;
+        }
+    }
 
 //------------------------------------------------------------------------- REQUÊTES
 
     const apiGetAllInvoices = async () => {
         console.log("Returning all invoices...");
 
-        fetch("/api/invoices/all",{
+        await fetch("/api/invoices/all",{
             method: "GET",
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
         })
@@ -39,7 +173,8 @@ export default function HistoriqueCommandes() {
             if (isUserTokenExpired(data)){
                 myAppNavigator("/login");
             }
-            setInvoiceList(data.resultArray);
+            setInvoiceListFull(data.resultArray);
+            setInvoiceListResult(data.resultArray)
         })
         .catch((err) => {
             console.log(err.message);
@@ -47,36 +182,134 @@ export default function HistoriqueCommandes() {
         });
     }
 
+    const apiGetAllUsers = async () => {
+        
+        await fetch("/api/users/search/all",{
+            method: "POST",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+            body: JSON.stringify(
+                {
+                    isInactiveAccountsIncluded : activeSession.userInfo.isAdmin, 
+                }
+            )
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);
+
+            if (isUserTokenExpired(data)){
+                myAppNavigator("/login");
+            }
+            setUserListFull(data.resultArray);
+        })
+        .catch((err) => {
+            console.log(err.message);
+            console.log(err);
+        });
+
+    }
+
+    const apiGetGerantID = async () => {
+        console.log("Returning gerants buvette");
+
+        await fetch("/api/users/search/role",{
+            method: "POST",
+            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+            body: JSON.stringify(
+                {
+                    filter: "Gerant Buvette",
+                    isInactiveAccountsIncluded : activeSession.userInfo.isAdmin, 
+                }
+            )
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("API response ↓");
+            console.log(data.message);
+
+            if (isUserTokenExpired(data)){
+                myAppNavigator("/login");
+            }
+            setUserListResult(data.resultArray);
+        })
+        .catch((err) => {
+            console.log(err.message);
+            console.log(err);
+        });
+    }
 
 //------------------------------------------------------------------------- AFFICHAGE
+
+    const theThing =() => {
+        console.log(userListResult);
+    }
 
 
   return (
     <div>
         <DoTheThings 
-        theThing={null}
+        theThing={theThing}
         theOtherThing={null} 
         />
+        <br />
+        <div>
+            <h3>
+            
+            <label>
+                Afficher les commandes... {" "}
+                <select onChange={handleInputSelect}>
+                    <option value="all"> toutes </option>
+                    <option value="myself"> validées par moi même, {activeSession.userInfo.nom} {activeSession.userInfo.prenom} </option>
+                    <option value="gerant"> validées par (gérant) </option>
+                    <option value="customer"> à l'ordre de (consommateur)</option>
+                    <option value="date"> datant (inactif pour le moment)</option>
+                </select>
+            </label>
+            <label hidden={!isSearchByDate}>
+                <select onChange={handleDateInputSelect}>
+                    <option value="null"> (sélectionnez une période de temps) </option>
+                    <option value="day"> d'aujourd'hui </option>
+                    <option value="week"> des 7 derniers jours </option>
+                    <option value="month"> des 30 derniers jours </option>
+                    <option value="semester"> des 6 derniers mois </option>
+                    <option value="year"> des 12 derniers mois</option>
+                </select>
+            </label>
+            </h3>
+            <ul hidden={(userListResult.length === 0) || (searchType=== "all") || (searchType=== "myself")}>
+                {userListResult.map(user => {
+                    return(
+                        <li key={user.id}>
+                                {user.nom} {user.prenom} {user.isActiveAccount ? "" : "(compte inactif)"}
+                                    <button onClick={() => handleFilterUsers(user, searchType)}>Afficher les commandes</button>
+                            </li>
+                        )
+                    })}
+            </ul>
+            { searchTool }
+            { searchWarning }
+        </div>
+
+        <hr />
 
         <h2>
-            Liste des commandes : 
+        {apiSearchResponse || " Liste de toutes les commandes :"}
+        <br />
+        { isListFiltered 
+            ? <button onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>
+            : "" }
         </h2>
-        <h4>
             <ul>
-                {invoiceList.map(facture => {
+                {invoiceListResult.map(facture => {
                     return(
                         <li key={facture.id}>
-                            Commande pour {facture.customer} du {facture.createdAt.substring(0,10)}. Montant total {facture.discount !== 0 ? "(après réduction) " : ""}: {facture.totalAmountDiscounted}€
-                            <ul>
+                            À l'ordre de <b>{facture.customer}</b>, le {facture.createdAt.substring(0,10)} || <b>{facture.totalAmountDiscounted}€</b> {facture.discount !== 0 ? `(après ${facture.discount}% de réduction) ` : ""}
                                 <button onClick={() => myAppNavigator(`/manage/buvette/invoices/details/${facture.id}`)}>Voir les détails</button>
-                                <br />
-                                <br />
-                            </ul>
                         </li>
                     )
                 })}
             </ul>
-        </h4>
     </div>
   )
 }

@@ -86,8 +86,9 @@ export default function DetailCommande() {
         theOtherThing={null} 
         />
 
-      <h2>Facture #{invoice.id}, datée du {invoice.createdAt.substring(0,10)}</h2>
+      <h2>Facture #{invoice.id}</h2>
       <h3>Commande validée par {invoice.gerant}, pour <i>{invoice.customer}</i>.
+      <br />
       Détails de la commande : </h3>
       
       <h3>
@@ -105,7 +106,7 @@ export default function DetailCommande() {
           <br />
         {invoice.discount !== 0 
           ?<div>
-            <h4>Montant total : {invoice.totalAmountDiscounted} €
+            <h4>Montant total : {invoice.totalAmount} €
             <br />
             Réduction : {invoice.discount}%</h4> 
             <br/>
@@ -114,6 +115,11 @@ export default function DetailCommande() {
           : <h3>Montant total : {invoice.totalAmountDiscounted} €</h3> 
         }  
         </ul>
+        <br />
+        <br />
+
+        Commande datée du {invoice.createdAt !== undefined ? invoice.createdAt.substring(0,10) : invoice.createdAt }
+
       </h3>
 
 

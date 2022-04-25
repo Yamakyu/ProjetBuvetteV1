@@ -524,11 +524,12 @@ export default function VerifierCommande() {
             <br />
             <br />
             {/*<button disabled={!isOrderReady && isStringEmpty(orderComment)} onClick={apiCompleteOrder}>Valider la commande</button>*/}
+            {validateOrderResponse}
+            <br />
             <button disabled={!isOrderReady} onClick={apiCompleteOrder}>Valider la commande</button>
             <br />
-            {validateOrderResponse}
-
-
+            <br />
+            <br />
     </div>
   )
 }

@@ -42,6 +42,19 @@ exports.addUser = async (req, res) => {
         req.body.isGerantMateriel = false;
       }
 
+      //Deuxième parse pour obtenir directement un string avec les droits en clair. Le front en a besoin plusieurs fois
+      if (req.body.isAdmin) {
+        req.body.droits = "Admin";
+      } else if (req.body.isGerantBuvette && req.body.isGerantMateriel) {
+        req.body.droits = "Double gérant";
+      } else if (req.body.isGerantBuvette || req.body.isGerantMateriel) {
+        req.body.droits = isGerantBuvette
+          ? "Gerant Buvette"
+          : "Gerant Matériel"; //Si on créé un utilisateur qui est gérant buvette ou matériel, et qu'il est pas gérant buvette, c'est qu'il gère le matériel
+      } else {
+        req.body.droits = "Aucun";
+      }
+
       await User.create(req.body)
         .then((data) => {
           return res.status(200).json({
@@ -73,10 +86,10 @@ exports.addCustomer = async (req, res) => {
       });
     }
 
-    //↓ Si l'utilisateur est créé avec des droits particuliers, on vérifie que la requête est bien faite par un admin
     req.body.isAdmin = false;
     req.body.isGerantBuvette = false;
     req.body.isGerantMateriel = false;
+    req.body.droits = "aucun";
     req.body.password = "user";
 
     await User.create(req.body)
@@ -143,6 +156,9 @@ exports.login = async (req, res) => {
           prenom: thatUser.prenom,
           email: thatUser.email,
           droits: userRightsToReturn,
+          isAdmin: thatUser.isAdmin,
+          isGerantBuvette: thatUser.isGerantBuvette,
+          isGerantMateriel: thatUser.isGerantMateriel,
         };
 
         //On ajoute les informations utilisateur ainsi que ses droits dans le token de connexion, pour pouvoir s'en re-servir plus tard dans d'autres API (next())
@@ -392,20 +408,57 @@ exports.findByRole = async (req, res) => {
         case "Gerant Buvette":
           console.log("------ returning all GERANTS BUVETTE");
           theseUsers = await User.findAll({
-            where: { isGerantBuvette: true },
+            where: {
+              [Op.or]: [{ isGerantBuvette: true }, { isAdmin: true }],
+            },
           });
           break;
         case "Gerant Matériel":
           console.log("------ returning all GERANTS MATERIEL");
           theseUsers = await User.findAll({
-            where: { isGerantMateriel: true },
+            where: {
+              [Op.and]: [{ isGerantMateriel: true, isAdmin: true }],
+            },
           });
           break;
+        /*
+        case "not Buvette":
+          console.log("------ returning all NON GERANTS BUVETTE");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.and]: [
+                {
+                  isGerantBuvette: false,
+                  isAdmin: false,
+                },
+              ],
+            },
+          });
+          break;
+        case "not Matériel":
+          console.log("------ returning all GERANTS MATERIEL");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.and]: [
+                {
+                  isGerantMateriel: false,
+                  isAdmin: false,
+                },
+              ],
+            },
+          });
+          break;
+          */
         case "Double gérant":
           console.log("------ returning all GERANTS DOUBLE");
           theseUsers = await User.findAll({
-            where: {
-              [Op.and]: [{ isGerantMateriel: true }, { isGerantBuvette: true }],
+            here: {
+              [Op.or]: [
+                {
+                  [Op.and]: [{ isGerantBuvette: true, isGerantMateriel: true }],
+                },
+                { isAdmin: true, isActiveAccount: true },
+              ],
             },
           });
           break;
@@ -414,9 +467,11 @@ exports.findByRole = async (req, res) => {
           theseUsers = await User.findAll({
             where: {
               [Op.and]: [
-                { isGerantMateriel: false },
-                { isGerantBuvette: false },
-                { isAdmin: false },
+                {
+                  isGerantMateriel: false,
+                  isGerantBuvette: false,
+                  isAdmin: false,
+                },
               ],
             },
           });
@@ -447,7 +502,14 @@ exports.findByRole = async (req, res) => {
           console.log("------ returning all GERANTS BUVETTE");
           theseUsers = await User.findAll({
             where: {
-              [Op.and]: [{ isGerantBuvette: true }, { isActiveAccount: true }],
+              [Op.or]: [
+                {
+                  [Op.and]: [{ isGerantBuvette: true, isActiveAccount: true }],
+                },
+                {
+                  [Op.and]: [{ isAdmin: true, isActiveAccount: true }],
+                },
+              ],
             },
           });
           break;
@@ -455,19 +517,70 @@ exports.findByRole = async (req, res) => {
           console.log("------ returning all GERANTS MATERIEL");
           theseUsers = await User.findAll({
             where: {
-              [Op.and]: [{ isGerantMateriel: true }, { isActiveAccount: true }],
+              [Op.or]: [
+                {
+                  [Op.and]: [{ isGerantMateriel: true, isActiveAccount: true }],
+                },
+                {
+                  [Op.and]: [{ isAdmin: true, isActiveAccount: true }],
+                },
+              ],
             },
           });
           break;
+
+        /*
+        case "not Buvette":
+          console.log("------ returning all NON GERANTS BUVETTE");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.or]: [
+                {
+                  [Op.and]: [{ isGerantBuvette: false, isActiveAccount: true }],
+                },
+                {
+                  [Op.and]: [{ isAdmin: false, isActiveAccount: true }],
+                },
+              ],
+            },
+          });
+          break;
+        case "not Matériel":
+          console.log("------ returning all GERANTS MATERIEL");
+          theseUsers = await User.findAll({
+            where: {
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    { isGerantMateriel: false, isActiveAccount: true },
+                  ],
+                },
+                {
+                  [Op.and]: [{ isAdmin: false, isActiveAccount: true }],
+                },
+              ],
+            },
+          });
+          break;
+          */
 
         case "Double gérant":
           console.log("------ returning all GERANTS DOUBLE");
           theseUsers = await User.findAll({
             where: {
-              [Op.and]: [
-                { isGerantMateriel: true },
-                { isGerantBuvette: true },
-                { isActiveAccount: true },
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    {
+                      isGerantBuvette: true,
+                      isGerantMateriel: true,
+                      isActiveAccount: true,
+                    },
+                  ],
+                },
+                {
+                  [Op.and]: [{ isAdmin: true, isActiveAccount: true }],
+                },
               ],
             },
           });
