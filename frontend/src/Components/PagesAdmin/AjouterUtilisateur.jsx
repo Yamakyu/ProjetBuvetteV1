@@ -147,13 +147,13 @@ export default function AjouterUtilisateur() {
 
         <br/>
         
-        {warning || " ---- avertissement utilisateur"}
+        {warning || ""}
         <br/>
-        {checkEditUser || " ---- informations utilisateur"}
+        {checkEditUser || ""}
         <br/>
-        {confirmButton || " ---- bouton de confirmation"}
+        {confirmButton || ""}
         <br/>
-        {apiResponse || " ---- réponse API"}
+        {apiResponse || ""}
     </div>
 
 

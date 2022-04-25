@@ -47,10 +47,10 @@ exports.addUser = async (req, res) => {
         req.body.droits = "Admin";
       } else if (req.body.isGerantBuvette && req.body.isGerantMateriel) {
         req.body.droits = "Double gérant";
-      } else if (req.body.isGerantBuvette || req.body.isGerantMateriel) {
-        req.body.droits = isGerantBuvette
-          ? "Gerant Buvette"
-          : "Gerant Matériel"; //Si on créé un utilisateur qui est gérant buvette ou matériel, et qu'il est pas gérant buvette, c'est qu'il gère le matériel
+      } else if (req.body.isGerantBuvette) {
+        req.body.droits = "Gerant Buvette";
+      } else if (req.body.isGerantMateriel) {
+        req.body.droits = "Gerant Matériel";
       } else {
         req.body.droits = "Aucun";
       }

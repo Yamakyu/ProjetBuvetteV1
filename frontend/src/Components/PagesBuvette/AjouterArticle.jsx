@@ -14,6 +14,7 @@ export default function AjouterArticle() {
     const [articleName, setArticleName] = useState("");
     const [articlePrice, setArticlePrice] = useState(0);
     const [articleDescription, setArticleDescription] = useState("");
+    const [articleCategory, setArticleCategory] = useState("");
     const [isArticlePublished, setIsArticlePublished] = useState(true);
     const [articleImage, setArticleImage] = useState("");
     const [validateArticle, setValidateArticle] = useState("");
@@ -43,6 +44,7 @@ export default function AjouterArticle() {
         let articleWorkedOn = {
             nom: articleName,
             description: articleDescription,
+            categorie: articleCategory,
             prix: articlePrice,
             file: articleImage,
             disponible: isArticlePublished ? "oui" : "non"        //← Ici je parse le booléen en "oui" ou "non", pour la vérification
@@ -57,6 +59,7 @@ export default function AjouterArticle() {
         formData.append('file', articleImage);
         formData.append('nom', articleName);
         formData.append('price', articlePrice);
+        formData.append('categorie', articleCategory);
         formData.append('description', articleDescription);
         formData.append('published', isArticlePublished);
 
@@ -80,6 +83,7 @@ export default function AjouterArticle() {
                 setArticleDescription("");
                 setArticleImage({});
                 setValidateArticle("");
+                setArticleCategory("");
             }
         })
         .catch((err) => {
@@ -123,6 +127,18 @@ export default function AjouterArticle() {
                             type="text"
                         />
                     </Form.Group>
+
+                    <label>
+                        Categorie : {" "}
+                        <select name="categorie" onChange={(e) => setArticleCategory(e.target.value)} value={articleCategory}>
+                            <option value="snack">Snack</option>
+                            <option value="friandise">friandise</option>
+                            <option value="boisson chaude">Boisson chaude</option>
+                            <option value="boisson fraiche">Boisson fraîche</option>
+                            <option value="plat chaud">Plat chaud</option>
+                            <option value="plat froid">Plat froid</option>
+                        </select>
+                    </label>
 
                     <Form.Group className="mb-3" controlId="price">
                         <Form.Label>Prix unitaire (€) : </Form.Label>

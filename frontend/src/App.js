@@ -19,6 +19,7 @@ import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
 import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 import HistoriqueCommandes from "./Components/PagesBuvette/HistoriqueCommandes";
 import DetailCommande from "./Components/PagesBuvette/DetailCommande";
+import FinCommande from "./Components/PagesBuvette/FinCommande";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -124,6 +125,10 @@ function App() {
           <Route
             path="/manage/buvette/orders/check"
             element={<VerifierCommande />}
+          />
+          <Route
+            path="/manage/buvette/orders/completed"
+            element={<FinCommande />}
           />
           <Route
             path="/manage/buvette/articles/add"

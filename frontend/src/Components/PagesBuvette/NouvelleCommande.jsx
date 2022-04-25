@@ -26,7 +26,12 @@ export default function NouvelleCommande() {
 //------------------------------------------------------------------------- USE EFFECT
 
   useEffect(() => {
-          
+    
+    if(typeof(currentOrder) !== Array){
+      setCurrentOrder([]);
+      setMyOrder([]);
+    }
+
     apiGetAllArticles();
     sortOrder();
 

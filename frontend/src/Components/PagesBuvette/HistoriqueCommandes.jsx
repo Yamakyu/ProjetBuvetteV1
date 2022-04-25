@@ -300,16 +300,20 @@ export default function HistoriqueCommandes() {
             ? <button onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>
             : "" }
         </h2>
-            <ul>
-                {invoiceListResult.map(facture => {
-                    return(
-                        <li key={facture.id}>
-                            À l'ordre de <b>{facture.customer}</b>, le {facture.createdAt.substring(0,10)} || <b>{facture.totalAmountDiscounted}€</b> {facture.discount !== 0 ? `(après ${facture.discount}% de réduction) ` : ""}
-                                <button onClick={() => myAppNavigator(`/manage/buvette/invoices/details/${facture.id}`)}>Voir les détails</button>
-                        </li>
-                    )
-                })}
-            </ul>
+        {invoiceListResult !== undefined 
+            ?   <ul>
+                    {invoiceListResult.map(facture => {
+                        return(
+                            <div key={facture.id}>
+                                    <button onClick={() => myAppNavigator(`/manage/buvette/invoices/details/${facture.id}`)}>Voir les détails</button>
+                                {" "}Commande #{facture.id} || À l'ordre de <b>{facture.customer}</b>, le {facture.createdAt.substring(0,10)} || <b>{facture.totalAmountDiscounted}€</b> {facture.discount !== 0 ? `(après ${facture.discount}% de réduction) ` : ""}
+                            </div>
+                        )
+                    })}
+                </ul>
+            
+            : ""
+            }
     </div>
   )
 }

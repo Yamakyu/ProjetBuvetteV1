@@ -61,6 +61,7 @@ exports.addInvoice = async (req, res) => {
           return res.status(200).json({
             message: "La commande a bien été enregistrée !",
             invoiceLines,
+            invoice: invoiceCreationResult,
           });
         })
         .catch((error) => displayThatError(res, error));

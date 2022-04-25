@@ -5,6 +5,7 @@ import { SessionContext } from '../../Contexts/SessionContext'
 import { Container, Form, Button } from 'react-bootstrap'
 import Article from '../Utility/Article';
 import axios from 'axios'
+import DoTheThings from '../Utility/DoTheThings'
 
 
 
@@ -22,6 +23,7 @@ export default function ModifierArticle() {
     nom:"",
     description:"",
     prixUnitaire:"",
+    categorie:"",
     file:"",
   });
 
@@ -145,6 +147,7 @@ export default function ModifierArticle() {
     
     formData.append('nom', articleWorkedOn.nom);
     formData.append('prixUnitaire', articleWorkedOn.prixUnitaire);
+    formData.append('categorie', articleWorkedOn.categorie);
     formData.append('description', articleWorkedOn.description);
     
     //Pour éviter d'écraser l'image (qui n'est pas contrôlé de la même manière que le reste de articleWorkedOn), on ne l'ajoute que si on l'a changé. Autrement on risque d'ajouter une adresse vide à l'article (qui va être interceptée par le middleware)
@@ -182,15 +185,19 @@ export default function ModifierArticle() {
 //------------------------------------------------------------------------- AFFICHAGE
 
   const doThething = () => {
-    console.log("Nothing to do atm !");
+    console.log(articleWorkedOn);
   }
 
   return (
     <div>
-      <Button onClick={doThething}>Afficher articleWorkedOn</Button>
+      
+      <DoTheThings
+        theThing = {doThething}
+        theOtherThing={null}
+      />
 
       <h1>
-        Yo, article {articleId}
+        Article #{articleId}
       </h1>
       <div style={{fontSize: "20px"}}>
         <Article 
@@ -215,7 +222,7 @@ export default function ModifierArticle() {
             <Container className='mt-5 p-2'>
                 <Form>
                   <Form.Group controlId="fileName" className="mb-3">
-                    <Form.Label> /!\ Choississez une photo ou une image </Form.Label>
+                    <Form.Label>Vous pouvez choisir une photo ou une image </Form.Label>
                     <Form.Control
                         type="file"
                         name='image'
@@ -232,6 +239,18 @@ export default function ModifierArticle() {
                         name="nom"
                     />
                   </Form.Group>
+
+                  <label>
+                        Categorie : {" "}
+                        <select name="categorie" onChange={handleEditForm} value={articleWorkedOn.categorie}>
+                            <option value="snack">Snack</option>
+                            <option value="friandise">friandise</option>
+                            <option value="boisson chaude">Boisson chaude</option>
+                            <option value="boisson fraiche">Boisson fraîche</option>
+                            <option value="plat chaud">Plat chaud</option>
+                            <option value="plat froid">Plat froid</option>
+                        </select>
+                    </label>
 
                   <Form.Group className="mb-3" controlId="price">
                     <Form.Label>Prix unitaire (€) : </Form.Label>

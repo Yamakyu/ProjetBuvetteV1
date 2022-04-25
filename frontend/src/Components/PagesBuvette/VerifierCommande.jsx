@@ -5,7 +5,7 @@ import DoTheThings from '../Utility/DoTheThings';
 
 export default function VerifierCommande() {
     
-    const { activeSession, setActiveSession, isUserTokenExpired, currentOrder, setCurrentOrder } = useContext(SessionContext);
+    const { activeSession, isUserTokenExpired, currentOrder, setCurrentOrder } = useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
 
@@ -313,7 +313,8 @@ export default function VerifierCommande() {
             }
 
             if (data.invoiceLines !== undefined){
-                console.log(data.invoiceLines);
+                setCurrentOrder(data.invoice);
+                myAppNavigator("/manage/buvette/orders/completed")
             }
         })
         .catch((err) => console.log(err));
@@ -364,7 +365,7 @@ export default function VerifierCommande() {
     }
 
     const thatOtherThing = () => {
-        console.log(customer);
+        console.log(currentOrder);
         console.log(reducedOrder);
     }
 

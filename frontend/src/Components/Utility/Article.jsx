@@ -33,6 +33,12 @@ export default function Article(props) {
                             ? <> → <b>{newArticle.prixUnitaire}€</b> </>
                             : ""}
                     </Card.Title>
+
+                    <Card.Title>Categorie : {article.categorie}
+                        {(isEditingArticle && (newArticle.categorie !== article.categorie)) 
+                            ? <> → <b>{newArticle.categorie}</b> </>
+                            : ""}
+                    </Card.Title>
                     
                     <Card.Title>Disponible : {article.isDisponible ? "oui" : "non" }
                         {(isEditingArticle && (newArticle.isDisponible !== article.isDisponible)) 

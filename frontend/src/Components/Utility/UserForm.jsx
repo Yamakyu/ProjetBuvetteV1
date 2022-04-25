@@ -163,7 +163,7 @@ export default function UserForm(props) {
                     </select>
                 </label>
                 <br />
-                {warningCreateAdmin || " ---- avertissement création admin" }   
+                {warningCreateAdmin || "" }   
                 <br />
                 <button disabled={isInputDisabled}>Vérifier la saisie</button>
             </form>

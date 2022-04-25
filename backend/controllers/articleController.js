@@ -50,6 +50,7 @@ exports.initSomeArticles = async (req, res) => {
         nom: "Current mood",
         prixUnitaire: 10,
         photo: "default/Hifumi_but_NOT_FINE.jpg",
+        categorie: "friandise",
       };
 
       let newArticle3 = {
