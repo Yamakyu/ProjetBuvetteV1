@@ -2,12 +2,15 @@ require("dotenv").config();
 const db = require("../models");
 const Invoice = db.invoices;
 const InvoiceLines = db.invoiceLines;
+const Users = db.users;
 const Op = db.Sequelize.Op;
 //const os = require("os");
 
 // ---------- POST ----------- (testé)
 exports.addInvoice = async (req, res) => {
   console.log("INVOICE controller : addInvoice -------");
+
+  //Vérification des droits de l'utilisateur qui fait la requête
   try {
     if (
       !req.thatRequestToken.isAdmin &&
@@ -19,8 +22,8 @@ exports.addInvoice = async (req, res) => {
       });
     }
 
+    //On parse la requête avant de la transmettre à Sequelize
     let requestBody = req.body;
-
     console.log(requestBody);
 
     let invoiceInfo = {
@@ -36,10 +39,27 @@ exports.addInvoice = async (req, res) => {
 
     let invoiceCreationResult = await Invoice.create(invoiceInfo);
 
+    //En cas de succès...
     if (
       invoiceCreationResult.id !== null ||
       invoiceCreationResult.id !== undefined
     ) {
+      //... on va tenter d'indiquer que l'utilisateur a une commande supplémentaire
+      let addOrderToUserResult = false;
+
+      await Users.findByPk(invoiceInfo.customerId)
+        .then((data) => {
+          let nbrOrders = data.nbrOrders + 1;
+          Users.update({ nbrOrders }, { where: { id: invoiceInfo.customerId } })
+            .then((result) => {
+              console.log("resultat");
+              console.log(result);
+              addOrderToUserResult = result >= 1;
+            })
+            .catch((error) => console.log(error));
+        })
+        .catch((error) => displayThatError(error));
+
       let invoiceLines = [];
 
       requestBody.orderLines.forEach((line) => {
@@ -55,21 +75,19 @@ exports.addInvoice = async (req, res) => {
         });
       });
 
+      //Que l'opération ait réussi ou pas, on crééé les détails de la commande.
       await InvoiceLines.bulkCreate(invoiceLines)
         .then((data) => {
           console.log(`------- Détails de factures ajoutés`);
           return res.status(200).json({
-            message: "La commande a bien été enregistrée !",
+            message: addOrderToUserResult
+              ? "La commande a bien été enregistrée !"
+              : "La commande a été enregistrée, mais n'a pas pu être ajoutée à l'utilisateur",
             invoiceLines,
             invoice: invoiceCreationResult,
           });
         })
         .catch((error) => displayThatError(res, error));
-
-      //   return res.status(200).json({
-      //     message: "Bah chui un génie en fait",
-      //     invoiceLines,
-      //   });
     }
   } catch (error) {
     displayThatError(res, error);
@@ -95,7 +113,7 @@ exports.findInvoiceByID = async (req, res) => {
   }
 };
 
-// ---------- GET ----------- ()
+// ---------- GET ----------- (testé)
 exports.findInvoiceByCustomerID = async (req, res) => {
   console.log("INVOICE controller : findInvoiceByCustomerID -------");
 
@@ -113,7 +131,7 @@ exports.findInvoiceByCustomerID = async (req, res) => {
   }
 };
 
-// ---------- GET ----------- ()
+// ---------- GET ----------- (testé)
 exports.findInvoiceByGerantID = async (req, res) => {
   console.log("INVOICE controller : findInvoiceByGerantID -------");
 

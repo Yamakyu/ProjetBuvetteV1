@@ -58,6 +58,11 @@ module.exports = (sequelize, Sequelize) => {
         field: "droits",
         allowNull: true,
       },
+      nbrOrders: {
+        type: Sequelize.INTEGER,
+        field: "nombre_commandes",
+        defaultValue: 0,
+      },
     },
 
     {

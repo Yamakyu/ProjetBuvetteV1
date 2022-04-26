@@ -39,12 +39,9 @@ export default function HistoriqueCommandes() {
         let tempCustomerList = [];
 
         userListFull.forEach(user => {
-            if(!user.isAdmin && !user.isGerantBuvette){
+            if(user.nbrOrders >= 1){
                 tempCustomerList.push(user);
             }
-//            if(user.orders >= 1){
-//                tempCustomerList.push(user);
-//            }
         })
         let orderedCustomerList = tempCustomerList.sort((a,b) => 
             (a.nom.toLowerCase() > b.nom.toLowerCase()) ? 1 : ((b.nom.toLowerCase() > a.nom.toLowerCase()) ? -1 : 0)
