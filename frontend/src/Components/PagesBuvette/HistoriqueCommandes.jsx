@@ -11,12 +11,13 @@ export default function HistoriqueCommandes() {
     const [invoiceListResult, setInvoiceListResult] = useState([]);             //invoiceList est la liste affichée des commandes, et est susceptible d'être filtrée
     const [userListResult, setUserListResult] = useState([]);
     const [userListFull, setUserListFull] = useState([]);
+    const [customerListFull, setCustomerListFull] = useState([]);
+    const [gerantListFull, setGerantListFull] = useState([]);
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [searchTool, setSearchTool] = useState("");
     const [searchWarning, setSearchWarning] = useState("");
     const [searchType, setSearchType] = useState("all");
     const [isListFiltered, setIsListFiltered] = useState(false);
-    const [searchGerant, setSearchGerant] = useState(null);
     const [isSearchByDate, setIsSearchByDate] = useState(false);
 
     const myAppNavigator = useNavigate();
@@ -26,14 +27,29 @@ export default function HistoriqueCommandes() {
     useEffect(() => {
         apiGetAllInvoices();
         apiGetAllUsers();
+        apiGetGerantID();   //On obtient gerantListFull dans cette API.
         
         return () => {}
     }, [])
 
 
-
     useEffect(() => {
         setUserListResult(userListFull);
+
+        let tempCustomerList = [];
+
+        userListFull.forEach(user => {
+            if(!user.isAdmin && !user.isGerantBuvette){
+                tempCustomerList.push(user);
+            }
+//            if(user.orders >= 1){
+//                tempCustomerList.push(user);
+//            }
+        })
+        let orderedCustomerList = tempCustomerList.sort((a,b) => 
+            (a.nom.toLowerCase() > b.nom.toLowerCase()) ? 1 : ((b.nom.toLowerCase() > a.nom.toLowerCase()) ? -1 : 0)
+        )
+        setCustomerListFull(orderedCustomerList);
       return () => {}
     }, [userListFull])
     
@@ -53,23 +69,26 @@ export default function HistoriqueCommandes() {
         setSearchWarning("");
         setIsSearchByDate(inputEvent.target.value === "date");
 
-        if (inputEvent.target.value === "all" || inputEvent.target.value === "date" ){
-            setApiSearchResponse('');
-            setSearchTool("");
-            setUserListResult([]);
-            setInvoiceListResult(invoiceListFull)
-            setIsListFiltered(false);
-            return;
-        }
-        else if (inputEvent.target.value === "gerant") {
-            await apiGetGerantID();
-        }
-        else if (inputEvent.target.value === "myself"){
-            handleFilterUsers(activeSession.userInfo, inputEvent.target.value);
-        }
-        else {
-            setUserListResult(userListFull);
-            displaySearchTool();
+        switch (inputEvent.target.value) {
+            case "all":
+            case "date":
+                setUserListResult([]);
+                setApiSearchResponse('');
+                setInvoiceListResult(invoiceListFull)
+                setIsListFiltered(false);      
+                break;
+            case "myself":
+            case "selfOrder":  
+                handleFilterUsers(activeSession.userInfo, inputEvent.target.value);
+                break;
+            case "gerant":
+                setUserListResult(gerantListFull);
+                break;
+            case "customer":
+                setUserListResult(customerListFull);
+                break;
+            default:
+                break;
         }
     }
 
@@ -80,6 +99,7 @@ export default function HistoriqueCommandes() {
 
         invoiceListFull.forEach(facture => {
             if(((facture.customerId === thatUser.id) && (search==="customer")) 
+            || ((facture.customerId === thatUser.id) && (search==="selfOrder"))
             || ((facture.gerantId === thatUser.id) && (search==="gerant"))
             || ((facture.gerantId === thatUser.id) && (search==="myself"))){
                 filteredInvoiceList.push(facture);
@@ -104,9 +124,13 @@ export default function HistoriqueCommandes() {
 
     const filterUserResults = (searchFilter) => {
         let filteredUserList = [];
+        let nonFilteredUserList = userListResult;
+
+        console.log(searchFilter);
 
         //Si le filtre est vide, on retourne les utilisateurs tels quels
         if(!isFilterNotEmpty(searchFilter)){
+            setUserListResult(nonFilteredUserList);
             return;
         }
 
@@ -231,7 +255,9 @@ export default function HistoriqueCommandes() {
             if (isUserTokenExpired(data)){
                 myAppNavigator("/login");
             }
-            setUserListResult(data.resultArray);
+            setGerantListFull(data.resultArray.sort((a,b) => 
+                (a.nom.toLowerCase() > b.nom.toLowerCase()) ? 1 : ((b.nom.toLowerCase() > a.nom.toLowerCase()) ? -1 : 0)
+            ));
         })
         .catch((err) => {
             console.log(err.message);
@@ -242,7 +268,18 @@ export default function HistoriqueCommandes() {
 //------------------------------------------------------------------------- AFFICHAGE
 
     const theThing =() => {
+        console.log("userListFull");
+        console.log(userListFull);
+        console.log("----------");
+        console.log("userListResult");
         console.log(userListResult);
+        console.log("----------");
+        console.log("customerListFull");
+        console.log(customerListFull);
+        console.log("----------");
+        console.log("gerantListFull");
+        console.log(gerantListFull);
+        console.log("----------");
     }
 
 
@@ -262,6 +299,7 @@ export default function HistoriqueCommandes() {
                     <option value="all"> toutes </option>
                     <option value="myself"> validées par moi même, {activeSession.userInfo.nom} {activeSession.userInfo.prenom} </option>
                     <option value="gerant"> validées par (gérant) </option>
+                    <option value="selfOrder"> à l'ordre de moi même, {activeSession.userInfo.nom} {activeSession.userInfo.prenom} </option>
                     <option value="customer"> à l'ordre de (consommateur)</option>
                     <option value="date"> datant (inactif pour le moment)</option>
                 </select>
@@ -277,7 +315,7 @@ export default function HistoriqueCommandes() {
                 </select>
             </label>
             </h3>
-            <ul hidden={(userListResult.length === 0) || (searchType=== "all") || (searchType=== "myself")}>
+            <ul hidden={(userListResult.length === 0) || (searchType=== "all") || (searchType=== "myself") || (searchType=== "selfOrder")}>
                 {userListResult.map(user => {
                     return(
                         <li key={user.id}>

@@ -354,8 +354,16 @@ export default function ModifierUtilisateur() {
                 myAppNavigator("/login");
             }
 
-            setUserListResult(data.resultArray, setIsFilteredList(true));
             setApiSearchResponse(data.message);
+            setIsFilteredList(true);
+
+            if(data.resultArray){
+                setUserListResult(data.resultArray);
+            }else {
+                setUserListResult([]);
+            }
+
+
         })
         .catch((err) => {
             console.log(err.message);
@@ -393,7 +401,13 @@ export default function ModifierUtilisateur() {
             }
 
             setApiSearchResponse(data.message);
-            setUserListResult(data.resultArray,setIsFilteredList(true));
+            setIsFilteredList(true);
+
+            if(data.resultArray){
+                setUserListResult(data.resultArray);
+            }else {
+                setUserListResult([]);
+            }
         })
         .catch((err) => {
             console.log(err.message);
@@ -470,6 +484,7 @@ export default function ModifierUtilisateur() {
                 if (isUserTokenExpired(data)){
                     myAppNavigator("/login");
                 }
+                setApiSearchResponse('');
                 setUserListResult(data.resultArray, setIsFilteredList(false));
             })
             .catch((err) => {
