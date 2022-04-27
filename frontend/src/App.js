@@ -66,8 +66,8 @@ function App() {
 
   let getLocalStorage = (localStorageKey) => {
     if (
-      localStorage.getItem("currentSession") === null ||
-      !localStorage.getItem("currentSession")
+      localStorage.getItem(localStorageKey) === null ||
+      !localStorage.getItem(localStorageKey)
     ) {
       console.log("session is null, returning empty session");
       return {

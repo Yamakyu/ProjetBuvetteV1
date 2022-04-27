@@ -321,7 +321,7 @@ exports.checkAdmins = async (req, res) => {
         message: "Compte admin prêt",
       });
     } else {
-      let newAdmin = {
+      let admin1 = {
         nom: "Mayaki",
         prenom: "Abdoul-Jabar",
         email: "contact@bsolife.fr",
@@ -329,9 +329,28 @@ exports.checkAdmins = async (req, res) => {
         isAdmin: true,
       };
 
-      await User.create(newAdmin)
+      let admin2 = {
+        nom: "AdminNom",
+        prenom: "AdminPrenom",
+        email: "admin@admin.fr",
+        password: "root",
+        isAdmin: true,
+      };
+
+      await User.create(admin1)
         .then((data) => {
-          console.log(`------- Admin ajouté`);
+          console.log(`------- Admin 1 ajouté`);
+        })
+        .catch((err) => {
+          console.log(`------- Impossible d'ajouter un admin : ${err} `);
+          return res
+            .status(500)
+            .json({ message: "Impossible d'ajouter un admin : " + err });
+        });
+
+      await User.create(admin2)
+        .then((data) => {
+          console.log(`------- Admin 2 ajouté`);
           return res.status(200).json({ message: "Admin ajouté" });
         })
         .catch((err) => {
