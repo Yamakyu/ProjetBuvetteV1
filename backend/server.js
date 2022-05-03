@@ -65,6 +65,13 @@ monApp.use("/api/reset", userController.isLoggedIn, (req, res) => {
   });
 });
 
+/* client-side routing.
+ * For GET requests from any routes (other than those which is specified above),
+ * send the file "index.html" to the client-side from the folder "build"
+ * https://stackoverflow.com/questions/69200762/deploy-production-build-of-reactjs-with-node-express-as-backend
+ */
+monApp.get("*", (_, res) => res.sendFile("index.html", { root: "build" }));
+
 //On écoute le port 8080 pour les requêtes
 monApp.listen(PORT, () => {
   console.log(`À l'écoute du ${PORT}.`);

@@ -3,6 +3,8 @@ const db = require("../models");
 const Article = db.articles;
 const Op = db.Sequelize.Op;
 const os = require("os");
+const fs = require("fs");
+const path = require("path");
 
 //ENVISAGER SÉRIEUSEMENT de n'utiliser qu'un controleur pour la buvette et le stock.
 //HECK. Ca peut être le même model (il faudra une table différente, cela dit)
@@ -34,6 +36,7 @@ exports.initSomeArticles = async (req, res) => {
     });
 
     if (articleCount > 0) {
+      await clearImageFolder();
       return res.status(200).json({
         message: "Il y a déjà des articles.",
       });
@@ -348,6 +351,42 @@ let displayTheseResults = (requestResponse, resultArray) => {
     }
   } catch (error) {
     displayThatError(requestResponse, error);
+  }
+};
+
+let clearImageFolder = async () => {
+  const directory = "./images/picsBuvette";
+  let theseArticlesImages = [];
+
+  try {
+    let allArticles = await Article.findAll();
+
+    console.log(allArticles.length);
+
+    if (allArticles.length !== 0) {
+      console.log("---------- !!!!!!! Extracting images from articles...");
+
+      allArticles.forEach((article) => {
+        theseArticlesImages.push(article.photo.replace("picsBuvette/", ""));
+      });
+    } else {
+      console.log("---------- !!!!!!! Couldn't get images from articles ");
+      return;
+    }
+
+    fs.readdir(directory, (err, files) => {
+      if (err) throw err;
+
+      files.forEach((file) => {
+        if (!theseArticlesImages.includes(path.basename(file))) {
+          fs.unlink(path.join(directory, file), (err) => {
+            if (err) throw err;
+          });
+        }
+      });
+    });
+  } catch (error) {
+    displayThatError(error);
   }
 };
 
