@@ -9,7 +9,7 @@ export default function ModifierUtilisateur() {
 
 //------------------------------------------------------------------------- INITIALISATION
 
-    const {activeSession, setActiveSession, isUserTokenExpired}= useContext(SessionContext);
+    const {activeSession, setActiveSession, isUserTokenExpired, fullUserList, setFullUserList}= useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
 
@@ -20,7 +20,9 @@ export default function ModifierUtilisateur() {
     const [warningUserDelete, setWarningUserDelete] = useState("");
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [apiResponse, setApiResponse] = useState("");
+
     const [userListResult, setUserListResult] = useState([]);
+
     //const [isEditingUser, setisEditingUser] = useState(false);
     const [isEditingPassword, setIsEditingPassword] = useState(false)
     const [listUserDisplay, setListUserDisplay] = useState("");
@@ -44,6 +46,7 @@ export default function ModifierUtilisateur() {
 
         if (activeSession){
             apiGetAllUsers();
+            
         } else {
             setActiveSession({
                 userConnexionStatus:"Accès réservé. Veuillez vous connecter."
@@ -118,7 +121,7 @@ export default function ModifierUtilisateur() {
                             }               
                         </ul>
                         <br/>
-                        {isFilteredList ? <button onClick={apiGetAllUsers}>Afficher la liste de tout les utilisateurs</button> : ""}
+                        {isFilteredList ? <button onClick={() => setUserListResult(fullUserList, setIsFilteredList(false))}>Afficher la liste de tout les utilisateurs</button> : ""}
                     </div>
                         
                 )
@@ -465,6 +468,7 @@ export default function ModifierUtilisateur() {
         );
     }
 
+    //Appelé uniquement quand on charge (ou) refresh la page
     const apiGetAllUsers = async () => {
         console.log("Returning all users...");
 
@@ -486,6 +490,7 @@ export default function ModifierUtilisateur() {
                 }
                 setApiSearchResponse('');
                 setUserListResult(data.resultArray, setIsFilteredList(false));
+                setFullUserList(data.resultArray);
             })
             .catch((err) => {
                 console.log(err.message);

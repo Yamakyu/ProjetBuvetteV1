@@ -252,8 +252,9 @@ exports.editUser = async (req, res) => {
 //------------- GET -------------- (tested) (not used as is)
 exports.isLoggedIn = (req, res, next) => {
   console.log("USER controller : isLoggedIn -------");
+  let requestToken;
   try {
-    let requestToken = req.headers.authorization.replace("Bearer ", "");
+    requestToken = req.headers.authorization.replace("Bearer ", "");
     //↑ Dans notre requête, notre token se trouve dans une chaîne qui a la forme "Bearer le_token"
 
     //↓ Le payload ici c'est EXACTEMENT le payload encodé dans le token quand on s'est loggué. C'est pourquoi on utilise process.env.PRIVATE_KEY
@@ -281,6 +282,19 @@ exports.isLoggedIn = (req, res, next) => {
             error,
           needLogout: true,
         });
+    } else if (
+      error instanceof jwt.JsonWebTokenError &&
+      requestToken.replace(" ", "") === "Bearer"
+    ) {
+      console.log("---------- IS LOGGED IN : pas de token");
+      return res
+        .status(401) //← 401 = unauthorized
+        .json({
+          message:
+            "Veuillez vous connecter pour accéder aux fonctionnalités. " +
+            error,
+          needLogout: true,
+        });
     } else if (error instanceof jwt.JsonWebTokenError) {
       console.log("---------- IS LOGGED IN : token invalide");
       return res
@@ -295,7 +309,9 @@ exports.isLoggedIn = (req, res, next) => {
       return res
         .status(400) //← 400 = bad request
         .json({
-          message: "Aucun token. Veuillez vous connecter. " + error,
+          message:
+            "Veuillez vous connecter pour accéder aux fonctionnalités. " +
+            error,
           needLogout: true,
         });
     } else {

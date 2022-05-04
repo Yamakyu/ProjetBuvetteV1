@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../Contexts/SessionContext';
+import DoTheThings from './Utility/DoTheThings';
 
 
 export default function Connexion() {
@@ -10,7 +11,7 @@ export default function Connexion() {
     //Récupérer GetLocalStorage pour empêcher erreur en cas de localStorage vide
     //↑ Après s'être déconnecté
 
-    const {activeSession, setActiveSession}= useContext(SessionContext);
+    const {activeSession, setActiveSession, fullUserList}= useContext(SessionContext);
     
     const myAppNavigator = useNavigate();
 
@@ -95,9 +96,18 @@ export default function Connexion() {
 
 //------------------------------------------------------------------------- AFFICHAGE
 
+    
+    const showUserList = () => {
+        console.log();
+    }
 
     return (
         <div>
+            <DoTheThings
+            theThing={null}
+            theOtherThing={null}
+            />
+
             <form onSubmit={apiLogin}>
                 <input type="email" value={email} placeholder='email' 
                 onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>

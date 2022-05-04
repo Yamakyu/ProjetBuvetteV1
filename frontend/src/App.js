@@ -23,6 +23,7 @@ import FinCommande from "./Components/PagesBuvette/FinCommande";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
+  const [fullUserList, setFullUserList] = useState([]);
 
   let isUserTokenExpired = (apiResponseData) => {
     //Si le backend retourne que le token est expiré, on vide la session actuelle (removeItem) et on y ajoute le message (le backend retourne l'erreur : la plupart du temps, Token expiré).
@@ -109,6 +110,8 @@ function App() {
         isUserTokenExpired,
         currentOrder,
         setCurrentOrder,
+        fullUserList,
+        setFullUserList,
       }}
     >
       <BrowserRouter>
