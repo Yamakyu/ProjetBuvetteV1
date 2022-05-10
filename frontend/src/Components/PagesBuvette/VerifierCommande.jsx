@@ -5,7 +5,7 @@ import DoTheThings from '../Utility/DoTheThings';
 
 export default function VerifierCommande() {
     
-    const { activeSession, isUserTokenExpired, currentOrder, setCurrentOrder } = useContext(SessionContext);
+    const { activeSession, isUserTokenExpired, currentOrder, setCurrentOrder, fullUserList, setFullUserList } = useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
 
@@ -24,7 +24,7 @@ export default function VerifierCommande() {
     const [isOrderReady, setIsOrderReady] = useState(false);
 
     const [userListResult, setUserListResult] = useState([]);
-    const [userListFull, setUserListFull] = useState([]);
+    //const [userListFull, setUserListFull] = useState([]);
     const [nameToLookFor, setNameToLookFor] = useState("");
     const [customer, setCustomer] = useState({});
     const [newCustomer, setNewCustomer] = useState({
@@ -156,13 +156,19 @@ export default function VerifierCommande() {
         console.log(newCustomer);
 
         if (isStringEmpty(newCustomer.nom) || isStringEmpty(newCustomer.prenom) || isStringEmpty(newCustomer.email)){
+            setisValidatingAddCustomerInput(false);
             return setApiResponse("Vous devez remplir tout les champs !");
+        }else{
+            setisValidatingAddCustomerInput(true);
+            return setApiResponse("");
         }
 
+
+        /*
         let userAlreadyExists = false;
         
-        if(userListFull){
-            userListFull.forEach((user) => {
+        if(fullUserList){
+            fullUserList.forEach((user) => {
                 if (user.email === newCustomer.email){
                     console.log("mail match !");
                     setApiResponse(`L'email ${newCustomer.email} est déjà utilisé !`);
@@ -181,6 +187,7 @@ export default function VerifierCommande() {
             setApiResponse("");
             setisValidatingAddCustomerInput(true);
         }
+        */
     }
 
 //------------------------------------------------------------------------- REQUÊTES
@@ -229,7 +236,7 @@ export default function VerifierCommande() {
                 if (isUserTokenExpired(data)){
                     myAppNavigator("/login");
                 }
-                setUserListFull(data.resultArray);
+                setFullUserList(data.resultArray);
             })
             .catch((err) => {
                 console.log(err.message);
@@ -265,6 +272,26 @@ export default function VerifierCommande() {
                 setCustomer(data.addedUser);  
                 setIsOrderReady(true);
             }
+
+
+                console.log(data.addedUser);
+    
+                if (data.success){
+                    setNewCustomer({
+                        nom:"",
+                        prenom:"",
+                        email:"",
+                    })
+                }else {
+                    setNewCustomer(() => ({
+                        ...newCustomer, 
+                        email: "",
+                    }))
+                }
+
+
+
+
         })
         .catch((err) => console.log(err));
     }
@@ -444,7 +471,7 @@ export default function VerifierCommande() {
                     onChange={(e) => setNameToLookFor(e.target.value)}
                     name="searchName"
                     />
-                    <button onClick={() => apiSearchUsersByName(nameToLookFor)}>Lancer la recherche</button>
+                    <button onClick={() => apiSearchUsersByName(nameToLookFor)}>Afficher les utilisateurs</button>
                     <br/>
                     <br/>
 
@@ -469,7 +496,7 @@ export default function VerifierCommande() {
                 </div>
                 
                 {/* Formulaire d'ajout d'un nouvel acheteur */}
-                <div hidden={isOrderForSelf || !isFirstOrder}>
+                <form onSubmit={prepareAddCustomer} hidden={isOrderForSelf || !isFirstOrder}>
                     Veuillez entrer les informations de l'acheteur
                     <br />
                     <input
@@ -493,7 +520,7 @@ export default function VerifierCommande() {
                         onChange={handleNewCustomerInput}
                         name="email"
                     />
-                    <button onClick={prepareAddCustomer}>Valider la saisie</button>
+                    <button >Valider la saisie</button>
                     <br />
                     <br />
 
@@ -512,7 +539,7 @@ export default function VerifierCommande() {
                     </div>
                     <br />
                     {apiResponse}
-                </div>
+                </form>
                 
             <br />
             </ul>

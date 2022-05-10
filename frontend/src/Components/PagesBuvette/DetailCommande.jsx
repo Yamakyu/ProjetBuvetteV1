@@ -88,6 +88,7 @@ export default function DetailCommande() {
 
       <h2>Facture #{invoice.id}</h2>
       <h3>Commande validée par {invoice.gerant}, pour <i>{invoice.customer}</i>.
+      <hr />
       <br />
       Détails de la commande : </h3>
       

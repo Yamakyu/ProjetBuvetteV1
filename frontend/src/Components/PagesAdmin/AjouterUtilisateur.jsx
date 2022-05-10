@@ -8,7 +8,7 @@ export default function AjouterUtilisateur() {
 
 //------------------------------------------------------------------------- INITIALISATION
 
-    const {activeSession, setActiveSession, isUserTokenExpired}= useContext(SessionContext);
+    const {activeSession, setActiveSession, isUserTokenExpired, fullUserList}= useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
 
@@ -25,8 +25,22 @@ export default function AjouterUtilisateur() {
         droits:"Aucun"
     });
 
-//------------------------------------------------------------------------- METHODES D'AFFICHAGE
+
     
+
+
+
+//------------------------------------------------------------------------- METHODES DE TRAITEMENT
+
+
+    const isStringEmpty = (thatString) => {
+        if (thatString === null || thatString === undefined || thatString === "" || thatString.replace(/\s+/g, '') === ""){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //https://stackoverflow.com/questions/57581147/how-to-display-objects-keys-and-values-in-react-component
     const displayInputedUser = () => {
         return(
@@ -50,6 +64,10 @@ export default function AjouterUtilisateur() {
     const submitForm = (formEvent) => {
         formEvent.preventDefault();
         console.log(userWorkedOn);
+
+        if (isStringEmpty(userWorkedOn.nom) || isStringEmpty(userWorkedOn.prenom) || isStringEmpty(userWorkedOn.email)){
+            return setApiResponse("Vous devez remplir tout les champs !");
+        }
 
         if (passwordConfirm !== userWorkedOn.password){
             setWarning("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
@@ -102,14 +120,22 @@ export default function AjouterUtilisateur() {
     
                 resetWarning();
                 setApiResponse(data.message);
-                setUserWorkedOn({
-                    nom:"",
-                    prenom:"",
-                    email:"",
-                    password:"",
-                    droits:"Aucun"
-                })
                 setPasswordConfirm("");
+
+                if (data.success){
+                    setUserWorkedOn({
+                        nom:"",
+                        prenom:"",
+                        email:"",
+                        password:"",
+                        droits:"Aucun"
+                    })
+                }else {
+                    setUserWorkedOn(() => ({
+                        ...userWorkedOn, 
+                        email: "",
+                    }))
+                }
                 
             })
             .catch((err) => console.log(err));

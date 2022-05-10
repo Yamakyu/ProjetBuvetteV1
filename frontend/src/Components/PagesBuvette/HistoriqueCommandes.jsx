@@ -5,12 +5,12 @@ import DoTheThings from '../Utility/DoTheThings';
 
 export default function HistoriqueCommandes() {
 
-    const {activeSession, isUserTokenExpired} = useContext(SessionContext)
+    const {activeSession, isUserTokenExpired, fullUserList, setFullUserList} = useContext(SessionContext)
 
     const [invoiceListFull, setInvoiceListFull] = useState([]);     //invoiceListFull est la liste complète des commandes, et ne sera jamais changé
     const [invoiceListResult, setInvoiceListResult] = useState([]);             //invoiceList est la liste affichée des commandes, et est susceptible d'être filtrée
     const [userListResult, setUserListResult] = useState([]);
-    const [userListFull, setUserListFull] = useState([]);
+    //const [userListFull, setUserListFull] = useState([]);
     const [customerListFull, setCustomerListFull] = useState([]);
     const [gerantListFull, setGerantListFull] = useState([]);
     const [apiSearchResponse, setApiSearchResponse] = useState("");
@@ -34,11 +34,11 @@ export default function HistoriqueCommandes() {
 
 
     useEffect(() => {
-        setUserListResult(userListFull);
+        setUserListResult(fullUserList);
 
         let tempCustomerList = [];
 
-        userListFull.forEach(user => {
+        fullUserList.forEach(user => {
             if(user.nbrOrders >= 1){
                 tempCustomerList.push(user);
             }
@@ -48,7 +48,7 @@ export default function HistoriqueCommandes() {
         )
         setCustomerListFull(orderedCustomerList);
       return () => {}
-    }, [userListFull])
+    }, [fullUserList])
     
 
 
@@ -92,6 +92,11 @@ export default function HistoriqueCommandes() {
     const handleFilterUsers = (thatUser, search) => {
         let filteredInvoiceList = [];
         setIsListFiltered(true);
+        
+        if(invoiceListFull === undefined || invoiceListFull.length===0){
+            setApiSearchResponse("Aucune facture à afficher")
+            return;
+        }
         setApiSearchResponse("Résultats de la recherche : ")
 
         invoiceListFull.forEach(facture => {
@@ -222,7 +227,8 @@ export default function HistoriqueCommandes() {
             if (isUserTokenExpired(data)){
                 myAppNavigator("/login");
             }
-            setUserListFull(data.resultArray);
+            setUserListResult(data.resultArray);
+            setFullUserList(data.resultArray);
         })
         .catch((err) => {
             console.log(err.message);
@@ -265,8 +271,8 @@ export default function HistoriqueCommandes() {
 //------------------------------------------------------------------------- AFFICHAGE
 
     const theThing =() => {
-        console.log("userListFull");
-        console.log(userListFull);
+        console.log("fullUserList");
+        console.log(fullUserList);
         console.log("----------");
         console.log("userListResult");
         console.log(userListResult);
@@ -329,7 +335,9 @@ export default function HistoriqueCommandes() {
         <hr />
 
         <h2>
-        {apiSearchResponse || " Liste de toutes les commandes :"}
+        {invoiceListFull === undefined 
+            ? "Il n'y a pas encore eu de commande." 
+            : (apiSearchResponse || " Liste de toutes les commandes :")}
         <br />
         { isListFiltered 
             ? <button onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>

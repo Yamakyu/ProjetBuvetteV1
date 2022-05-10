@@ -55,16 +55,24 @@ exports.addUser = async (req, res) => {
         req.body.droits = "Aucun";
       }
 
-      await User.create(req.body)
-        .then((data) => {
-          return res.status(200).json({
-            message: "Inscription réussie",
-            addedUser: data,
+      //On vérifie que le mail n'existe pas déjà
+      let isEmailUnique = await canAddEmails(req.body.email, res);
+
+      if (isEmailUnique) {
+        await User.create(req.body)
+          .then((data) => {
+            return res.status(200).json({
+              message: "Inscription réussie",
+              addedUser: data,
+              success: true,
+            });
+          })
+          .catch((err) => {
+            displayThatError(res, err);
           });
-        })
-        .catch((err) => {
-          displayThatError(res, err);
-        });
+      } else {
+        sendDuplicateEmailResponse(req, res);
+      }
     }
   } catch (err) {
     displayThatError(res, err);
@@ -92,16 +100,24 @@ exports.addCustomer = async (req, res) => {
     req.body.droits = "aucun";
     req.body.password = "user";
 
-    await User.create(req.body)
-      .then((data) => {
-        return res.status(200).json({
-          message: "Inscription réussie",
-          addedUser: data,
+    //On vérifie que le mail n'existe pas déjà
+    let isEmailUnique = await canAddEmails(req.body.email, res);
+
+    if (isEmailUnique) {
+      await User.create(req.body)
+        .then((data) => {
+          return res.status(200).json({
+            message: "Inscription réussie",
+            addedUser: data,
+            success: true,
+          });
+        })
+        .catch((err) => {
+          displayThatError(res, err);
         });
-      })
-      .catch((err) => {
-        displayThatError(res, err);
-      });
+    } else {
+      sendDuplicateEmailResponse(req, res);
+    }
   } catch (err) {
     displayThatError(res, err);
   }
@@ -385,7 +401,7 @@ exports.checkAdmins = async (req, res) => {
 
 //Aide pour eager loading https://sequelize.org/docs/v6/advanced-association-concepts/eager-loading/
 
-//------------- GET -------------- (testé)
+//------------- POST -------------- (testé)
 exports.findById = async (req, res) => {
   console.log("USER controller : findById -------");
 
@@ -421,7 +437,7 @@ exports.findById = async (req, res) => {
   }
 };
 
-//------------- GET -------------- (testé)
+//------------- POST -------------- (testé)
 exports.findByRole = async (req, res) => {
   console.log("USER controller : findByRole -------");
 
@@ -660,7 +676,7 @@ exports.findByRole = async (req, res) => {
   }
 };
 
-//------------- GET -------------- (testé)
+//------------- POST -------------- (testé)
 exports.findByName = async (req, res) => {
   console.log("USER controller : findByName -------");
 
@@ -705,7 +721,7 @@ exports.findByName = async (req, res) => {
   }
 };
 
-//------------- GET -------------- (testé)
+//------------- POST -------------- (testé)
 exports.findAll = async (req, res) => {
   console.log("USER controller : findAll -------");
 
@@ -735,6 +751,40 @@ exports.findAll = async (req, res) => {
 //-----------------------------------------
 //--------------FUNCTIONS------------------
 //-----------------------------------------
+
+let sendDuplicateEmailResponse = (req, res) => {
+  return res.status(403).json({
+    message: `ERREUR : L'email ${req.body.email} est déjà utilisé par un utilisateur ! `,
+    success: false,
+  });
+};
+
+let canAddEmails = async (thatEmail, res) => {
+  console.log("USER controller : checking emails -------");
+  console.log(thatEmail);
+  try {
+    let theseEmails = [];
+
+    let allUsersEmails = await User.findAll({
+      attributes: ["email"],
+    });
+
+    allUsersEmails.forEach((user) => {
+      theseEmails.push(user.dataValues.email);
+    });
+
+    if (theseEmails.includes(thatEmail)) {
+      console.log("Email is NOT unique");
+      return false;
+    } else {
+      console.log("Email IS unique");
+      return true;
+    }
+  } catch (err) {
+    displayThatError(res, err);
+  }
+};
+
 let displayResults = (
   requestResponse,
   resultArray,
