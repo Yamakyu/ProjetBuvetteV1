@@ -19,7 +19,7 @@ export default function AjouterArticle() {
     const [articleImage, setArticleImage] = useState("");
     const [validateArticle, setValidateArticle] = useState("");
     const [formMessage, setFormMessage] = useState("");
-    const [resAPIMessage, setResAPIMessage] = useState("");
+    const [apiResponse, setApiResponse] = useState("");
     const [validationMessage, setvalidationMessage] = useState("");
 
 
@@ -40,6 +40,13 @@ export default function AjouterArticle() {
 
     const prepareAddArticle = (e) => {
         e.preventDefault();
+        setApiResponse("");
+
+        if (isStringEmpty(articleName)){
+            return setApiResponse("Vous devez remplir au moins le nom de l'article !");
+        } else if (articlePrice === 0) {
+            setApiResponse("ATTENTION : le prix indiqué est 0€ !");
+        }
 
         let articleWorkedOn = {
             nom: articleName,
@@ -49,7 +56,6 @@ export default function AjouterArticle() {
             file: articleImage,
             disponible: isArticlePublished ? "oui" : "non"        //← Ici je parse le booléen en "oui" ou "non", pour la vérification
         }
-        setResAPIMessage("");
         setValidateArticle(displayInputedArticle(articleWorkedOn))
     }
 
@@ -63,7 +69,7 @@ export default function AjouterArticle() {
         formData.append('description', articleDescription);
         formData.append('published', isArticlePublished);
 
-        setResAPIMessage("Ajout en cours. Cela peut prendre quelques instants....");
+        setApiResponse("Ajout en cours. Cela peut prendre quelques instants....");
 
         await axios.post('/api/articles/add', formData, {
             headers: {
@@ -77,7 +83,7 @@ export default function AjouterArticle() {
             if (isUserTokenExpired(res.data)){
                 return myAppNavigator("/login");
             }else{
-                setResAPIMessage("→ Article " + res.data.message);
+                setApiResponse("→ Article " + res.data.message);
                 setArticleName("");
                 setArticlePrice("");
                 setArticleDescription("");
@@ -93,9 +99,17 @@ export default function AjouterArticle() {
             if (isUserTokenExpired(err)){
                 return myAppNavigator("/login");
             }
-            setResAPIMessage(err.response.data.message);
+            setApiResponse(err.response.data.message);
         })
         
+    }
+
+    const isStringEmpty = (thatString) => {
+        if (thatString === null || thatString === undefined || thatString === "" || thatString.replace(/\s+/g, '') === ""){
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -177,7 +191,7 @@ export default function AjouterArticle() {
             </Container>
 
 
-        {validateArticle} {resAPIMessage}
+        {validateArticle} {apiResponse}
 
         <br/>
         <br/>

@@ -13,7 +13,7 @@ export default function AjouterUtilisateur() {
     const myAppNavigator = useNavigate();
 
     const [checkEditUser, setCheckEditUser] = useState();
-    const [confirmButton, setConfirmButton] = useState();
+    // const [confirmButton, setConfirmButton] = useState();
     const [warning, setWarning] = useState("");
     const [apiResponse, setApiResponse] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -51,13 +51,15 @@ export default function AjouterUtilisateur() {
                 ? ""
                 : <li key={objectKey}> {objectKey} : {value} </li>
                 )}
+                <br/>
+                <button onClick={apiAddUser}>→ Ajouter l'utilisateur ←</button>
             </ul>
         );
     }
     
     const resetWarning = () => {
         setWarning("");
-        setConfirmButton("");
+        // setConfirmButton("");
         setCheckEditUser("");
     }
 
@@ -72,11 +74,11 @@ export default function AjouterUtilisateur() {
         if (passwordConfirm !== userWorkedOn.password){
             setWarning("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
             setCheckEditUser("");
-            setConfirmButton("");
+            // setConfirmButton("");
             setApiResponse("");
         } else {
             setWarning("Cet utilisateur sera ajouté à la base de données : ");
-            setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
+            //setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
             setCheckEditUser(displayInputedUser());
             setApiResponse("");
         }
@@ -90,7 +92,7 @@ export default function AjouterUtilisateur() {
         if (activeSession) {
 
             setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
-            setConfirmButton("");
+            //setConfirmButton("");
     
             //Envoi à notre API back end
             await fetch("/api/users/signup",{
@@ -172,12 +174,14 @@ export default function AjouterUtilisateur() {
         </UserForm>
 
         <br/>
+        <button onClick={() => myAppNavigator("/manage/users/edit")}>Accéder à la liste des utilisateurs</button>
+
+        <br/>
         
         {warning || ""}
         <br/>
         {checkEditUser || ""}
-        <br/>
-        {confirmButton || ""}
+        {/*confirmButton || ""*/}
         <br/>
         {apiResponse || ""}
     </div>

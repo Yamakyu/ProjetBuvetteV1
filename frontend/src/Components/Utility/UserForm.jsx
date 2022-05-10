@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 export default function UserForm(props) {
 
+
     let userEdit = props.user;
     let setUserEdit = props.setUser;
     let validateForm = props.formHandler;
@@ -19,7 +20,8 @@ export default function UserForm(props) {
 
     const [warningCreateAdmin, setWarningCreateAdmin] = useState("");
 
-    const resetEdits = () =>{
+    const resetEdits = (inputEvent) =>{
+        inputEvent.preventDefault();
         setUserEdit({
         nom:"",
         prenom:"",
@@ -105,6 +107,7 @@ export default function UserForm(props) {
 
     <div>
         <form onSubmit={validateForm}>
+                Nom : {" "}
                 <input
                     placeholder='nom'
                     value={userEdit.nom}
@@ -113,6 +116,8 @@ export default function UserForm(props) {
                     name="nom"
                     disabled={isInputDisabled}
                 />
+                <br />
+                Prenom : {" "}
                 <input
                     placeholder='prenom'
                     value={userEdit.prenom}
@@ -121,6 +126,8 @@ export default function UserForm(props) {
                     name="prenom"
                     disabled={isInputDisabled}
                 />
+                <br />
+                Adresse email : {" "}
                 <input
                     placeholder='email'
                     value={userEdit.email}
@@ -131,29 +138,39 @@ export default function UserForm(props) {
                 />
                 <br />
                 {displayPasswordField 
-                    ? <input
-                        placeholder='mot de passe'
-                        value={userEdit.password}
-                        type="password"
-                        onChange={handleInputs}
-                        name="password"
-                        disabled={isInputDisabled}
-                    />
-                    :""}
+                    ? 
+                    <div>
+                        <br />
+                            {"Mot de passe : "}
+
+                            <input
+                            placeholder='mot de passe'
+                            value={userEdit.password}
+                            type="password"
+                            onChange={handleInputs}
+                            name="password"
+                            disabled={isInputDisabled}
+                            />
+                    </div>
+                        :""}
 
                 {displayPasswordField 
-                    ? <input
-                        placeholder='CONFIRMEZ mot de passe'
-                        value={passwordConfirm}
-                        onChange={(e) => setPasswordConfirm(e.target.value)}
-                        type="password"
-                        name="passwordConfirm"
-                        disabled={isInputDisabled}
-                    />
+                    ? <div>
+                            {"Confirmez le mot de passe : "}
+                            
+                            <input
+                            placeholder='CONFIRMEZ mot de passe'
+                            value={passwordConfirm}
+                            onChange={(e) => setPasswordConfirm(e.target.value)}
+                            type="password"
+                            name="passwordConfirm"
+                            disabled={isInputDisabled}
+                            />                        
+                    </div>                        
                     :""}       
                     <br />
                 <label>
-                    Droits de gestion : 
+                    Droits de gestion : {" "} 
                     <select onChange={handleInputSelect} value={userEdit.droits} disabled={isInputDisabled}>
                         <option value="Aucun">Aucun</option>
                         <option value="Gerant Buvette">Gérant de buvette</option>
@@ -166,10 +183,10 @@ export default function UserForm(props) {
                 {warningCreateAdmin || "" }   
                 <br />
                 <button disabled={isInputDisabled}>Vérifier la saisie</button>
+                <button onClick={resetEdits}>Annuler l'opération</button>
             </form>
-
         <br/>
-            <button onClick={resetEdits}>Annuler l'opération</button>
+        <br/>
         <br/>
     </div>
   )
