@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../Contexts/SessionContext';
 import DoTheThings from './Utility/DoTheThings';
-
+import "../Styles/AppStyle.css";
 
 export default function Connexion() {
 
@@ -102,27 +102,36 @@ export default function Connexion() {
     }
 
     return (
-        <div>
-            <DoTheThings
-            theThing={null}
-            theOtherThing={null}
-            />
-
-            <form onSubmit={apiLogin}>
-                <input type="email" value={email} placeholder='email' 
-                onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
+        <div className='BoxSimple'>
             
-                <input type="password" value={password} placeholder='password' 
-                onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
-                <br />
-                <br />
 
-                <button>Connexion</button>
+            <h1 className='PageName'>Connexion</h1>
+            
+
+            <form className='FormulaireSimple' onSubmit={apiLogin}>
+                <text className='VerticalLabel'>
+                    Adresse e-mail {" "}
+                </text>
+                <input className='LargeInput' type="email" value={email} placeholder='Adresse e-mail' 
+                onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
+                
+
+                <text className='VerticalLabel'>
+                    Mot de passe : {" "}
+                </text>
+                <input className='LargeInput' type="password" value={password} placeholder='Mot de passe' 
+                onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
+
+                <br />
+                <button className='MainButton'>Connexion</button>
+            
+                {/*loginApiResponse*/}
+                <div className='APIResponse'>
+                    {displayConnexionStatus()}
+                </div>
+                {/*getLocalStorage("currentSession").userConnexionStatus*/}
             </form>
 
-            {/*loginApiResponse*/}
-            {displayConnexionStatus()}
-            {/*getLocalStorage("currentSession").userConnexionStatus*/}
 
         </div>
     )

@@ -24,8 +24,11 @@ export default function DoTheThings(props) {
 
   return (
     <div>
-        <button onClick={doTheThing}>Do the thing</button>
-        <button onClick={doTheOtherThing}>Do the OTHER thing</button>
+        <button className='SubButton' onClick={doTheThing}>Do the thing</button>
+        <button className='SubButton' onClick={doTheOtherThing}>Do the OTHER thing</button>
+        <br />
+        <br />
+        <br />
     </div>
   )
 }

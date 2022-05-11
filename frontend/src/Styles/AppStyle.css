@@ -1,0 +1,70 @@
+.BoxSimple{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    padding-top: 10px;
+
+
+    outline-color: black;
+    outline-width: 2px;
+    outline-style: dotted;
+
+}
+.FormulaireSimple{
+    font-size: 25px;
+
+    width: 95%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+    margin-bottom: 20px;
+    background-color: #a1ffff86;    
+    border-radius: 50px;
+    outline-color: rgb(157, 255, 206);
+    outline-width: 10px;
+    outline-style: solid;
+}
+.PageName{
+    margin-bottom: 100px;
+    font-size: 40px;
+}
+.VerticalLabel{
+    margin-top: 15px;
+}
+.LargeInput{
+    width: 80%;
+    font-size: 20px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    background-color: #ffffff79;
+}
+.MainButton {
+    font-size: 30px;
+
+    border-radius: 35px;
+    padding: 15px;
+    margin-top:30px ;
+
+    background-color:#eff9e1 ;
+    border-color: teal;
+    border-width: 5px;
+    border-style: double;
+}
+.SubButton {
+    border-style: solid;
+    border-color: cadetblue;
+    border-radius: 15px;
+    padding: 7px;
+}
+.APIResponse{
+    margin:5px;
+    font-size: 20px;
+    color: orangered;
+    background-color:#9fdefe;
+    border-radius: 5px;
+}

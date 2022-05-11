@@ -102,65 +102,70 @@ function App() {
   //↑ On rend les informations de la session accessible dans toute l'application ↓
 
   return (
-    <SessionContext.Provider
-      value={{
-        activeSession,
-        setActiveSession,
-        getLocalStorage,
-        isUserTokenExpired,
-        currentOrder,
-        setCurrentOrder,
-        fullUserList,
-        setFullUserList,
-      }}
-    >
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Accueil />} />
-          <Route path="/login" element={<Connexion />} />
-          <Route path="/admin" element={<AdminMain />} />
-          <Route path="/manage/buvette" element={<GestionBuvette />} />
-          <Route
-            path="/manage/buvette/orders/new"
-            element={<NouvelleCommande />}
-          />
-          <Route
-            path="/manage/buvette/orders/check"
-            element={<VerifierCommande />}
-          />
-          <Route
-            path="/manage/buvette/orders/completed"
-            element={<FinCommande />}
-          />
-          <Route
-            path="/manage/buvette/articles/add"
-            element={<AjouterArticle />}
-          />
-          <Route
-            path="/manage/buvette/articles/overview"
-            element={<GestionArticles />}
-          />
-          <Route
-            path="/manage/buvette/articles/:id"
-            element={<ModifierArticle />}
-          />
-          <Route
-            path="/manage/buvette/invoices"
-            element={<HistoriqueCommandes />}
-          />
-          <Route
-            path="/manage/buvette/invoices/details/:id"
-            element={<DetailCommande />}
-          />
-          <Route path="/manage/materiel" element={<GestionMateriel />} />
-          <Route path="/manage/users" element={<GestionUtilisateurs />} />
-          <Route path="/manage/users/add" element={<AjouterUtilisateur />} />
-          <Route path="/manage/users/edit" element={<ModifierUtilisateur />} />
-          <Route path="/test" element={<TestDivers />} />
-        </Routes>
-      </BrowserRouter>
-    </SessionContext.Provider>
+    <div className="App">
+      <SessionContext.Provider
+        value={{
+          activeSession,
+          setActiveSession,
+          getLocalStorage,
+          isUserTokenExpired,
+          currentOrder,
+          setCurrentOrder,
+          fullUserList,
+          setFullUserList,
+        }}
+      >
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Accueil />} />
+            <Route path="/login" element={<Connexion />} />
+            <Route path="/admin" element={<AdminMain />} />
+            <Route path="/manage/buvette" element={<GestionBuvette />} />
+            <Route
+              path="/manage/buvette/orders/new"
+              element={<NouvelleCommande />}
+            />
+            <Route
+              path="/manage/buvette/orders/check"
+              element={<VerifierCommande />}
+            />
+            <Route
+              path="/manage/buvette/orders/completed"
+              element={<FinCommande />}
+            />
+            <Route
+              path="/manage/buvette/articles/add"
+              element={<AjouterArticle />}
+            />
+            <Route
+              path="/manage/buvette/articles/overview"
+              element={<GestionArticles />}
+            />
+            <Route
+              path="/manage/buvette/articles/:id"
+              element={<ModifierArticle />}
+            />
+            <Route
+              path="/manage/buvette/invoices"
+              element={<HistoriqueCommandes />}
+            />
+            <Route
+              path="/manage/buvette/invoices/details/:id"
+              element={<DetailCommande />}
+            />
+            <Route path="/manage/materiel" element={<GestionMateriel />} />
+            <Route path="/manage/users" element={<GestionUtilisateurs />} />
+            <Route path="/manage/users/add" element={<AjouterUtilisateur />} />
+            <Route
+              path="/manage/users/edit"
+              element={<ModifierUtilisateur />}
+            />
+            <Route path="/test" element={<TestDivers />} />
+          </Routes>
+        </BrowserRouter>
+      </SessionContext.Provider>
+    </div>
   );
 }
 
