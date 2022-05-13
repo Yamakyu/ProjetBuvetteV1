@@ -14,7 +14,7 @@ export default function AjouterUtilisateur() {
 
     const [checkEditUser, setCheckEditUser] = useState();
     // const [confirmButton, setConfirmButton] = useState();
-    const [warning, setWarning] = useState("");
+    // const [warning, setWarning] = useState("");
     const [apiResponse, setApiResponse] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [userWorkedOn, setUserWorkedOn] = useState({
@@ -49,16 +49,16 @@ export default function AjouterUtilisateur() {
                 //Cette expression conditionelle permet de masquer les booléens (isAdmin, etc) et le mot de passe
                 objectKey.startsWith("is") || objectKey === "password"
                 ? ""
-                : <li key={objectKey}> {objectKey} : {value} </li>
+                : <li key={objectKey}> <b>{objectKey}</b> : {value} </li>
                 )}
                 <br/>
-                <button onClick={apiAddUser}>→ Ajouter l'utilisateur ←</button>
+                <button className='ConfirmButton' onClick={apiAddUser}>→ Ajouter l'utilisateur ←</button>
             </ul>
         );
     }
     
     const resetWarning = () => {
-        setWarning("");
+        setApiResponse("");
         // setConfirmButton("");
         setCheckEditUser("");
     }
@@ -72,15 +72,15 @@ export default function AjouterUtilisateur() {
         }
 
         if (passwordConfirm !== userWorkedOn.password){
-            setWarning("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
+            setApiResponse("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
             setCheckEditUser("");
             // setConfirmButton("");
-            setApiResponse("");
+            //setApiResponse("");
         } else {
-            setWarning("Cet utilisateur sera ajouté à la base de données : ");
+            setApiResponse("Cet utilisateur sera ajouté à la base de données : ");
             //setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
             setCheckEditUser(displayInputedUser());
-            setApiResponse("");
+            // setApiResponse("");
         }
 
     }
@@ -158,9 +158,9 @@ export default function AjouterUtilisateur() {
 //------------------------------------------------------------------------- AFFICHAGE
 
   return (
-    <div>
+    <div className='BoxSimple'>
         <br/>
-        <h1>AJOUTER UN UTILISATEUR</h1>
+        <h1 >Ajouter un utilisateur ou un client</h1>
         <br/>
 
         <UserForm 
@@ -172,18 +172,20 @@ export default function AjouterUtilisateur() {
             setPasswordConfirm={setPasswordConfirm}
             passwordConfirm={passwordConfirm}>    
         </UserForm>
-
-        <br/>
-        <button onClick={() => myAppNavigator("/manage/users/edit")}>Accéder à la liste des utilisateurs</button>
-
+        <div className='APIResponse'>
+            {apiResponse || ""}
+        </div>
         <br/>
         
-        {warning || ""}
+        {/*warning || ""*/}
         <br/>
         {checkEditUser || ""}
         {/*confirmButton || ""*/}
         <br/>
-        {apiResponse || ""}
+
+
+        <br/>
+        <button className='SubButton' onClick={() => myAppNavigator("/manage/users/edit")}>Liste des utilisateurs</button>
     </div>
 
 

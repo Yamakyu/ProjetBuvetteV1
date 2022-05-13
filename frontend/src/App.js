@@ -5,8 +5,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import Accueil from "./Components/Accueil";
 import Connexion from "./Components/Connexion";
+import GestionMain from "./Components/GestionMain";
 import TestDivers from "./Components/Utility/TestDivers";
-import AdminMain from "./Components/PagesAdmin/AdminMain";
+//import AdminMain from "./Components/PagesAdmin/AdminMain";
 import GestionMateriel from "./Components/PagesMateriel/GestionMateriel";
 import GestionBuvette from "./Components/PagesBuvette/GestionBuvette";
 import AjouterArticle from "./Components/PagesBuvette/AjouterArticle";
@@ -120,7 +121,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Accueil />} />
             <Route path="/login" element={<Connexion />} />
-            <Route path="/admin" element={<AdminMain />} />
+            <Route path="/main" element={<GestionMain />} />
             <Route path="/manage/buvette" element={<GestionBuvette />} />
             <Route
               path="/manage/buvette/orders/new"

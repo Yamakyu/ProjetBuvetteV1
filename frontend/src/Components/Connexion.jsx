@@ -64,10 +64,8 @@ export default function Connexion() {
     
                 switch (thatNewSession.userInfo.droits) {
                     case "Admin":
-                        myAppNavigator("/admin");
-                        break;
                     case "Double gérant":
-                        myAppNavigator("/manage");
+                        myAppNavigator("/main");
                         break;
                     case "Gerant Buvette":
                         myAppNavigator("/manage/buvette");
@@ -103,22 +101,18 @@ export default function Connexion() {
 
     return (
         <div className='BoxSimple'>
-            
-
             <h1 className='PageName'>Connexion</h1>
-            
-
             <form className='FormulaireSimple' onSubmit={apiLogin}>
-                <text className='VerticalLabel'>
-                    Adresse e-mail {" "}
-                </text>
+                <div className='VerticalLabel'>
+                    Adresse e-mail :
+                </div>
                 <input className='LargeInput' type="email" value={email} placeholder='Adresse e-mail' 
                 onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
                 
 
-                <text className='VerticalLabel'>
-                    Mot de passe : {" "}
-                </text>
+                <div className='VerticalLabel'>
+                    Mot de passe :
+                </div>
                 <input className='LargeInput' type="password" value={password} placeholder='Mot de passe' 
                 onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
 

@@ -1,37 +1,97 @@
+/* --------- NAVBAR --------- */
+
+.Navbar{
+    display: flex;
+    justify-content: space-evenly;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #3b1d50;
+}
+.NavbarButton{
+    font-size: 20px;
+    text-decoration: none;
+
+    color: aliceblue;
+    background-color: #001057;
+
+    padding: 10px;
+    outline-style: solid;
+    outline-color: cyan;
+    border-radius: 15px;
+}
+.LogoutButton{
+    font-size: 20px;
+    text-decoration: none;
+
+    color: aliceblue;
+    background-color: #b96395;
+
+    padding: 10px;
+    outline-style: solid;
+    outline-color: orange;
+    border-radius: 15px;
+}
+.NavbarSeparator{
+    margin: 0;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #91abff;
+}
+
+/* --------- Conteneurs --------- */
+
 .BoxSimple{
     display: flex;
     flex-direction: column;
     align-items: center;
     
+    width: 100%;
     padding-top: 10px;
-
 
     outline-color: black;
     outline-width: 2px;
     outline-style: dotted;
 
 }
+.MenuButtonsBox{
+    width: fit-content;
+    padding: 2%;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    padding-bottom: 50px;
+    margin: 20px;
+}
 .FormulaireSimple{
     font-size: 25px;
+    width: 100%;
 
-    width: 95%;
     height: 100%;
 
     display: flex;
     align-items: center;
     flex-direction: column;
-    
-    margin-bottom: 20px;
+    padding-bottom: 10px;
+    margin-bottom: 10   px;
     background-color: #a1ffff86;    
-    border-radius: 50px;
+    border-radius: 25px;
     outline-color: rgb(157, 255, 206);
     outline-width: 10px;
     outline-style: solid;
 }
-.PageName{
-    margin-bottom: 100px;
-    font-size: 40px;
+.ButtonContainer{
+    width: inherit;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
+
+/* --------- Boutons et inputs --------- */
+
 .VerticalLabel{
     margin-top: 15px;
 }
@@ -42,9 +102,10 @@
     border-left: 0;
     border-right: 0;
     background-color: #ffffff79;
+    
 }
 .MainButton {
-    font-size: 30px;
+    font-size: 22px;
 
     border-radius: 35px;
     padding: 15px;
@@ -52,19 +113,77 @@
 
     background-color:#eff9e1 ;
     border-color: teal;
-    border-width: 5px;
-    border-style: double;
+    border-width: 4px;
+    border-style: solid;
 }
 .SubButton {
+    font-size: 18px;
+
+    margin: 15px;
+    padding: 10px;
+
+    border-radius: 20px;
+
+    background-color:#f9f6e1 ;
+    border-color: rgb(177, 196, 157);
+    border-width: 3px;
     border-style: solid;
-    border-color: cadetblue;
-    border-radius: 15px;
-    padding: 7px;
+}
+.ConfirmButton{
+    font-size: 18px;
+
+    margin: 15px;
+    padding: 10px;
+
+    border-radius: 20px;
+
+    background-color:#d4fcf8 ;
+    border-color: rgb(139, 224, 213);
+    border-width: 3px;
+    border-style: solid;
+}
+.CancelButton{
+    font-size: 18px;
+
+    margin: 15px;
+    padding: 10px;
+
+    border-radius: 20px;
+
+    background-color:#f9e1e1 ;
+    border-color: rgb(196, 157, 157);
+    border-width: 3px;
+    border-style: solid;
+}
+.OptionSelector{
+    background-color: rgb(226, 250, 250);
+    font-size: 20px;
+    border-radius: 5px;
+    border-style: solid;
+    margin-bottom: 20px;
+}
+/* --------- Texte --------- */
+
+.PageName{
+    margin-bottom: 75px;
+    font-size: 40px;
 }
 .APIResponse{
-    margin:5px;
+    margin:15px;
+    padding-left: 10px;
+    padding-right: 10px;
     font-size: 20px;
     color: orangered;
     background-color:#9fdefe;
-    border-radius: 5px;
+    border-radius: 20px;
+}
+.Avertissement{
+    margin-bottom: 10px;
+    color: #440606;
+}
+
+/* --------- Autres --------- */
+
+.FancyBr{
+    margin-top: 50px;
 }

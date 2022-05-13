@@ -19,7 +19,8 @@ export default function Navbar() {
         localStorage.removeItem("currentSession")
 
         setActiveSession(() => ({
-          ...getLocalStorage("currentSession")            
+          ...getLocalStorage("currentSession"),
+          userConnexionStatus: "Veuillez vous connecter pour accéeder aux fonctionnalités"
         }));
 
         setCurrentOrder([]);
@@ -27,9 +28,26 @@ export default function Navbar() {
         myAppNavigator("/login");
     }
 
+    let baseNavbar = () => {
+        return(
+            <div>
+                {activeSession === undefined ? "" : <button onClick={displayActiveSession}>Bon c'est quoi l'active session là</button>}
+                {activeSession.userInfo.droits === "Admin" ? <button onClick={prepareDropDatabase}>Drop la BdD</button> : ""}
+                {confirmDropDatabaseBtn}
+                {cancelDropDatabaseBtn}
+                <a href='https://trello.com/b/Op3lCEVw/stage-doranco-application-gestion-buvette-stock'> - TRELLO - </a>
+            </div>
+        )
+    }
+
     let generateNavbar = () =>{
 
+        console.log(window.location.pathname);
+
         try{
+            if(window.location.pathname === "/login"){
+                return;
+            }
             if (activeSession.userInfo.droits === undefined || !activeSession){
                 return(
                     <nav>
@@ -41,42 +59,38 @@ export default function Navbar() {
                 switch (activeSession.userInfo.droits) {
                     case "Admin":
                         return(
-                            <nav>
-                                <Link to="/admin"> [ Interface admin ] </Link>
-                                <Link to="/manage/buvette"> [ Gestion buvette ] </Link>
-                                <Link to="/manage/materiel "> [ Gestion materiel ] </Link>
-                                <Link to="/manage/users "> [ Gestion utilisateurs ] </Link>
-                                <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
+                            <nav className='Navbar'>
+                                <Link className='NavbarButton' to="/main">Menu principal</Link>
+                                <Link className='LogoutButton' to="/" onClick={userLogout}>Deconnexion</Link>
                             </nav>
                         )
                     case "Double gérant":
                         return(
-                            <nav>
-                                <Link to="/manage/buvette"> [ Gestion buvette ] </Link>
-                                <Link to="/manage/materiel "> [ Gestion materiel ] </Link>
-                                <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
+                            <nav className='Navbar'>
+                                <Link className='NavbarButton' to="/manage">Menu principal</Link>
+                                <Link className='LogoutButton' to="/" onClick={userLogout}>Deconnexion</Link>
                             </nav>
                         )
                     case "Gerant Buvette":
                         return(
-                            <nav>
-                                <Link to="/manage/buvette"> [ Gestion buvette ] </Link>
-                                <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
+                            <nav className='Navbar'>
+                                <Link className='NavbarButton' to="/manage/buvette">Gestion buvette</Link>
+                                <Link className='LogoutButton' to="/" onClick={userLogout}>Deconnexion</Link>
                             </nav>
                         )
                     case "Gerant Matériel":
                         return(
-                            <nav>
-                                <Link to="/manage/materiel"> [ Gestion buvette ] </Link>
-                                <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
+                            <nav className='Navbar'>
+                                <Link className='NavbarButton' to="/manage/materiel">Gestion Matériel</Link>
+                                <Link className='LogoutButton' to="/" onClick={userLogout}>Deconnexion</Link>
                             </nav>
                         )                
                     case"Aucun":
                     default:
                         return(
-                            <nav>
-                                <Link to="/Accueil"> [ Accueil ] </Link>
-                                <Link to="/" onClick={userLogout}> [ Deconnexion ] </Link>
+                            <nav className='Navbar'>
+                                <Link className='NavbarButton' to="/Accueil">Accueil</Link>
+                                <Link className='LogoutButton' to="/" onClick={userLogout}>Deconnexion</Link>
                             </nav>
                         )
                 }
@@ -84,9 +98,9 @@ export default function Navbar() {
         }
         catch(error){
             return(
-                <nav>
-                    <Link to="/"> [ Accueil ] </Link>
-                    <Link to="/login"> [ Connexion ] </Link>
+                <nav className='Navbar'>
+                    <Link to="/">Accueil</Link>
+                    <Link to="/login">Connexion</Link>
                 </nav>
             )
         }
@@ -149,13 +163,9 @@ export default function Navbar() {
 
         <div>
             {generateNavbar()}
-            {activeSession === undefined ? "" : <button onClick={displayActiveSession}>Bon c'est quoi l'active session là</button>}
-            {activeSession.userInfo.droits === "Admin" ? <button onClick={prepareDropDatabase}>Drop la BdD</button> : ""}
-            {confirmDropDatabaseBtn}
-            {cancelDropDatabaseBtn}
-            <a href='https://trello.com/b/Op3lCEVw/stage-doranco-application-gestion-buvette-stock'> - TRELLO - </a>
-            <hr/>
-            <hr/>
+            {/*baseNavbar()*/}
+            
+            <hr className='NavbarSeparator'/>
         </div>
     )
 }

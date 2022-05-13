@@ -85,7 +85,7 @@ export default function UserForm(props) {
                     isGerantBuvette: false,
                     droits: pickedOption,
                     isAdmin: true}));
-                setWarningCreateAdmin("Vous vous apprêtez à donner les droits ADMINISTRATEUR à cet utilisateur.")
+                setWarningCreateAdmin("Cet utilisateur sera ADMINISTRATEUR.")
                 break;
             case "Aucun":
             default:
@@ -105,89 +105,112 @@ export default function UserForm(props) {
 
   return (
 
-    <div>
-        <form onSubmit={validateForm}>
-                Nom : {" "}
-                <input
-                    placeholder='nom'
-                    value={userEdit.nom}
-                    type="text"
-                    onChange={handleInputs}
-                    name="nom"
-                    disabled={isInputDisabled}
-                />
-                <br />
-                Prenom : {" "}
-                <input
-                    placeholder='prenom'
-                    value={userEdit.prenom}
-                    type="text"
-                    onChange={handleInputs}
-                    name="prenom"
-                    disabled={isInputDisabled}
-                />
-                <br />
-                Adresse email : {" "}
-                <input
-                    placeholder='email'
-                    value={userEdit.email}
-                    type="email"
-                    onChange={handleInputs}
-                    name="email"
-                    disabled={isInputDisabled}
-                />
-                <br />
-                {displayPasswordField 
-                    ? 
-                    <div>
-                        <br />
-                            {"Mot de passe : "}
+    <div >
+        <form className='FormulaireSimple' onSubmit={validateForm}>
+            <div className='VerticalLabel'>
+                Nom :
+            </div>
+            <input
+                className='LargeInput'
+                placeholder='Nom'
+                value={userEdit.nom}
+                type="text"
+                onChange={handleInputs}
+                name="nom"
+                disabled={isInputDisabled}
+            />
+            <br />
+            <div className='VerticalLabel'>
+                Prenom :
+            </div>
+            <input
+                className='LargeInput'
+                placeholder='Prenom'
+                value={userEdit.prenom}
+                type="text"
+                onChange={handleInputs}
+                name="prenom"
+                disabled={isInputDisabled}
+            />
+            <br />
+            <div className='VerticalLabel'>
+                Adresse e-mail :
+            </div>
+            <input
+                className='LargeInput'
+                placeholder='Adresse e-mail'
+                value={userEdit.email}
+                type="email"
+                onChange={handleInputs}
+                name="email"
+                disabled={isInputDisabled}
+            />
+            <br />
+            {displayPasswordField 
+                ? <div style={{width:'100%'}}>
+                    <br />
+                    <div className='VerticalLabel'>
+                        Mot de passe :
+                    </div>
 
-                            <input
-                            placeholder='mot de passe'
+                        <input 
+                            className='LargeInput'
+                            placeholder='Mot de passe'
                             value={userEdit.password}
                             type="password"
                             onChange={handleInputs}
                             name="password"
                             disabled={isInputDisabled}
-                            />
-                    </div>
-                        :""}
+                        />
+                </div>
+                    :""}
 
-                {displayPasswordField 
-                    ? <div>
-                            {"Confirmez le mot de passe : "}
-                            
-                            <input
-                            placeholder='CONFIRMEZ mot de passe'
+                    
+            {displayPasswordField 
+                ? <div style={{width:'100%'}}>
+                        <div className='VerticalLabel'>
+                            Confirmation mot de passe :
+                        </div>
+                        
+                        <input
+                            className='LargeInput'
+                            placeholder='CONFIRMEZ le mot de passe'
                             value={passwordConfirm}
                             onChange={(e) => setPasswordConfirm(e.target.value)}
                             type="password"
                             name="passwordConfirm"
                             disabled={isInputDisabled}
-                            />                        
-                    </div>                        
-                    :""}       
-                    <br />
-                <label>
+                        />                        
+                </div>                        
+                :""}       
+                <br />
+            <label>
+                <div className='FancyBr'/>
+                <div className='VerticalLabel'>
                     Droits de gestion : {" "} 
-                    <select onChange={handleInputSelect} value={userEdit.droits} disabled={isInputDisabled}>
-                        <option value="Aucun">Aucun</option>
-                        <option value="Gerant Buvette">Gérant de buvette</option>
-                        <option value="Gerant Matériel">Gérant matériel</option>
-                        <option value="Double gérant">Gérant buvette + matériel</option>
-                        <option value="Admin">Administrateur</option>
-                    </select>
-                </label>
-                <br />
-                {warningCreateAdmin || "" }   
-                <br />
-                <button disabled={isInputDisabled}>Vérifier la saisie</button>
-                <button onClick={resetEdits}>Annuler l'opération</button>
-            </form>
-        <br/>
-        <br/>
-        <br/>
+                </div>
+                <select className='OptionSelector' onChange={handleInputSelect} value={userEdit.droits} disabled={isInputDisabled}>
+                    <option value="Aucun">Aucun (l'utilisateur sera un client)</option>
+                    <option value="Gerant Buvette">Gérant de buvette</option>
+                    <option value="Gerant Matériel">Gérant matériel</option>
+                    <option value="Double gérant">Gérant buvette + matériel</option>
+                    <option value="Admin">Administrateur</option>
+                </select>
+            </label>
+
+            <br />
+            <div className='Avertissement'>
+                {warningCreateAdmin || "" }
+            </div>
+
+            <br />
+
+            <div className='ButtonContainer'>
+                <button className='ConfirmButton' disabled={isInputDisabled}>Vérifier la saisie</button>
+                <button className='CancelButton' onClick={resetEdits}>Annuler l'opération</button>
+            </div>
+
+        </form>
     </div>
   )
 }

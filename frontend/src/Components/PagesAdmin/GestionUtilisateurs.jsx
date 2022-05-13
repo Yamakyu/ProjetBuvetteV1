@@ -20,13 +20,15 @@ export default function GestionUtilisateurs() {
 
 
   return (
-    <div>
-      <h1>Super page gestion d'utilisateur</h1>
-      <br/>
-      <br/>
+    <div className='BoxSimple'>
+      <div className='MenuButtonsBox'>
+        <h1 className='PageName'>Gestion des utilisateurs</h1>
+        <br/>
+        <br/>
 
-        <button onClick={goToAddUser}> Ajouter un utilisateur </button>
-        <button onClick={goToEditUser}> Modifier ou supprimer un utilisateur </button>
+          <button className='MainButton' onClick={goToAddUser}> Ajouter un utilisateur ou un client </button>
+          <button className='MainButton' onClick={goToEditUser}> Modifier ou supprimer un utilisateur/client </button>
+      </div>
     </div>
 
 
