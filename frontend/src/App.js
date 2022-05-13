@@ -19,14 +19,22 @@ import GestionUtilisateurs from "./Components/PagesAdmin/GestionUtilisateurs";
 import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
 import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 import HistoriqueCommandes from "./Components/PagesBuvette/HistoriqueCommandes";
+import VerifierNewUtilisateur from "./Components/PagesAdmin/VerifierNewUtilisateur";
 import DetailCommande from "./Components/PagesBuvette/DetailCommande";
 import FinCommande from "./Components/PagesBuvette/FinCommande";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
   const [fullUserList, setFullUserList] = useState([]);
+  const [userWorkedOn, setUserWorkedOn] = useState({
+    nom: "",
+    prenom: "",
+    email: "",
+    password: "",
+    droits: "Aucun",
+  });
 
-  let isUserTokenExpired = (apiResponseData) => {
+  const isUserTokenExpired = (apiResponseData) => {
     //Si le backend retourne que le token est expiré, on vide la session actuelle (removeItem) et on y ajoute le message (le backend retourne l'erreur : la plupart du temps, Token expiré).
     /*
     Afin que la déconnexion soit complète (session vidée + retour à la page de login, le code qui appelle cette fonction doit toujours être :
@@ -66,7 +74,7 @@ function App() {
     }
   };
 
-  let getLocalStorage = (localStorageKey) => {
+  const getLocalStorage = (localStorageKey) => {
     if (
       localStorage.getItem(localStorageKey) === null ||
       !localStorage.getItem(localStorageKey)
@@ -114,6 +122,8 @@ function App() {
           setCurrentOrder,
           fullUserList,
           setFullUserList,
+          userWorkedOn,
+          setUserWorkedOn,
         }}
       >
         <BrowserRouter>
@@ -159,7 +169,11 @@ function App() {
             <Route path="/manage/users" element={<GestionUtilisateurs />} />
             <Route path="/manage/users/add" element={<AjouterUtilisateur />} />
             <Route
-              path="/manage/users/edit"
+              path="/manage/users/verify"
+              element={<VerifierNewUtilisateur />}
+            />
+            <Route
+              path="/manage/users/overview"
               element={<ModifierUtilisateur />}
             />
             <Route path="/test" element={<TestDivers />} />

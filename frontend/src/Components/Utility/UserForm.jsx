@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
-
+import React, { useContext, useState } from 'react'
+import { SessionContext } from '../../Contexts/SessionContext';
 
 export default function UserForm(props) {
 
+    const { userWorkedOn, setUserWorkedOn }= useContext(SessionContext);
 
-    let userEdit = props.user;
-    let setUserEdit = props.setUser;
+    let user = props.user || userWorkedOn;
+    let setUser = props.setUser || setUserWorkedOn;
+
     let validateForm = props.formHandler;
     let resetWarning = props.resetWarning;
     let refreshEditUser = props.refreshEditUserDisplay;
@@ -16,13 +18,15 @@ export default function UserForm(props) {
     //↓ Pour désactiver les inputs (suppressions utilisateur). C'est actif par défaut (si on ne transmet pas le props, il est false, l'input est actif)
     let isInputDisabled = props.disableInput && true;
     let setIsInputDisabled = props.setDisableInput || (() => {});
+    let isAddNewUser = props.isAddNewUser; 
+    
     //↑ Si le props pour (dés)activer les input n'a pas été transmis, setIsInputEnabled est une fonction vide
 
     const [warningCreateAdmin, setWarningCreateAdmin] = useState("");
 
     const resetEdits = (inputEvent) =>{
         inputEvent.preventDefault();
-        setUserEdit({
+        setUser({
         nom:"",
         prenom:"",
         email:"",
@@ -39,7 +43,7 @@ export default function UserForm(props) {
 
         const { name, value } = inputEvent.target;
 
-        setUserEdit(prevState => ({
+        setUser(prevState => ({
             ...prevState,
             [name]: value
         }));
@@ -52,7 +56,7 @@ export default function UserForm(props) {
 
         switch (pickedOption) {
             case "Gerant Buvette":
-                setUserEdit(prevState => ({
+                setUser(prevState => ({
                     ...prevState,
                     droits: pickedOption,
                     isAdmin: false,
@@ -61,7 +65,7 @@ export default function UserForm(props) {
                 setWarningCreateAdmin("");
                 break;
             case "Gerant Matériel":
-                setUserEdit(prevState => ({
+                setUser(prevState => ({
                     ...prevState,
                     droits: pickedOption,
                     isAdmin: false,
@@ -70,7 +74,7 @@ export default function UserForm(props) {
                 setWarningCreateAdmin("");
                 break;
             case "Double gérant":
-                setUserEdit(prevState => ({
+                setUser(prevState => ({
                     ...prevState,
                     droits: pickedOption,
                     isAdmin: false,
@@ -79,7 +83,7 @@ export default function UserForm(props) {
                 setWarningCreateAdmin("");
                 break;
             case "Admin" :
-                setUserEdit(prevState => ({
+                setUser(prevState => ({
                     ...prevState,
                     isGerantMateriel: false,
                     isGerantBuvette: false,
@@ -89,7 +93,7 @@ export default function UserForm(props) {
                 break;
             case "Aucun":
             default:
-                setUserEdit(prevState => ({
+                setUser(prevState => ({
                     ...prevState,
                     isAdmin: false,
                     isGerantMateriel: false,
@@ -113,7 +117,7 @@ export default function UserForm(props) {
             <input
                 className='LargeInput'
                 placeholder='Nom'
-                value={userEdit.nom}
+                value={user.nom}
                 type="text"
                 onChange={handleInputs}
                 name="nom"
@@ -126,7 +130,7 @@ export default function UserForm(props) {
             <input
                 className='LargeInput'
                 placeholder='Prenom'
-                value={userEdit.prenom}
+                value={user.prenom}
                 type="text"
                 onChange={handleInputs}
                 name="prenom"
@@ -139,7 +143,7 @@ export default function UserForm(props) {
             <input
                 className='LargeInput'
                 placeholder='Adresse e-mail'
-                value={userEdit.email}
+                value={user.email}
                 type="email"
                 onChange={handleInputs}
                 name="email"
@@ -153,43 +157,37 @@ export default function UserForm(props) {
                         Mot de passe :
                     </div>
 
-                        <input 
-                            className='LargeInput'
-                            placeholder='Mot de passe'
-                            value={userEdit.password}
-                            type="password"
-                            onChange={handleInputs}
-                            name="password"
-                            disabled={isInputDisabled}
-                        />
-                </div>
-                    :""}
+                    <input 
+                        className='LargeInput'
+                        placeholder='Mot de passe'
+                        value={user.password}
+                        type="password"
+                        onChange={handleInputs}
+                        name="password"
+                        disabled={isInputDisabled}
+                    />
 
-                    
-            {displayPasswordField 
-                ? <div style={{width:'100%'}}>
-                        <div className='VerticalLabel'>
-                            Confirmation mot de passe :
-                        </div>
-                        
-                        <input
-                            className='LargeInput'
-                            placeholder='CONFIRMEZ le mot de passe'
-                            value={passwordConfirm}
-                            onChange={(e) => setPasswordConfirm(e.target.value)}
-                            type="password"
-                            name="passwordConfirm"
-                            disabled={isInputDisabled}
-                        />                        
-                </div>                        
-                :""}       
-                <br />
+                    <div className='VerticalLabel'>
+                        Confirmation mot de passe :
+                    </div>
+                    <input
+                        className='LargeInput'
+                        placeholder='CONFIRMEZ le mot de passe'
+                        value={passwordConfirm}
+                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                        type="password"
+                        name="passwordConfirm"
+                        disabled={isInputDisabled}
+                    />                 
+                </div>
+                :""}
+                
             <label>
                 <div className='FancyBr'/>
                 <div className='VerticalLabel'>
                     Droits de gestion : {" "} 
                 </div>
-                <select className='OptionSelector' onChange={handleInputSelect} value={userEdit.droits} disabled={isInputDisabled}>
+                <select className='OptionSelector' onChange={handleInputSelect} value={user.droits} disabled={isInputDisabled}>
                     <option value="Aucun">Aucun (l'utilisateur sera un client)</option>
                     <option value="Gerant Buvette">Gérant de buvette</option>
                     <option value="Gerant Matériel">Gérant matériel</option>
@@ -207,7 +205,7 @@ export default function UserForm(props) {
 
             <div className='ButtonContainer'>
                 <button className='ConfirmButton' disabled={isInputDisabled}>Vérifier la saisie</button>
-                <button className='CancelButton' onClick={resetEdits}>Annuler l'opération</button>
+                <button className='CancelButton' hidden={!isAddNewUser} onClick={resetEdits}>Annuler l'opération</button>
             </div>
 
         </form>

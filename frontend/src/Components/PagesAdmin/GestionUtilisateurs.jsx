@@ -15,7 +15,7 @@ export default function GestionUtilisateurs() {
 
     const goToEditUser = () =>
     {
-        myAppNavigator("/manage/users/edit");
+        myAppNavigator("/manage/users/overview");
     }
 
 
@@ -26,8 +26,8 @@ export default function GestionUtilisateurs() {
         <br/>
         <br/>
 
-          <button className='MainButton' onClick={goToAddUser}> Ajouter un utilisateur ou un client </button>
-          <button className='MainButton' onClick={goToEditUser}> Modifier ou supprimer un utilisateur/client </button>
+          <button className='MainButton' onClick={goToAddUser}> Ajouter un utilisateur (ou un client) </button>
+          <button className='MainButton' onClick={goToEditUser}> Liste des utilisateurs</button>
       </div>
     </div>
 

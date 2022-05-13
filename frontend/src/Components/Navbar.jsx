@@ -41,9 +41,6 @@ export default function Navbar() {
     }
 
     let generateNavbar = () =>{
-
-        console.log(window.location.pathname);
-
         try{
             if(window.location.pathname === "/login"){
                 return;

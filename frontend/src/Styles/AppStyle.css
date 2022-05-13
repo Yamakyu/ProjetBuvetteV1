@@ -74,12 +74,11 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    padding-bottom: 10px;
-    margin-bottom: 10   px;
-    background-color: #a1ffff86;    
+
+    background-color: #f7e9ff;    
     border-radius: 25px;
-    outline-color: rgb(157, 255, 206);
-    outline-width: 10px;
+    outline-color: rgb(183, 157, 255);
+    outline-width: 2px;
     outline-style: solid;
 }
 .ButtonContainer{
@@ -88,12 +87,30 @@
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+
+    margin-top: 10px;
+
+}
+.UserCard{
+    font-size: 25px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    background-color: #f7e9ff;    
+    border-radius: 25px;
+    outline-color: rgb(183, 157, 255);
+    outline-width: 2px;
+    outline-style: solid;  
 }
 
 /* --------- Boutons et inputs --------- */
 
 .VerticalLabel{
     margin-top: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 .LargeInput{
     width: 80%;
@@ -101,7 +118,7 @@
     border-top: 0;
     border-left: 0;
     border-right: 0;
-    background-color: #ffffff79;
+    background-color: #ffffff;
     
 }
 .MainButton {
@@ -124,8 +141,8 @@
 
     border-radius: 20px;
 
-    background-color:#f9f6e1 ;
-    border-color: rgb(177, 196, 157);
+    background-color:#e7f9e1 ;
+    border-color: rgb(157, 196, 169);
     border-width: 3px;
     border-style: solid;
 }
@@ -155,13 +172,27 @@
     border-width: 3px;
     border-style: solid;
 }
+.RedButton{
+    font-size: 18px;
+
+    margin: 15px;
+    padding: 10px;
+
+    border-radius: 20px;
+
+    background-color:#ffc4c4 ;
+    border-color: rgb(228, 109, 109);
+    border-width: 3px;
+    border-style: solid;
+}
 .OptionSelector{
-    background-color: rgb(226, 250, 250);
+    background-color: #ffffff;
     font-size: 20px;
     border-radius: 5px;
     border-style: solid;
     margin-bottom: 20px;
 }
+
 /* --------- Texte --------- */
 
 .PageName{
@@ -174,12 +205,14 @@
     padding-right: 10px;
     font-size: 20px;
     color: orangered;
-    background-color:#9fdefe;
+    background-color:#fcfe9f;
     border-radius: 20px;
 }
 .Avertissement{
     margin-bottom: 10px;
     color: #440606;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 /* --------- Autres --------- */

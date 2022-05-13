@@ -8,9 +8,6 @@ export default function Connexion() {
 
 //------------------------------------------------------------------------- INITIALISATION
 
-    //Récupérer GetLocalStorage pour empêcher erreur en cas de localStorage vide
-    //↑ Après s'être déconnecté
-
     const {activeSession, setActiveSession, fullUserList}= useContext(SessionContext);
     
     const myAppNavigator = useNavigate();

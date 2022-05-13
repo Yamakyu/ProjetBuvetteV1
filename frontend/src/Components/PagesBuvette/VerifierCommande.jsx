@@ -400,8 +400,8 @@ export default function VerifierCommande() {
   return (
     <div>
         <DoTheThings
-        theThing={thatThing}
-        theOtherThing={thatOtherThing}
+        theThing={null}
+        theOtherThing={null}
         />
 
         <h2><u>Veuillez vérifier la saisie</u></h2>

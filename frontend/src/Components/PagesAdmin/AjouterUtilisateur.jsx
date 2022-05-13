@@ -1,34 +1,55 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext'
 import UserForm from '../Utility/UserForm';
-
+import validator from 'validator';
 
 export default function AjouterUtilisateur() {
 
 //------------------------------------------------------------------------- INITIALISATION
 
-    const {activeSession, setActiveSession, isUserTokenExpired, fullUserList}= useContext(SessionContext);
+    const {
+        activeSession,
+        setActiveSession,
+        isUserTokenExpired,
+        userWorkedOn,
+        setUserWorkedOn 
+    } = useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
 
     const [checkEditUser, setCheckEditUser] = useState();
     // const [confirmButton, setConfirmButton] = useState();
     // const [warning, setWarning] = useState("");
+    const [newUser, setNewUser] = useState({
+        nom: "",
+        prenom: "",
+        email: "",
+        password: "",
+        droits: "Aucun",
+    })
     const [apiResponse, setApiResponse] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
-    const [userWorkedOn, setUserWorkedOn] = useState({
-        nom:"",
-        prenom:"",
-        email:"",
-        password:"",
-        droits:"Aucun"
-    });
 
+//------------------------------------------------------------------------- USE EFFECT
 
-    
+    //Quel que soit la page d'où on vient, on retire toujours le mot de passe
+    useEffect(() => {
 
+    setUserWorkedOn(() => ({
+        ...userWorkedOn, 
+        password : ""
+    }))
 
+    if (!isStringEmpty(userWorkedOn.nom)){
+        setNewUser(() => ({
+            ...userWorkedOn, 
+            password : ""
+        }))
+    }
+
+    return () => {}
+    }, [])
 
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
@@ -42,10 +63,11 @@ export default function AjouterUtilisateur() {
     }
 
     //https://stackoverflow.com/questions/57581147/how-to-display-objects-keys-and-values-in-react-component
+    /*
     const displayInputedUser = () => {
         return(
             <ul>
-                {Object.entries(userWorkedOn).map(([objectKey, value]) =>
+                {Object.entries(newUser).map(([objectKey, value]) =>
                 //Cette expression conditionelle permet de masquer les booléens (isAdmin, etc) et le mot de passe
                 objectKey.startsWith("is") || objectKey === "password"
                 ? ""
@@ -56,7 +78,8 @@ export default function AjouterUtilisateur() {
             </ul>
         );
     }
-    
+    */
+
     const resetWarning = () => {
         setApiResponse("");
         // setConfirmButton("");
@@ -65,21 +88,36 @@ export default function AjouterUtilisateur() {
 
     const submitForm = (formEvent) => {
         formEvent.preventDefault();
-        console.log(userWorkedOn);
+        console.log(newUser);
 
-        if (isStringEmpty(userWorkedOn.nom) || isStringEmpty(userWorkedOn.prenom) || isStringEmpty(userWorkedOn.email)){
+        
+        if (isStringEmpty(newUser.nom) || isStringEmpty(newUser.prenom) || isStringEmpty(newUser.email)){
+            return setApiResponse("Vous devez remplir tout les champs !");
+        } else if (isStringEmpty(newUser.password)){
+            setNewUser(() => ({
+                ...newUser,
+                password:""
+            }))
+            setPasswordConfirm("");
             return setApiResponse("Vous devez remplir tout les champs !");
         }
 
-        if (passwordConfirm !== userWorkedOn.password){
+        if (!validator.isEmail(newUser.email)){
+            return setApiResponse("Veuillez remplir une adresse e-mail valide !")
+        }
+        
+        if (passwordConfirm !== newUser.password){
             setApiResponse("ATTENTION. La confirmation de mot de passe doit être identique au mot de passe entré !");
             setCheckEditUser("");
             // setConfirmButton("");
             //setApiResponse("");
         } else {
-            setApiResponse("Cet utilisateur sera ajouté à la base de données : ");
+            setUserWorkedOn(newUser)
+            myAppNavigator('/manage/users/verify')
+            
+            //setApiResponse("Cet utilisateur sera ajouté à la base de données : ");
+            //setCheckEditUser(displayInputedUser());
             //setConfirmButton(<button onClick={apiAddUser}>Confirmer</button>);
-            setCheckEditUser(displayInputedUser());
             // setApiResponse("");
         }
 
@@ -87,73 +125,7 @@ export default function AjouterUtilisateur() {
 
 //------------------------------------------------------------------------- REQUÊTES
 
-    const apiAddUser = async () => {
-
-        if (activeSession) {
-
-            setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
-            //setConfirmButton("");
     
-            //Envoi à notre API back end
-            await fetch("/api/users/signup",{
-                method: "POST",
-                headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-                body: JSON.stringify(
-                    {
-                        nom: userWorkedOn.nom,
-                        prenom:userWorkedOn.prenom,
-                        email:userWorkedOn.email,
-                        password:userWorkedOn.password,
-                        isGerantBuvette:userWorkedOn.isGerantBuvette,
-                        isGerantMateriel:userWorkedOn.isGerantMateriel,
-                        isAdmin:userWorkedOn.isAdmin
-                    })
-            })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log("API response ↓");
-                console.log(data.message);
-
-                if (isUserTokenExpired(data)){
-                    myAppNavigator("/login");
-                }
-
-                console.log(data.addedUser);
-    
-                resetWarning();
-                setApiResponse(data.message);
-                setPasswordConfirm("");
-
-                if (data.success){
-                    setUserWorkedOn({
-                        nom:"",
-                        prenom:"",
-                        email:"",
-                        password:"",
-                        droits:"Aucun"
-                    })
-                }else {
-                    setUserWorkedOn(() => ({
-                        ...userWorkedOn, 
-                        email: "",
-                    }))
-                }
-                
-            })
-            .catch((err) => console.log(err));
-    
-
-
-        }else{
-            setActiveSession({
-                userConnexionStatus:"Accès réservé. Veuillez vous connecter."
-            })
-            myAppNavigator("/login");
-        }
-
-
-
-    }
 
 //------------------------------------------------------------------------- AFFICHAGE
 
@@ -164,13 +136,15 @@ export default function AjouterUtilisateur() {
         <br/>
 
         <UserForm 
+            user={newUser}
+            setUser={setNewUser}
             formHandler={submitForm}
-            user={userWorkedOn} 
-            setUser={setUserWorkedOn} 
             resetWarning={resetWarning} 
             editPassword={true}
             setPasswordConfirm={setPasswordConfirm}
-            passwordConfirm={passwordConfirm}>    
+            passwordConfirm={passwordConfirm}
+            isAddNewUser={true} 
+            >   
         </UserForm>
         <div className='APIResponse'>
             {apiResponse || ""}
@@ -185,7 +159,7 @@ export default function AjouterUtilisateur() {
 
 
         <br/>
-        <button className='SubButton' onClick={() => myAppNavigator("/manage/users/edit")}>Liste des utilisateurs</button>
+        <button className='SubButton' onClick={() => myAppNavigator("/manage/users/overview")}>Liste des utilisateurs</button>
     </div>
 
 
