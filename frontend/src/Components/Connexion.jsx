@@ -91,37 +91,37 @@ export default function Connexion() {
 
 //------------------------------------------------------------------------- AFFICHAGE
 
-    
-    const showUserList = () => {
-        console.log();
-    }
 
     return (
         <div className='BoxSimple'>
-            <h1 className='PageName'>Connexion</h1>
-            <form className='FormulaireSimple' onSubmit={apiLogin}>
-                <div className='VerticalLabel'>
-                    Adresse e-mail :
-                </div>
-                <input className='LargeInput' type="email" value={email} placeholder='Adresse e-mail' 
-                onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
+
+            <div>
+                <h1 className='PageName'>Connexion</h1>
+                <form className='FormulaireSimple' onSubmit={apiLogin}>
+                    <div className='VerticalLabel'>
+                        Adresse e-mail :
+                    </div>
+                    <input className='LargeInput' type="email" value={email} placeholder='Adresse e-mail' 
+                    onChange={(inputEvent) => setEmail(inputEvent.target.value)}/>
+                    
+
+                    <div className='VerticalLabel'>
+                        Mot de passe :
+                    </div>
+                    <input className='LargeInput' type="password" value={password} placeholder='Mot de passe' 
+                    onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
+
+                    <br />
+                    <button className='MainButton'>Connexion</button>
                 
+                    {/*loginApiResponse*/}
+                    <div className='APIResponse'>
+                        {displayConnexionStatus()}
+                    </div>
+                    {/*getLocalStorage("currentSession").userConnexionStatus*/}
+                </form>
+            </div>
 
-                <div className='VerticalLabel'>
-                    Mot de passe :
-                </div>
-                <input className='LargeInput' type="password" value={password} placeholder='Mot de passe' 
-                onChange={(inputEvent) => setPassword(inputEvent.target.value)}/>
-
-                <br />
-                <button className='MainButton'>Connexion</button>
-            
-                {/*loginApiResponse*/}
-                <div className='APIResponse'>
-                    {displayConnexionStatus()}
-                </div>
-                {/*getLocalStorage("currentSession").userConnexionStatus*/}
-            </form>
 
 
         </div>

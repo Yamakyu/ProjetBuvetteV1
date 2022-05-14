@@ -67,7 +67,7 @@
 }
 .FormulaireSimple{
     font-size: 25px;
-    width: 100%;
+    width: min-content;
 
     height: 100%;
 
@@ -82,14 +82,11 @@
     outline-style: solid;
 }
 .ButtonContainer{
-    width: inherit;
-
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 
     margin-top: 10px;
-
 }
 .UserCard{
     font-size: 25px;
@@ -113,7 +110,9 @@
     margin-right: 5px;
 }
 .LargeInput{
-    width: 80%;
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 300px;
     font-size: 20px;
     border-top: 0;
     border-left: 0;
@@ -168,7 +167,7 @@
     border-radius: 20px;
 
     background-color:#f9e1e1 ;
-    border-color: rgb(196, 157, 157);
+    border-color: rgb(199, 145, 145);
     border-width: 3px;
     border-style: solid;
 }

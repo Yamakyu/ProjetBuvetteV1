@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext';
 import Utilisateur from '../Utility/Utilisateur'
@@ -16,6 +16,24 @@ export default function VerifierNewUtilisateur() {
     const [isEmailError, setIsEmailError] = useState(false);
     const [apiResponse, setApiResponse] = useState("");
     const myAppNavigator = useNavigate();
+
+
+    useEffect(() => {
+        const emptyUser = {
+            nom: "",
+            prenom: "",
+            email: "",
+            password: "",
+            droits: "Aucun"
+        }
+
+      if (JSON.stringify(userWorkedOn) === JSON.stringify(emptyUser)){
+          goBackToAddUser();
+      }
+    
+      return () => {}
+    }, [])
+    
 
     const goBackToAddUser = () => {
         myAppNavigator("/manage/users/add");
