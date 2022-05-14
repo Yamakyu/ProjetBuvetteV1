@@ -17,11 +17,12 @@ import NouvelleCommande from "./Components/PagesBuvette/NouvelleCommande";
 import VerifierCommande from "./Components/PagesBuvette/VerifierCommande";
 import GestionUtilisateurs from "./Components/PagesAdmin/GestionUtilisateurs";
 import AjouterUtilisateur from "./Components/PagesAdmin/AjouterUtilisateur";
-import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
+import ListeUtilisateurs from "./Components/PagesAdmin/ListeUtilisateurs";
 import HistoriqueCommandes from "./Components/PagesBuvette/HistoriqueCommandes";
 import VerifierNewUtilisateur from "./Components/PagesAdmin/VerifierNewUtilisateur";
 import DetailCommande from "./Components/PagesBuvette/DetailCommande";
 import FinCommande from "./Components/PagesBuvette/FinCommande";
+import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -174,6 +175,10 @@ function App() {
             />
             <Route
               path="/manage/users/overview"
+              element={<ListeUtilisateurs />}
+            />
+            <Route
+              path="/manage/users/edit/:id"
               element={<ModifierUtilisateur />}
             />
             <Route path="/test" element={<TestDivers />} />

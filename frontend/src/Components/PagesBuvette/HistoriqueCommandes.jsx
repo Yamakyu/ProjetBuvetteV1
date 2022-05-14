@@ -295,7 +295,6 @@ export default function HistoriqueCommandes() {
         <br />
         <div>
             <h3>
-            
             <label>
                 Afficher les commandes... {" "}
                 <select onChange={handleInputSelect}>
@@ -318,6 +317,7 @@ export default function HistoriqueCommandes() {
                 </select>
             </label>
             </h3>
+
             <ul hidden={(userListResult.length === 0) || (searchType=== "all") || (searchType=== "myself") || (searchType=== "selfOrder")}>
                 {userListResult.map(user => {
                     return(

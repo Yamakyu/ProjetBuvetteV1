@@ -3,6 +3,8 @@ import { SessionContext } from '../../Contexts/SessionContext';
 
 export default function UserForm(props) {
 
+//---------------------------------------------------------------------------------------- INITIALISATION
+
     const { userWorkedOn, setUserWorkedOn }= useContext(SessionContext);
 
     let user = props.user || userWorkedOn;
@@ -23,6 +25,8 @@ export default function UserForm(props) {
     //↑ Si le props pour (dés)activer les input n'a pas été transmis, setIsInputEnabled est une fonction vide
 
     const [warningCreateAdmin, setWarningCreateAdmin] = useState("");
+
+//----------------------------------------------------------------------------------------    
 
     const resetEdits = (inputEvent) =>{
         inputEvent.preventDefault();

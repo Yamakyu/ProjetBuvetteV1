@@ -97,7 +97,7 @@ exports.addCustomer = async (req, res) => {
     req.body.isAdmin = false;
     req.body.isGerantBuvette = false;
     req.body.isGerantMateriel = false;
-    req.body.droits = "aucun";
+    req.body.droits = "Aucun";
     req.body.password = "user";
 
     //On vérifie que le mail n'existe pas déjà
@@ -358,6 +358,7 @@ exports.checkAdmins = async (req, res) => {
         prenom: "Abdoul-Jabar",
         email: "contact@bsolife.fr",
         password: "root",
+        droits: "Admin",
         isAdmin: true,
       };
 
@@ -366,6 +367,7 @@ exports.checkAdmins = async (req, res) => {
         prenom: "AdminPrenom",
         email: "admin@admin.fr",
         password: "root",
+        droits: "Admin",
         isAdmin: true,
       };
 
@@ -710,6 +712,41 @@ exports.findByName = async (req, res) => {
         },
       });
     }
+    displayResults(
+      res,
+      theseUsers,
+      isTtryingForbiddenRequest,
+      req.thatRequestToken.id
+    );
+  } catch (error) {
+    displayThatError(res, error);
+  }
+};
+
+//------------- POST -------------- ()
+exports.findByMail = async (req, res) => {
+  console.log("USER controller : findByMail -------");
+
+  try {
+    let enteredMail = req.query.mail;
+    console.log(enteredMail);
+    let theseUsers; //En réalité il n'y a qu'un utilisateur, mais par souci de réutilisation du code, on va faire comme s'il y en avait plusieurs
+
+    let { isInactiveAccountsDisplayed, isTtryingForbiddenRequest } =
+      checkAuthorizationDeadAccounts(req);
+
+    if (isInactiveAccountsDisplayed) {
+      theseUsers = await User.findAll({
+        where: { email: enteredMail },
+      });
+    } else {
+      theseUsers = await User.findAll({
+        where: {
+          [Op.and]: [{ email: enteredMail }, { isActiveAccount: true }],
+        },
+      });
+    }
+    console.log(theseUsers);
     displayResults(
       res,
       theseUsers,

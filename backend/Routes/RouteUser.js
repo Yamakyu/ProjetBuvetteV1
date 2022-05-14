@@ -19,8 +19,17 @@ router.post(
   userController.findByRole
 );
 router.post("/search/all", userController.isLoggedIn, userController.findAll);
+router.post(
+  "/search/name",
+  userController.isLoggedIn,
+  userController.findByName
+);
+router.post(
+  "/search/mail",
+  userController.isLoggedIn,
+  userController.findByMail
+);
 router.post("/search/:id", userController.isLoggedIn, userController.findById);
-router.post("/search", userController.isLoggedIn, userController.findByName);
 //Pour faire une query avec une recherche on met un "?maVariable=maValeur"
 //Par exemple, pour chercher les utilisateurs dont le nom contient "john" : http://localhost:8080/api/users/search?name=john
 
