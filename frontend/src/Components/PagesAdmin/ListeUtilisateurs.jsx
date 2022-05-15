@@ -8,7 +8,15 @@ export default function ListeUtilisateurs() {
 
 //------------------------------------------------------------------------- INITIALISATION
 
-    const {activeSession, setActiveSession, isUserTokenExpired, fullUserList, setFullUserList}= useContext(SessionContext);
+    const {
+        activeSession, 
+        setActiveSession, 
+        isUserTokenExpired, 
+        fullUserList, 
+        setFullUserList, 
+        userWorkedOn, 
+        setUserWorkedOn
+    } = useContext(SessionContext);
 
     const myAppNavigator = useNavigate();
 
@@ -32,6 +40,8 @@ export default function ListeUtilisateurs() {
     const [searchTool, setSearchTool] = useState();
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [originalUser, setOriginalUser] = useState(null);
+    
+    /*
     const [userWorkedOn, setUserWorkedOn] = useState({
         nom:"",
         prenom:"",
@@ -39,6 +49,7 @@ export default function ListeUtilisateurs() {
         password:"",
         droits:"Aucun"
     })
+    */
 
 //------------------------------------------------------------------------- USE EFFECT
 
@@ -54,6 +65,18 @@ export default function ListeUtilisateurs() {
             })
             myAppNavigator("/login");
         }
+
+        setUserWorkedOn({
+            nom:"",
+            prenom:"",
+            email:"",
+            password:"",
+            droits:"Aucun"
+        })      
+        /* ↑ Afin de parer à l'éventualité où l'utilisateur revient de la page d'édition/suppression utilisateur, on reset
+        userWorkedOn, ce qui empêchera d'afficher les informations la prochaine fois que l'utilisateur décide d'ajouter un 
+        nouvel utilisateur. Ainsi, la formulaire d'ajout ne sera pas pré-rempli avec des informations d'un utilisateur existant.
+        La même opération est réalisée dans GestionUtilisateurs.jsx */
             
 
       return () => {
@@ -147,7 +170,11 @@ export default function ListeUtilisateurs() {
                                     return "";
                                 }else{
                                     return(
-                                        <MiniUtilisateur key={objectKey} user={user}/> 
+                                        <MiniUtilisateur 
+                                            key={objectKey} 
+                                            user={user}
+                                            goToToggleUser={goToToggleUser}
+                                            goToEditUser={goToEditUser}/> 
                                     )
                                 }
                             })
@@ -355,6 +382,19 @@ export default function ListeUtilisateurs() {
         //↑ On aura besoin d'avoir une trace des informations utilisateur originelles
         setCheckEditUser(displayInputedUser(userSelected));
     }
+//------------------------------------------------------------------------- METHODES DE NAVIGATION
+
+    const goToEditUser = (thatUser) => {
+        setUserWorkedOn(thatUser);
+        myAppNavigator("/manage/users/edit/"+thatUser.id);
+    }
+
+    const goToToggleUser = (thatUser) => {
+        setUserWorkedOn(thatUser);
+        myAppNavigator("/manage/users/toggle/"+thatUser.id);
+    }
+
+
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT et REQUÊTES
 
     //Dans la BdD les droits sont des booléens, on parse ceci.

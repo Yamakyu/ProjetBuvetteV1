@@ -6,6 +6,8 @@ export default function MiniUtilisateur(props) {
 
     const myAppNavigator = useNavigate();
     let user = props.user;
+    let goToEditUser = props.goToEditUser;
+    let goToToggleUser = props.goToToggleUser;
 
     return (
         <>
@@ -27,11 +29,15 @@ export default function MiniUtilisateur(props) {
                 </div>
             
                 <div className='MiniCardButtonContainer'>
-                    <button className='MiniCardSubButton' onClick={() => myAppNavigator("/manage/users/edit/"+user.id)}>Modifier</button>
-                    <button className='MiniCardRedButton' onClick={() => {console.log("Suppression")}}>{user.isActiveAccount ? "Supprimer" : "Restaurer"}</button>
-                </div>
+                    <button className='MiniCardConfirmButton' onClick={() => goToEditUser(user)}>Modifier</button>
+                    
+                
+                    {user.isActiveAccount 
+                        ? <button className='MiniCardRedButton' onClick={() => goToToggleUser(user)}>Supprimer</button>
+                        : <button className='MiniCardSubButton' onClick={() => goToToggleUser(user)}>Restaurer</button>
+                    }
 
-    
+                </div>
             </div>
         </>
       )

@@ -23,6 +23,7 @@ import VerifierNewUtilisateur from "./Components/PagesAdmin/VerifierNewUtilisate
 import DetailCommande from "./Components/PagesBuvette/DetailCommande";
 import FinCommande from "./Components/PagesBuvette/FinCommande";
 import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
+import SupprimerUtilisateur from "./Components/PagesAdmin/SupprimerUtilisateur";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -180,6 +181,10 @@ function App() {
             <Route
               path="/manage/users/edit/:id"
               element={<ModifierUtilisateur />}
+            />
+            <Route
+              path="/manage/users/toggle/:id"
+              element={<SupprimerUtilisateur />}
             />
             <Route path="/test" element={<TestDivers />} />
           </Routes>

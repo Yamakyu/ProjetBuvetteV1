@@ -28,7 +28,7 @@ export default function VerifierNewUtilisateur() {
         }
 
       if (JSON.stringify(userWorkedOn) === JSON.stringify(emptyUser)){
-          goBackToAddUser();
+        myAppNavigator("/manage/users/add");
       }
     
       return () => {}
@@ -121,16 +121,10 @@ export default function VerifierNewUtilisateur() {
                 </div>
                 :<Utilisateur
                 user = {userWorkedOn}
-                newUser = {null}
-                isEditingUser = {false}
-                isEditingPassword = {false}
-                backToEditThatUser = {goBackToAddUser}
                 displayGoBackButton = {true} 
                 displayAddUserButton = {true}
-                displayEditButton = {false}
-                displayDeleteButton = {false}
                 disableAddUser = {isEmailError}
-                addUser = {apiAddUser}
+                backEndAPIRequest = {apiAddUser}
             />
             }
 

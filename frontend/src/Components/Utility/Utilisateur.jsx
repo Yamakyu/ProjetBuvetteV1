@@ -8,19 +8,19 @@ import { SessionContext } from '../../Contexts/SessionContext'
 export default function Utilisateur(props) {
 
     const { userWorkedOn }= useContext(SessionContext);
-
     const [passwordConfirm, setPasswordConfirm] = useState("");
+    const myAppNavigator = useNavigate();
 
     let user = props.user || userWorkedOn;
     let newUser = props.newUser;
     let isEditingUser = props.isEditingUser;
     let isEditingPassword = props.isEditingPassword;
 
-    let backToEditThatUser = props.backToEditThatUser;
-    let disableAddUser = props.disableAddUser;
-    let addUser = props.addUser;
+    let backEndAPIRequest = props.backEndAPIRequest;
     
-    let displayGoBackButton = props.displayGoBackButton; 
+    let disableAddUser = props.disableAddUser;
+    let displayGoBackToAddUserButton = props.displayGoBackToAddUserButton; 
+    let displayGoBackToOvrwiewButton = props.displayGoBackToOvrwiewButton;
     let displayAddUserButton = props.displayAddUserButton; 
     let displayEditButton = props.displayEditButton;
     let displayDeleteButton = props.displayDeleteButton; 
@@ -31,7 +31,11 @@ export default function Utilisateur(props) {
         <br/>
         <div className='UserCard'>
 
-           
+                {!user.isActiveAccount
+                    ?<div className='Avertissement'><b>(Compte utilisateur inactif)</b></div>
+                    :""
+                }
+
                 <div className='VerticalLabel'><b>Nom : </b>{user.nom}
                     {(isEditingUser && (newUser.nom !== user.nom)) 
                         ? <><br /> → <b>{newUser.nom}</b> </>
@@ -57,8 +61,24 @@ export default function Utilisateur(props) {
                 </div>
 
 
+                <div className='ButtonContainer'>
+                    <button className='ConfirmButton' hidden={!displayAddUserButton || disableAddUser} onClick={() => backEndAPIRequest(user)}>Ajouter l'tilisateur</button>
+                    <button className='CancelButton' hidden={!displayGoBackToAddUserButton} onClick={() => {myAppNavigator("/manage/users/add")}}>Modifier la saisie</button>
 
-                {/*isEditingUser
+                    <button className='SubButton' hidden={!displayEditButton} onClick={() => backEndAPIRequest(user, newUser)}>Modifier cet utilisateur</button>
+                    
+                    {user.isActiveAccount 
+                        ? <button className='RedButton' hidden={!displayDeleteButton} onClick={() => backEndAPIRequest(user)}>Supprimer cet utilisateur</button>
+                        : <button className='ConfirmButton' hidden={!displayDeleteButton} onClick={() => backEndAPIRequest(user)}>Restaurer cet utilisateur</button>
+                    }
+                    
+
+                    <button className='SubButton' hidden={!displayGoBackToOvrwiewButton} onClick={() => {myAppNavigator("/manage/users/overview")}}>Liste des utilisateurs</button>
+                </div>
+
+
+                {
+                /*isEditingUser
                     ?<div className='FancyBr'>
 
 
@@ -137,7 +157,8 @@ export default function Utilisateur(props) {
 
                     </div>
                     :""
-                        */}
+                        */
+                        }
 
 
 
@@ -145,13 +166,7 @@ export default function Utilisateur(props) {
       
 
             
-            <div className='ButtonContainer'>
-                <button className='ConfirmButton' hidden={!displayAddUserButton || disableAddUser} onClick={() => {addUser()}}>Ajouter l'tilisateur</button>
-                <button className='CancelButton' hidden={!displayGoBackButton} onClick={() => {backToEditThatUser()}}>Modifier la saisie</button>
-
-                <button className='SubButton' hidden={!displayEditButton} onClick={() => {}}>Modifier cet utilisateur</button>
-                <button className='RedButton' hidden={!displayDeleteButton} onClick={() => {}}>Supprimer cet utilisateur</button>
-            </div>
+            
 
         </div>
     </div>
