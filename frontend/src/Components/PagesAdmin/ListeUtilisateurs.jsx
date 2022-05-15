@@ -688,43 +688,6 @@ export default function ListeUtilisateurs() {
         va plutôt  afficher "Résultats de la recherche", qui est donné en réponse de l'API Fetch.
         cf setApiSearchResponse() */}   
         {listUserDisplay ||  " ---- affichage de la liste des utilisateurs" }
-
-        <UserForm 
-            formHandler={submitForm}
-            user={userWorkedOn}
-            setUser={setUserWorkedOn}
-            resetWarning={resetWarning}
-            editPassword={isEditingPassword}
-            disableInput={disableInput}
-            setDisableInput={setDisableInput}
-            setPasswordConfirm={setPasswordConfirm}
-            passwordConfirm={passwordConfirm}  
-            refreshEditUserDisplay={displayInputedUser}
-            /*
-            doubleCheck={isDoubleChecking} 
-            setDoubleChecking={setIsDoubleChecking} 
-            confirmButton={confirmButton}
-            setConfirmButton={setConfirmButton}*/
-            >
-        </UserForm>
-
-        <br/>
-        {warning || " ---- avertissement utilisateur"}
-        <br/>
-        {warningUserDelete || " ---- avertissement suppression utilisateur"}
-        <br/>
-        {/*isDoubleChecking ? displayInputedUser() : " ---- informations utilisateur"*/}
-        {checkEditUser || " ---- informations utilisateur"}
-        <br/>
-        {confirmButton || " ---- bouton de confirmation"}
-        <br/>
-        {apiResponse || " ---- réponse API"}
-        <br/>
-        <br/>
-        <br/>
-
-        <br/>
-        <br/>
     </div>
 
 

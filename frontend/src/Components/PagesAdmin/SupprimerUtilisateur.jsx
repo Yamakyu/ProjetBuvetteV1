@@ -15,6 +15,7 @@ export default function SupprimerUtilisateur() {
     } = useContext(SessionContext);
 
     const [apiResponse, setApiResponse] = useState("");
+    const [disableConfirmButton, setDisableConfirmButton] = useState(false);
 
     const { id } = useParams();
 
@@ -25,6 +26,7 @@ export default function SupprimerUtilisateur() {
     const apiToggleUser = async (thatUser) => {
         setApiResponse("Requête envoyée. L'opération peut prendre quelques secondes. En attente de la réponse du serveur... ");
         let userAfterEdit;
+        setDisableConfirmButton(true);
 
         await fetch(`/api/users/edit/${thatUser.id}`,{
             method: "PUT",
@@ -46,7 +48,8 @@ export default function SupprimerUtilisateur() {
             setApiResponse(data.message);
             
             userAfterEdit = data.updatedUser;
-            setUserWorkedOn(userAfterEdit);            
+            setUserWorkedOn(userAfterEdit);
+            setDisableConfirmButton(false);
         })
         .catch((err) => console.log(err));
 
@@ -64,24 +67,25 @@ export default function SupprimerUtilisateur() {
 
     return (
         <div>
-            <h1>Cet utilisateur sera supprimé</h1>
+            <h1>Veuillez entrer les modifications</h1>
 
 
             <div className='BoxSimple'>
 
-            <div className='APIResponse'>
-                {apiResponse || ""}
-            </div>
+                <div className='APIResponse'>
+                    {apiResponse || ""}
+                </div>
 
-            <Utilisateur
-                user = {userWorkedOn}
-                newUser = {null}
-                displayGoBackToOvrwiewButton
-                displayDeleteButton
-                displayGoBackButton
-                backEndAPIRequest = {apiToggleUser}
-            />
+                <Utilisateur
+                    user = {userWorkedOn}
+                    newUser = {null}
+                    displayGoBackToOvrwiewButton
+                    displayDeleteButton
+                    displayGoBackButton
+                    disableConfirmButton = {disableConfirmButton}
+                    backEndAPIRequest = {apiToggleUser}
+                />
+            </div>
         </div>
-    </div>
     )
 }

@@ -94,6 +94,8 @@
     outline-color: rgb(183, 157, 255);
     outline-width: 2px;
     outline-style: solid;  
+
+    margin-bottom: 5px;
 }
 .MiniUserCard{
     font-size: 13px;
@@ -133,8 +135,8 @@
 
 .VerticalLabel{
     margin-top: 15px;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 .LargeInput{
     margin-left: 20px;
@@ -288,6 +290,7 @@
 }
 .Avertissement{
     margin-bottom: 10px;
+    margin-top: 5px;
     color: #440606;
     margin-left: 5px;
     margin-right: 5px;
@@ -296,7 +299,7 @@
 /* --------- Autres --------- */
 
 .FancyBr{
-    margin-top: 50px;
+    margin-top: 40px;
 }
 .FancyHr{
     border-width: 2px;
