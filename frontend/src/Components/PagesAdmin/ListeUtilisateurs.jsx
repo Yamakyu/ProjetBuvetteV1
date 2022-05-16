@@ -28,8 +28,6 @@ export default function ListeUtilisateurs() {
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [apiResponse, setApiResponse] = useState("");
 
-    const [searchType, setSearchType] = useState("");
-
     const [userListResult, setUserListResult] = useState([]);
 
     //const [isEditingUser, setisEditingUser] = useState(false);
@@ -41,20 +39,14 @@ export default function ListeUtilisateurs() {
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [originalUser, setOriginalUser] = useState(null);
     
-    /*
-    const [userWorkedOn, setUserWorkedOn] = useState({
-        nom:"",
-        prenom:"",
-        email:"",
-        password:"",
-        droits:"Aucun"
-    })
-    */
-
 //------------------------------------------------------------------------- USE EFFECT
 
     //Au chargement de la page
     useEffect(() => {
+
+        if(userListResult.length===0){
+            setApiResponse("Veuillez rafraichir la page");
+        }
 
         if (activeSession){
             apiGetAllUsers();
@@ -71,7 +63,8 @@ export default function ListeUtilisateurs() {
             prenom:"",
             email:"",
             password:"",
-            droits:"Aucun"
+            droits:"Aucun",
+            isActiveAccount:true
         })      
         /* ↑ Afin de parer à l'éventualité où l'utilisateur revient de la page d'édition/suppression utilisateur, on reset
         userWorkedOn, ce qui empêchera d'afficher les informations la prochaine fois que l'utilisateur décide d'ajouter un 
@@ -225,8 +218,6 @@ export default function ListeUtilisateurs() {
     let checkInactiveAccounts = false;
 
     const handleInputSelect = (inputEvent) => {
-        setSearchType(inputEvent.target.value);
-
         switch (inputEvent.target.value) {
             case "name":
                 prepareSearchUserByName();    

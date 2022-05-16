@@ -22,8 +22,29 @@ export default function ModifierUtilisateur() {
 
   const myAppNavigator = useNavigate();
 
+  const emptyUser = {
+    nom: "",
+    prenom: "",
+    email: "",
+    password: "",
+    droits: "Aucun",
+    isActiveAccount: true
+}
+
   useEffect(() => {
-    // ????  
+
+    /*Si l'utilisateur fait "retour" après avoir quitté la page de modification utilisateur, il va se retrouver avec des infos utilisateur
+    vides. Pour palier à cela, si les infos sont vide (baseUser === emptyUser), on récupère l'id de l'utilisateur en question (depuis l'URL)
+    et on affiche l'utilisateur correspondant grâce à fullUserList */
+    if (JSON.stringify(baseUser) === JSON.stringify(emptyUser)){
+      fullUserList.forEach(thatUser => {
+          if (thatUser.id == id){
+              setUserWorkedOn(thatUser);
+              return setBaseUser(thatUser);
+          }
+    })
+    //↑ Utile uniquement quand on actualise
+  }
   
     return () => {}
   }, [])

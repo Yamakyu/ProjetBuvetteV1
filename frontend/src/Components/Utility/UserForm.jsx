@@ -35,7 +35,11 @@ export default function UserForm(props) {
         prenom:"",
         email:"",
         password:"",
-        droits:"none"})
+        droits:"none",
+        isActiveAccount: true
+        })
+
+        setPasswordConfirm('');
 
         resetWarning();
         setWarningCreateAdmin("");

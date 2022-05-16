@@ -27,6 +27,7 @@ export default function AjouterUtilisateur() {
         email: "",
         password: "",
         droits: "Aucun",
+        isActiveAccount:true
     })
     const [apiResponse, setApiResponse] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");

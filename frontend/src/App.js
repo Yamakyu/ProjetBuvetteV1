@@ -34,6 +34,7 @@ function App() {
     email: "",
     password: "",
     droits: "Aucun",
+    isActiveAccount: true,
   });
 
   const isUserTokenExpired = (apiResponseData) => {

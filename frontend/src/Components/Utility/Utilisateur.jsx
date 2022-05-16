@@ -2,15 +2,19 @@ import Button from '@restart/ui/esm/Button'
 import React, { useContext, useEffect, useState } from 'react'
 import { Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { SessionContext } from '../../Contexts/SessionContext'
 
 export default function Utilisateur(props) {
 
-    const { userWorkedOn, setUserWorkedOn }= useContext(SessionContext);
+    const { userWorkedOn, setUserWorkedOn, fullUserList }= useContext(SessionContext);
+
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [warningCreateAdmin, setWarningCreateAdmin] = useState("");
     const myAppNavigator = useNavigate();
+    const { id } = useParams();
+
+    
 
     let user = props.user || userWorkedOn;
     let newUser = props.newUser;
@@ -28,7 +32,8 @@ export default function Utilisateur(props) {
     let disableConfirmButton = props.disableConfirmButton;
 
     useEffect(() => {
-      setUserWorkedOn(() => ({
+
+        setUserWorkedOn(() => ({
           ...userWorkedOn,
           password:""
       }))
@@ -112,9 +117,9 @@ export default function Utilisateur(props) {
         <br/>
         <div className='UserCard'>
 
-            {!user.isActiveAccount
-                ?<div className='Avertissement'><b>(Compte utilisateur inactif)</b></div>
-                :""
+            {user.isActiveAccount
+                ?""
+                :<div className='Avertissement'><b>(Compte utilisateur inactif)</b></div>
             }
 
             <div className='VerticalLabel'><u>Nom :</u> {user.nom}

@@ -15,7 +15,8 @@ export default function GestionUtilisateurs() {
         prenom:"",
         email:"",
         password:"",
-        droits:"Aucun"
+        droits:"Aucun",
+        isActiveAccount:true,
     })      
     /* ↑ Afin de parer à l'éventualité où l'utilisateur revient de la page d'édition/suppression utilisateur, on reset
     userWorkedOn, ce qui empêchera d'afficher les informations la prochaine fois que l'utilisateur décide d'ajouter un 

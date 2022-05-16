@@ -67,7 +67,7 @@ export default function SupprimerUtilisateur() {
 
     return (
         <div>
-            <h1>Veuillez entrer les modifications</h1>
+            <h1>Cet utilisateur sera {userWorkedOn.isActiveAccount ? "supprimé" : "restauré"}</h1>
 
 
             <div className='BoxSimple'>

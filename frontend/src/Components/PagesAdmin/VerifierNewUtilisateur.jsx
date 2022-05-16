@@ -24,7 +24,8 @@ export default function VerifierNewUtilisateur() {
             prenom: "",
             email: "",
             password: "",
-            droits: "Aucun"
+            droits: "Aucun",
+            isActiveAccount: true
         }
 
       if (JSON.stringify(userWorkedOn) === JSON.stringify(emptyUser)){
@@ -83,6 +84,7 @@ export default function VerifierNewUtilisateur() {
                         email: "",
                         password: "",
                         droits: "Aucun",
+                        isActiveAccount:true
                     }, console.log("userWorkedOn reset !"));
                     
                 }else{
@@ -121,8 +123,8 @@ export default function VerifierNewUtilisateur() {
                 </div>
                 :<Utilisateur
                 user = {userWorkedOn}
-                displayGoBackButton = {true} 
-                displayAddUserButton = {true}
+                displayAddUserButton
+                displayGoBackToAddUserButton
                 disableAddUser = {isEmailError}
                 backEndAPIRequest = {apiAddUser}
             />
