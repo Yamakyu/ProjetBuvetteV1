@@ -37,6 +37,7 @@ export default function AjouterUtilisateur() {
     //Quel que soit la page d'où on vient, on retire toujours le mot de passe
     useEffect(() => {
 
+
     setUserWorkedOn(() => ({
         ...userWorkedOn, 
         password : ""
@@ -48,6 +49,7 @@ export default function AjouterUtilisateur() {
             password : ""
         }))
     }
+    
 
     return () => {}
     }, [])

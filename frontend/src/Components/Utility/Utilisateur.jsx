@@ -29,18 +29,7 @@ export default function Utilisateur(props) {
     let displayDeleteButton = props.displayDeleteButton; 
     
     let disableAddUser = props.disableAddUser;
-    let disableConfirmButton = props.disableConfirmButton;
-
-    useEffect(() => {
-
-        setUserWorkedOn(() => ({
-          ...userWorkedOn,
-          password:""
-      }))
-    
-      return () => {}
-    }, [])
-    
+    let disableConfirmButton = props.disableConfirmButton;    
 
 //----------------------------------------------------------- TRAITEMENT
 

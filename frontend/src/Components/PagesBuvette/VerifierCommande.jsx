@@ -37,6 +37,10 @@ export default function VerifierCommande() {
 
     useEffect(() => {
 
+        if(currentOrder.length===0){
+            myAppNavigator("/manage/buvette/orders/new");
+        }
+
         //On aura besoin de pouvoir vérifier plus tard la présence ou pas d'un utilisateur.
         apiGetAllUsers();
 

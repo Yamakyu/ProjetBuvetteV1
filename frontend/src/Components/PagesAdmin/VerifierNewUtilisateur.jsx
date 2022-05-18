@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext';
 import Utilisateur from '../Utility/Utilisateur'
+import DoTheThings from '../Utility/DoTheThings'
 
 export default function VerifierNewUtilisateur() {
     const { 
@@ -27,6 +28,9 @@ export default function VerifierNewUtilisateur() {
             droits: "Aucun",
             isActiveAccount: true
         }
+
+
+        console.log(userWorkedOn);
 
       if (JSON.stringify(userWorkedOn) === JSON.stringify(emptyUser)){
         myAppNavigator("/manage/users/add");
@@ -104,10 +108,17 @@ export default function VerifierNewUtilisateur() {
         }
     }
 
+    const printPassword = () => {
+        console.log(userWorkedOn);
+    }
+
   return (
     <div>
         <h1>Cet utilisateur sera enregistré</h1>
 
+        <DoTheThings
+            theThing = {printPassword}
+        />
 
         <div className='BoxSimple'>
 

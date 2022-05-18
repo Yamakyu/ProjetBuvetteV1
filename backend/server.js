@@ -72,7 +72,6 @@ monApp.use("/api/reset", userController.isLoggedIn, (req, res) => {
  */
 monApp.get("*", (_, res) => res.sendFile("index.html", { root: "build" }));
 
-//On écoute le port 8080 pour les requêtes
 monApp.listen(PORT, () => {
   console.log(`À l'écoute du ${PORT}.`);
   console.log(

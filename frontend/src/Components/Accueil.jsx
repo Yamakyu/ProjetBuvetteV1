@@ -11,6 +11,9 @@ export default function Accueil() {
   const {activeSession, fullUserList, setFullUserList, isUserTokenExpired}= useContext(SessionContext); 
 
   useEffect(() => {
+    if(!activeSession.userToken){
+      myAppNavigator("/login")
+    }
     fetch("/api/init/").then(res => res.json).then(data => console.log(data.message)).catch(error => console.log(error));
 
     if (fullUserList.length === 0){
