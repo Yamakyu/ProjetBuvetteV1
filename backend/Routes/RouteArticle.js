@@ -22,7 +22,7 @@ router.post("/category", articleController.findArticleByCategory);
 router.post("/all", articleController.findAllArticles);
 router.post("/search", articleController.findArticleByName);
 
-//router.get("/ip", articleController.getNetworkInfo);
+router.get("/ip", articleController.getNetworkInfo);
 router.get("/init", articleController.initSomeArticles);
 router.get("/:id", articleController.findArticleById);
 

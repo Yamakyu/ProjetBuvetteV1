@@ -305,6 +305,7 @@ let getCurrentIp = () => {
     });
 
     return ip;
+    //return os.networkInterfaces();
   } catch (error) {
     displayThatError(error);
   }

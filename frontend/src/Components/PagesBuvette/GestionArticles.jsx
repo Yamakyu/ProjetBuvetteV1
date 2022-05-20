@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ListeArticles from '../Utility/ListeArticles'
+import ListeArticles from './ListeArticles'
 import { SessionContext } from '../../Contexts/SessionContext';
 import FiltreArticle from '../Utility/FiltreArticle';
 
@@ -218,7 +218,8 @@ export default function ModifierArticle() {
         <ListeArticles 
             articles={articleListResult} 
             apiSearchResponse={apiSearchResponse} 
-            displayDetailsButtonChild={true}
+            displayDetailsButtonChild
+            displayToggleArticleButtonChild
             />
     </div>
   )

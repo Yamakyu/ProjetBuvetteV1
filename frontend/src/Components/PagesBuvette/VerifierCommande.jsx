@@ -200,7 +200,7 @@ export default function VerifierCommande() {
         console.log("recherche : " + thatName);
         setApiResponse("Recherche en cours. Cela peut prendre quelques instants...");
 
-        fetch("/api/users/search?name="+thatName,{
+        fetch("/api/users/search/name?name="+thatName,{
             method: "POST",
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
         })

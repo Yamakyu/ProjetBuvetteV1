@@ -37,26 +37,27 @@ export default function ModifierArticle() {
 
   useEffect(() => {
     
-      fetch("/api/articles/"+articleId,{
-          method: "GET",
-          headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-          
-      })
-      .then((res) => res.json())
-      .then((data) => {
-          console.log("API response ↓");
-          console.log(data.message);
-          console.log(data.article);
-  
-          if (isUserTokenExpired(data)){
-              myAppNavigator("/login");
-          }
-          setThatArticle(data.article);
-      })
-      .catch((err) => {
-          console.log(err.message);
-          console.log(err);
-      });    
+    fetch("/api/articles/"+articleId,{
+      method: "GET",
+      headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+        
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("API response ↓");
+      console.log(data.message);
+      console.log(data.article);
+
+      if (isUserTokenExpired(data)){
+        myAppNavigator("/login");
+      }
+      setThatArticle(data.article);
+      setArticleWorkedOn(data.article);
+    })
+    .catch((err) => {
+      console.log(err.message);
+      console.log(err);
+    });    
   
     return () => {
       //
@@ -65,8 +66,8 @@ export default function ModifierArticle() {
 
 //------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
 
-  const prepareChangeArticleActiveState = () => {
-    setApiResponse(` Cet article ${thatArticle.isDisponible ? "ne sera PLUS DISPONIBLE" : "sera de nouveau DISPONIBLE"} dans la buvette. \n Vous pourrez de nouveau changer ce statut ultérieurement.`);
+  const prepareToggleArticle = () => {
+    setApiResponse(` Cet article ${thatArticle.isDisponible ? "ne sera PLUS DISPONIBLE" : "sera de nouveau DISPONIBLE"} dans la buvette. Vous pourrez de nouveau changer ce statut à volonté.`);
     setConfirmButton(<button onClick={apiChangeArticleActiveState}> Confirmer la modification ? </button>);
     setCancelButton(<button onClick={cancelModification}> Annuler l'opération </button>);
     setIsCurrentlyEditingArticle("");
@@ -156,29 +157,29 @@ export default function ModifierArticle() {
     }
     
     await axios.put('/api/articles/edit/'+thatArticle.id, formData, {
-        headers: {
-          Authorization: "Bearer " + activeSession.userToken
-        }
+      headers: {
+        Authorization: "Bearer " + activeSession.userToken
+      }
     }).then((res) => {
-        console.log("API response ↓");
-        console.log(res.data.message);
-        console.log(res.data);
+      console.log("API response ↓");
+      console.log(res.data.message);
+      console.log(res.data);
 
-        if (isUserTokenExpired(res.data)){
-            return myAppNavigator("/login");
-        }else{
-          setApiResponse(res.data.message);
-          setThatArticle(res.data.updatedArticle)
-        }
+      if (isUserTokenExpired(res.data)){
+        return myAppNavigator("/login");
+      }else{
+        setApiResponse(res.data.message);
+        setThatArticle(res.data.updatedArticle)
+      }
     })
     .catch((err) => {
-        console.log("API response ↓");
-        console.log(err.response.data.message);
-        console.log(err);
-        if (isUserTokenExpired(err.response.data)){
-            return myAppNavigator("/login");
-        }
-        setApiResponse(err.response.data.message);
+      console.log("API response ↓");
+      console.log(err.response.data.message);
+      console.log(err);
+      if (isUserTokenExpired(err.response.data)){
+        return myAppNavigator("/login");
+      }
+      setApiResponse(err.response.data.message);
     })
   }
 
@@ -195,93 +196,31 @@ export default function ModifierArticle() {
         theThing = {doThething}
         theOtherThing={null}
       />
+      <h1 className='PageName'> Article #{articleId}</h1>
 
-      <h1>
-        Article #{articleId}
-      </h1>
-      <div style={{fontSize: "20px"}}>
-        <Article 
-          article={thatArticle} 
-          newArticle={articleWorkedOn}
-          displayDetailsButton={false} 
-          isEditingArticle={isCurrentlyEditingArticle} 
-          />
-      </div>
-      <button onClick={prepareChangeArticleActiveState}>Rendre cet article {thatArticle.isDisponible ? "non disponible" : "disponible"}</button>
-      <button onClick={prepareEditArticle}>Modifier cet article</button>
-      <br/>
-      <br/>
+      <div className='BoxSimple'>
 
-      <ul>
-        {/*Idéalement ce formulaire aurait été déclaré dans une variable, afin de rendre le code plus lisible d'un coup d'oeil.
-        Mais cela pose des problèmes avec useState.
-        Ce formulaire n'est visible qu'aprèès avoir cliqué sur le bouton de modification d'article (ci dessus). 
-        Cela a pour effet de donner la valeur TRUE à isCurrentlyEditingArticle, et provoque l'affichage*/}
-          <div hidden={!isCurrentlyEditingArticle}>
-            <h3>Entrez les modifications désirées.</h3>
-            <Container className='mt-5 p-2'>
-                <Form>
-                  <Form.Group controlId="fileName" className="mb-3">
-                    <Form.Label>Vous pouvez choisir une photo ou une image </Form.Label>
-                    <Form.Control
-                        type="file"
-                        name='image'
-                        onChange={handleEditForm}
-                        size="lg" />
-                  </Form.Group>
-                  
-                  <Form.Group className="mb-3" controlId="title">
-                    <Form.Label>Nom de l'article : </Form.Label>
-                    <Form.Control
-                        onChange={handleEditForm}
-                        value={articleWorkedOn.nom}
-                        type="text"
-                        name="nom"
-                    />
-                  </Form.Group>
+      <div className='APIResponse'>
+          {apiResponse || ""}
+        </div>
 
-                  <label>
-                        Categorie : {" "}
-                        <select name="categorie" onChange={handleEditForm} value={articleWorkedOn.categorie}>
-                            <option value="snack">Snack</option>
-                            <option value="friandise">friandise</option>
-                            <option value="boisson chaude">Boisson chaude</option>
-                            <option value="boisson fraiche">Boisson fraîche</option>
-                            <option value="plat chaud">Plat chaud</option>
-                            <option value="plat froid">Plat froid</option>
-                        </select>
-                    </label>
-
-                  <Form.Group className="mb-3" controlId="price">
-                    <Form.Label>Prix unitaire (€) : </Form.Label>
-                    <Form.Control
-                        onChange={handleEditForm}
-                        value={articleWorkedOn.prixUnitaire}
-                        type="number"
-                        name="prixUnitaire"
-                        />
-                  </Form.Group>
-
-              
-                  <Form.Group className="mb-3" controlId="description">
-                    <Form.Label>Description de l'article</Form.Label>
-                    <br/>
-                    <Form.Control
-                        onChange={handleEditForm}
-                        value={articleWorkedOn.description}
-                        as="textarea"
-                        name="description"
-                        />
-                  </Form.Group>
-                </Form>
-            </Container>
-          </div>
-        {apiResponse}
+        <div>
+          <Article 
+            article={thatArticle} 
+            newArticle={articleWorkedOn}
+            isEditingArticle
+            dispplayEditArticleButton
+            handleEditForm={handleEditForm}
+            backEndAPIRequest = {apiEditArticle}
+            />
+        </div>
+        <button onClick={prepareToggleArticle}>Rendre cet article {thatArticle.isDisponible ? "non disponible" : "disponible"}</button>
+        <button onClick={prepareEditArticle}>Modifier cet article</button>
         <br/>
-        <button hidden={!isCurrentlyEditingArticle} onClick={apiEditArticle}> Confirmer la modification ? </button>
-        {confirmButton} 
-        {cancelButton}
-      </ul>
+        <br/>
+      </div>
+
+
     </div>
   )
 }

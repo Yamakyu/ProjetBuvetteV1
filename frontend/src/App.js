@@ -24,6 +24,7 @@ import DetailCommande from "./Components/PagesBuvette/DetailCommande";
 import FinCommande from "./Components/PagesBuvette/FinCommande";
 import ModifierUtilisateur from "./Components/PagesAdmin/ModifierUtilisateur";
 import SupprimerUtilisateur from "./Components/PagesAdmin/SupprimerUtilisateur";
+import ToggleArticle from "./Components/PagesBuvette/ToggleArticle";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -159,6 +160,10 @@ function App() {
             <Route
               path="/manage/buvette/articles/:id"
               element={<ModifierArticle />}
+            />
+            <Route
+              path="/manage/buvette/articles/toggle/:id"
+              element={<ToggleArticle />}
             />
             <Route
               path="/manage/buvette/invoices"

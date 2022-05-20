@@ -29,7 +29,7 @@ export default function ModifierUtilisateur() {
     password: "",
     droits: "Aucun",
     isActiveAccount: true
-}
+  }
 
   useEffect(() => {
 
@@ -37,12 +37,19 @@ export default function ModifierUtilisateur() {
     vides. Pour palier à cela, si les infos sont vide (baseUser === emptyUser), on récupère l'id de l'utilisateur en question (depuis l'URL)
     et on affiche l'utilisateur correspondant grâce à fullUserList */
     if (JSON.stringify(baseUser) === JSON.stringify(emptyUser)){
-      fullUserList.forEach(thatUser => {
+      console.log(fullUserList);
+
+      //↓ On entre dans ce cas de figure si on actualise la page de modification (ça reset les states)
+      if (fullUserList.length === 0){
+        setApiResponse("Erreur : Veuillez accéder à la liste des utilisateurs, et sélectionner cet utilisateur de nouveau")
+      } else {
+        fullUserList.forEach(thatUser => {
           if (thatUser.id == id){
-              setUserWorkedOn(thatUser);
-              return setBaseUser(thatUser);
+            setUserWorkedOn(thatUser);
+            return setBaseUser(thatUser);
           }
-    })
+        })
+      }
     //↑ Utile uniquement quand on actualise
   }
   
@@ -91,10 +98,10 @@ export default function ModifierUtilisateur() {
 
     setFullUserList(
       fullUserList.map(
-            (user) => userAfterEdit.id ===  user.id 
-                ? userAfterEdit 
-                : user
-        )
+        (user) => userAfterEdit.id ===  user.id 
+          ? userAfterEdit 
+          : user
+      )
     );
   }
 
@@ -105,23 +112,22 @@ export default function ModifierUtilisateur() {
     <div>
       <h1>Vous pouvez modifier cet utilisateur</h1>
 
-
       <div className='BoxSimple'>
 
-      <div className='APIResponse'>
+        <div className='APIResponse'>
           {apiResponse || ""}
-          </div>
+        </div>
 
-          <Utilisateur
-              user = {baseUser}
-              newUser = {userWorkedOn}
-              displayGoBackToOvrwiewButton
-              displayEditButton
-              displayGoBackButton
-              isEditingUser
-              dispableInputs
-              backEndAPIRequest = {apiEditUser}
-          />
+        <Utilisateur
+          user = {baseUser}
+          newUser = {userWorkedOn}
+          displayGoBackToOvrwiewButton
+          displayEditButton
+          displayGoBackButton
+          isEditingUser
+          disableConfirmButton={fullUserList.length===0}
+          backEndAPIRequest = {apiEditUser}
+        />
       </div>
     </div>
   )

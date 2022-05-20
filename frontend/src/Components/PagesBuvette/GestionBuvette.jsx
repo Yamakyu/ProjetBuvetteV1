@@ -50,26 +50,20 @@ export default function GestionBuvette() {
   }
 
   return (
-    <div>
-        <h1>Super page gestion de buvette</h1>
-        <br/>
-        <hr/>
-        <button onClick={goToNewOrder}> NOUVELLE COMMANDE </button>
-        <br/>
-        <br/>
-        <button onClick={gotToArticleOverview}> Voir la liste des articles </button>
-        <button onClick={goToAddArticle}> Ajouter des nouveaux articles </button>
-        <br/>
-        <br/>
-        <button onClick={goToOrderHistory}> Consulter l'historique des commandes</button>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <button onClick={initSomeArticles}> Initialiser des articles </button>
+    <div className='BoxSimple'>
+      <div className='MenuButtonsBox'>
+        <h1 className='PageName'>Super page gestion de buvette</h1>
+
+        <button className='ActionButton' onClick={goToNewOrder}> NOUVELLE COMMANDE </button>
+        <button className='MainButton' onClick={gotToArticleOverview}> Liste des articles </button>
+        <button className='MainButton' onClick={goToAddArticle}> Ajouter un nouvel article </button>
+        <button className='MainButton' onClick={goToOrderHistory}> Historique des commandes</button>
+        <button className='SubButton' onClick={initSomeArticles}> Initialiser des articles </button>
 
         <br/>
         {apiResponse}
+      </div>
     </div>
+
   )
 }

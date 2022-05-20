@@ -167,7 +167,8 @@ export default function ListeUtilisateurs() {
                                             key={objectKey} 
                                             user={user}
                                             goToToggleUser={goToToggleUser}
-                                            goToEditUser={goToEditUser}/> 
+                                            goToEditUser={goToEditUser}
+                                        /> 
                                     )
                                 }
                             })

@@ -13,6 +13,12 @@ export default function GestionDouble() {
         <h1 className='PageName'>Accéder à : </h1>
 
         <button className='MainButton'
+          hidden={!activeSession.userInfo.isAdmin && !activeSession.userInfo.isGerantBuvette}
+          onClick={() => myAppNavigator("/manage/buvette")}>
+            Gestion de la buvette
+        </button>
+
+        <button className='MainButton'
           hidden={!activeSession.userInfo.isAdmin} 
           onClick={() => myAppNavigator("/manage/users")}>
             Gestion des utiilisateurs
@@ -24,11 +30,6 @@ export default function GestionDouble() {
             Gestion du materiel
         </button>
         
-        <button className='MainButton'
-          hidden={!activeSession.userInfo.isAdmin && !activeSession.userInfo.isGerantBuvette}
-          onClick={() => myAppNavigator("/manage/buvette")}>
-            Gestion de la buvette
-        </button>
       </div>
     </div>
   )

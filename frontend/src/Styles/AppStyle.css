@@ -115,12 +115,89 @@
     margin-bottom: 15px;
     padding: 3px;
 }
+.ArticleCard{
+    font-size: 25px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    /*width: 60rem;*/
+
+    background-color: #fff2db;    
+    border-radius: 25px;
+    outline-color: rgb(255, 226, 146);
+    outline-width: 2px;
+    outline-style: solid;  
+
+    margin-bottom: 5px;
+}
+.ArticleCardUnavailable{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    /*width: 60rem;*/
+
+    background-color: #b4b4b4;    
+    border-radius: 25px;
+    outline-color: rgb(145, 130, 91);
+    outline-width: 2px;
+    outline-style: solid;  
+
+    margin-bottom: 5px;
+}
+.ArticleCardContent{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.ArticleText{
+    width: min-content;
+    font-size: 25px;
+    text-align: left;
+    align-self: flex-start;
+    margin: 10px;
+    overflow-wrap: break-word;
+    width: fit-content;
+}
+.MiniArticleCard{
+    font-size: 13px;
+
+    width: 250px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    background-color: #f7e9ff;    
+    border-radius: 20px;
+    outline-color: rgb(255, 253, 157);
+    outline-width: 2px;
+    outline-style: solid;  
+    
+    margin-bottom: 15px;
+    padding: 3px;
+}
+.CardPhoto{
+    height: 180px;
+    margin: 20px;
+    outline-width: 8px;
+    outline-color: black;
+    outline-style: solid;
+    border-radius: 15px;
+
+}
 .ButtonContainer{
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 .MiniCardButtonContainer{
     display: flex;
@@ -159,6 +236,19 @@
     background-color:#eff9e1 ;
     border-color: teal;
     border-width: 4px;
+    border-style: solid;
+}
+.ActionButton {
+    font-size: 30px;
+
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 30px;
+
+
+    background-color:#d4fcf8 ;
+    border-color: rgb(106, 221, 206);
+    border-width: 3px;
     border-style: solid;
 }
 .SubButton {
@@ -276,7 +366,7 @@
 /* --------- Texte --------- */
 
 .PageName{
-    margin-bottom: 75px;
+    margin-bottom: 50px;
     font-size: 40px;
 }
 .APIResponse{
@@ -295,11 +385,28 @@
     margin-left: 5px;
     margin-right: 5px;
 }
+.ArticleName{
+    font-size: 35px;
+    font-weight: bold;
 
+    margin-bottom: 20px;
+    
+    width: 100%;
+    height: 100%;
+}
+.ArticlePrix{
+    font-size: 35px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.ArticleDescription{
+    margin-top: 15px;
+    font-size: 24;
+}
 /* --------- Autres --------- */
 
 .FancyBr{
-    margin-top: 40px;
+    margin-top: 35px;
 }
 .FancyHr{
     border-width: 2px;

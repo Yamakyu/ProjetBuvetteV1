@@ -1,7 +1,4 @@
-import Button from '@restart/ui/esm/Button'
 import React, { useContext, useEffect, useState } from 'react'
-import { Card } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SessionContext } from '../../Contexts/SessionContext'
 
@@ -97,7 +94,7 @@ export default function Utilisateur(props) {
     }
 
 
-//----------------------------------------------------------- TRAITEMENT
+//----------------------------------------------------------- AFFICHAGE
 
 
 
@@ -135,7 +132,6 @@ export default function Utilisateur(props) {
                     : ""}
             </div>
 
-
             <div className='ButtonContainer'>
                 <button className='ConfirmButton' hidden={!displayAddUserButton || disableAddUser} disabled={disableConfirmButton} onClick={() => backEndAPIRequest(user)}>Ajouter l'tilisateur</button>
                 <button className='CancelButton' hidden={!displayGoBackToAddUserButton} onClick={() => {myAppNavigator("/manage/users/add")}}>Modifier la saisie</button>
@@ -154,61 +150,65 @@ export default function Utilisateur(props) {
             {
             isEditingUser
                 ?<div className='FancyBr'>
-                    <hr />
+                    <hr  />
                     <h4>Entrez les modifications désirées</h4>
-                    <div className='VerticalLabel'>
-                        Nom :
-                    </div>
-                    <input
-                        className='LargeInput'
-                        placeholder='Nom'
-                        value={newUser.nom}
-                        type="text"
-                        onChange={handleInputs}
-                        name="nom"
-                    />
-                    <br />
-                    <div className='VerticalLabel'>
-                        Prenom :
-                    </div>
-                    <input
-                        className='LargeInput'
-                        placeholder='Prenom'
-                        value={newUser.prenom}
-                        type="text"
-                        onChange={handleInputs}
-                        name="prenom"
-                    />
-                    <br />
-                    <div className='VerticalLabel'>
-                        Adresse e-mail :
-                    </div>
-                    <input
-                        className='LargeInput'
-                        placeholder='Adresse e-mail'
-                        value={newUser.email}
-                        type="email"
-                        onChange={handleInputs}
-                        name="email"
-                    />
 
-                    <label>
-                        <div className='FancyBr'/>
+                    <form>
+
                         <div className='VerticalLabel'>
-                            Droits de gestion : {" "} 
+                            Nom :
                         </div>
-                        <select className='OptionSelector' onChange={handleInputSelect} value={newUser.droits}>
-                            <option value="Aucun">Aucun (l'utilisateur sera un client)</option>
-                            <option value="Gerant Buvette">Gérant de buvette</option>
-                            <option value="Gerant Matériel">Gérant matériel</option>
-                            <option value="Double gérant">Gérant buvette + matériel</option>
-                            <option value="Admin">Administrateur</option>
-                        </select>
-                    </label>
-                    <div className='Avertissement'>
-                        {warningCreateAdmin || "" }
-                    </div>
-                    <div className='FancyBr'/>
+                        <input
+                            className='LargeInput'
+                            placeholder='Nom'
+                            value={newUser.nom}
+                            type="text"
+                            onChange={handleInputs}
+                            name="nom"
+                        />
+                        <br />
+                        <div className='VerticalLabel'>
+                            Prenom :
+                        </div>
+                        <input
+                            className='LargeInput'
+                            placeholder='Prenom'
+                            value={newUser.prenom}
+                            type="text"
+                            onChange={handleInputs}
+                            name="prenom"
+                        />
+                        <br />
+                        <div className='VerticalLabel'>
+                            Adresse e-mail :
+                        </div>
+                        <input
+                            className='LargeInput'
+                            placeholder='Adresse e-mail'
+                            value={newUser.email}
+                            type="email"
+                            onChange={handleInputs}
+                            name="email"
+                        />
+
+                        <label>
+                            <div className='FancyBr'/>
+                            <div className='VerticalLabel'>
+                                Droits de gestion : {" "} 
+                            </div>
+                            <select className='OptionSelector' onChange={handleInputSelect} value={newUser.droits}>
+                                <option value="Aucun">Aucun (l'utilisateur sera un client)</option>
+                                <option value="Gerant Buvette">Gérant de buvette</option>
+                                <option value="Gerant Matériel">Gérant matériel</option>
+                                <option value="Double gérant">Gérant buvette + matériel</option>
+                                <option value="Admin">Administrateur</option>
+                            </select>
+                        </label>
+                        <div className='Avertissement'>
+                            {warningCreateAdmin || "" }
+                        </div>
+                        <div className='FancyBr'/>
+                    </form>
                 </div>
                 :""
             }
