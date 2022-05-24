@@ -14,7 +14,7 @@ export default function AjouterArticle() {
     const [articleName, setArticleName] = useState("");
     const [articlePrice, setArticlePrice] = useState(0);
     const [articleDescription, setArticleDescription] = useState("");
-    const [articleCategory, setArticleCategory] = useState("");
+    const [articleCategory, setArticleCategory] = useState("snack");
     const [isArticlePublished, setIsArticlePublished] = useState(true);
     const [articleImage, setArticleImage] = useState("");
     const [validateArticle, setValidateArticle] = useState("");

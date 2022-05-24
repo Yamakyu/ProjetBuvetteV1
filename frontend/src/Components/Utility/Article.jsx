@@ -41,7 +41,7 @@ export default function Article(props) {
                 <img className='CardPhoto' src={article.photo}/>
                 <div >
                     <div className='ArticlePrix'>{article.isDisponible ? ` ${article.prixUnitaire}€ ` : "Non disponible"}
-                        {(isEditingArticle && (newArticle.prixUnitaire !== article.prixUnitaire)) 
+                        {(isEditingArticle && (newArticle.prixUnitaire != article.prixUnitaire)) 
                             ? <> → <b>{newArticle.prixUnitaire}€</b> </>
                             : ""}
                     </div>

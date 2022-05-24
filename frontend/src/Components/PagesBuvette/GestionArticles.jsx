@@ -12,6 +12,7 @@ export default function ModifierArticle() {
     const myAppNavigator = useNavigate();
 
     const [articleListResult, setArticleListResult] = useState([]);
+    const [fullArticlesList, setFullArticlesList] = useState([])
     const [searchTool, setSearchTool] = useState();
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [searchWarning, setSearchWarning] = useState("");
@@ -131,6 +132,8 @@ export default function ModifierArticle() {
 
     const apiSearchArticlesByCategory = (searchFilter, checkUnavailableArticles) => {
         
+        console.log(searchFilter);
+
         if (!isFilterValid(searchFilter)){
             return;
         }
@@ -187,6 +190,7 @@ export default function ModifierArticle() {
                 myAppNavigator("/login");
             }
             setArticleListResult(data.resultArray);
+            setFullArticlesList(data.resultArray);
             setIsListFiltered(false);
             setApiSearchResponse("");
         })
@@ -207,20 +211,27 @@ export default function ModifierArticle() {
         
             searchWarning = {searchWarning}
             setSearchWarning = {setSearchWarning}
+            
+            setArticleListResult={setArticleListResult}
+            fullArticlesList={fullArticlesList}
         
             apiSearchByName = {apiSearchArticlesByName}
             apiSearchByCategory = {apiSearchArticlesByCategory}
             apiGetAllArticles = {apiGetAllArticles}
             />
-        <br/>
-        <br/>
         <hr color='#adadad'/>
+        { isListFiltered 
+            ? <button className='MiniCardCancelButton' onClick={() => setArticleListResult(fullArticlesList)}>Annuler la recherche et afficher la liste de tout les articles</button>
+            : "" }
         <ListeArticles 
             articles={articleListResult} 
             apiSearchResponse={apiSearchResponse} 
             displayDetailsButtonChild
             displayToggleArticleButtonChild
-            />
+        />
+        { isListFiltered 
+        ? <button className='MiniCardCancelButton' onClick={() => setArticleListResult(fullArticlesList)}>Annuler la recherche et afficher la liste de tout les articles</button>
+        : "" }
     </div>
   )
 }

@@ -7,12 +7,6 @@ import MiniArticle from '../Utility/MiniArticle';
 
 export default function ListeArticles(props) {
 
-  const { activeSession, isUserTokenExpired }= useContext(SessionContext);
-  const myAppNavigator = useNavigate();
-
-  const [article, setArticle] = useState();
-  const [apiResponse, setApiResponse] = useState("");
-
   let theseArticles = props.articles;
 
   let apiSearchResponse = props.apiSearchResponse;
@@ -20,11 +14,7 @@ export default function ListeArticles(props) {
 
   let displayAddToOrderButton = props.displayAddToOrderButtonChild; 
   let displayDetailsButton = props.displayDetailsButtonChild;
-  let displayToggleArticleButton = props.displayToggleArticleButtonChild;
-
-  
-
-  
+  let displayToggleArticleButton = props.displayToggleArticleButtonChild;  
 
 
 

@@ -47,10 +47,9 @@
     align-items: center;
     
     width: 100%;
-    padding-top: 10px;
-    margin-top: 15px;
+    margin-top: 10px;
 
-    outline-color: black;
+    outline-color: rgb(184, 130, 130);
     outline-width: 2px;
     outline-style: dotted;
 
@@ -123,7 +122,7 @@
     flex-direction: column;
     justify-content: space-evenly;
     
-    width: 500px;
+    width: 350px;
     /*width: 60rem;*/
 
     background-color: #fff2db;    
@@ -142,7 +141,7 @@
     flex-direction: column;
     justify-content: space-evenly;
 
-    width: 500px;
+    width: 350px;
     /*width: 60rem;*/
 
     background-color: #b4b4b4;    
@@ -171,7 +170,7 @@
 .MiniArticleCardUnavailable{
     font-size: 13px;
 
-    width: 420px;
+    width: 340px;
 
     display: flex;
     align-items: center;
@@ -189,7 +188,7 @@
 .MiniArticleCard{
     font-size: 13px;
 
-    width: 420px;
+    width: 340px;
 
     display: flex;
     align-items: center;
@@ -197,7 +196,7 @@
 
     background-color: #fff2db;    
     border-radius: 20px;
-    outline-color: rgb(255, 226, 146);
+    outline-color: rgb(226, 190, 111);
     outline-width: 2px;
     outline-style: solid;  
     
@@ -227,7 +226,7 @@
 
 }
 .MiniCardPhoto{
-    max-block-size: 125px;
+    max-block-size: 100px;
     margin: 10px;
     outline-width: 5px;
     outline-color: black;

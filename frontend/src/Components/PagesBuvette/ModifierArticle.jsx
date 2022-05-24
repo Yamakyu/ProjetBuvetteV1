@@ -187,6 +187,9 @@ export default function ModifierArticle() {
 
   const doThething = () => {
     console.log(articleWorkedOn);
+    console.log(thatArticle);
+    console.log(thatArticle.prixUnitaire == articleWorkedOn.prixUnitaire);
+    console.log(thatArticle.prixUnitaire != articleWorkedOn.prixUnitaire);
   }
 
   return (

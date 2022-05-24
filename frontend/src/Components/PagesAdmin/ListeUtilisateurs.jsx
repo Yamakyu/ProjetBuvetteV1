@@ -237,9 +237,6 @@ export default function ListeUtilisateurs() {
                 setIsFilteredList(false);
                 break
             }
-
-
-
     }
 
     const prepareSearchUserByName = () => {
