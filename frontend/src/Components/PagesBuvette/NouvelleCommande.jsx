@@ -15,6 +15,7 @@ export default function NouvelleCommande() {
   const myAppNavigator = useNavigate();
 
     const [articleListResult, setArticleListResult] = useState([]);
+    const [fullArticlesList, setFullArticlesList] = useState([])
     const [myOrder, setMyOrder] = useState(currentOrder);
     const [apiSearchResponse, setApiSearchResponse] = useState("");
     const [searchWarning, setSearchWarning] = useState("");
@@ -122,6 +123,11 @@ const isFilterValid = (filter) => {
 
   }
 
+  const resetSearch = () => {
+    setArticleListResult(fullArticlesList);
+    setIsListFiltered(false);
+}
+
 //-------------------------------------------------------------------------  REQUÊTES
 
 
@@ -218,6 +224,7 @@ const isFilterValid = (filter) => {
         myAppNavigator("/login");
       }
       setArticleListResult(data.resultArray);
+      setFullArticlesList(data.resultArray);
       setIsListFiltered(false);
       setApiSearchResponse("");
     })
@@ -229,67 +236,59 @@ const isFilterValid = (filter) => {
 
 //------------------------------------------------------------------------- AFFICHAGE
 
-  const thatThing = () => {
-    console.log(myOrder.length);
-  }
-
-  const thatOtherThing = () => {
-    console.log("the OTHER thing");
-  }
-
   return (
     <div> 
-      
-      <DoTheThings
-        theThing={null}
-        theOtherThing={null}
-      />
-
-      <h1><u>Nouvelle commande</u></h1>
-      <br />
+      <h1 className='PageName'>Nouvelle commande</h1>
       <h2>Contenu de la commande : </h2>
-        <ul>
-          {myOrder 
-          ?myOrder.map((article, index) => {
-            return(
-              <li key={index}> 1 {article.nom} : {article.prixUnitaire}€ <button onClick={() => removeFromOrder(index)}>Retirer de la commande</button>
-              </li>
-            )
-          })
-          :""}
-          <h4>Montant total : {totalAmount} €</h4>
-        </ul>
+      {myOrder 
+      ? myOrder.map((article, index) => {
+        return(
+          <li key={index}> 1 {article.nom} : {article.prixUnitaire}€ <button className='TinyCancelButton' onClick={() => removeFromOrder(index)}> X </button>
+          </li>
+        )
+      })
+      : ""}
 
-          <br />
-          <button disabled={isOrderSorted} onClick={sortOrder}>Trier les articles</button>
-          <button disabled={myOrder.length === 0} onClick={() => setIsCancellingOrder(true)}>Annuler la commande</button>
-          <button disabled={myOrder.length === 0} onClick={checkOrder}>Valider la commande</button>
-          <br />
-          <br />
-          <div hidden={!isCancellingOrder}> Voulez vous vraiment retirer tout les articles de cette commande ? </div>
-          <button hidden={!isCancellingOrder} onClick={cancelOrder}>Confirmer l'annulation de la commande</button>
+      <h4>Montant total : {totalAmount} €</h4>
 
-        <hr />
-        <FiltreArticle 
-          isListFiltered = {isListFiltered}
-          setIsListFiltered = {setIsListFiltered}
-      
-          searchWarning = {searchWarning}
-          setSearchWarning = {setSearchWarning}
-      
-          apiSearchByName = {apiSearchArticlesByName}
-          apiSearchByCategory = {apiSearchArticlesByCategory}
-          apiGetAllArticles = {apiGetAllArticles}
-        />
-        <br />
-        <ListeArticles 
-          articles={articleListResult} 
-          apiSearchResponse={apiSearchResponse} 
-          displayAddToOrderButtonChild={true} 
-          displayDetailsButtonChild={false}
-          addToOrderChild={addToOrder}
-        />
-        {/* Ce composant appelle lui même le composant Article. L'indication "Child" sur un nom de props indique que cet élément est réceptionné par le composant Article, enfant du composant ListeArticle */}
+      <br />
+      <button className='MiniCardSubButton' disabled={isOrderSorted} onClick={sortOrder}>Trier les articles</button>
+      <button className='MiniCardCancelButton' disabled={myOrder.length === 0} onClick={() => setIsCancellingOrder(true)}>Annuler la commande</button>
+      <button className='MiniCardConfirmButton' disabled={myOrder.length === 0} onClick={checkOrder}>Valider la commande</button>
+      <br />
+      <br />
+      <div hidden={!isCancellingOrder}> Voulez vous vraiment retirer tout les articles de cette commande ? </div>
+      <button className='MiniCardRedButton' hidden={!isCancellingOrder} onClick={cancelOrder}>Confirmer l'annulation de la commande</button>
+
+      <hr />
+      <FiltreArticle 
+        setIsListFiltered = {setIsListFiltered}
+    
+        searchWarning = {searchWarning}
+        setSearchWarning = {setSearchWarning}
+
+        setArticleListResult={setArticleListResult}
+        fullArticlesList={fullArticlesList}
+    
+        apiSearchByName = {apiSearchArticlesByName}
+        apiSearchByCategory = {apiSearchArticlesByCategory}
+      />
+      <br />
+      { isListFiltered 
+          ? <button className='MiniCardCancelButton' onClick={resetSearch}>Annuler la recherche et afficher la liste de tout les articles</button>
+          : "" }
+      <ListeArticles 
+        articles={articleListResult} 
+        apiSearchResponse={apiSearchResponse} 
+        displayAddToOrderButtonChild={true}
+        displayDetailsButtonChild={false}
+        addToOrderChild={addToOrder}
+        isOrderingChild={true}
+      />
+      {/* Ce composant appelle lui même le composant Article. L'indication "Child" sur un nom de props indique que cet élément est réceptionné par le composant MiniArticle, enfant du composant ListeArticle */}
+      { isListFiltered 
+          ? <button className='MiniCardCancelButton' onClick={resetSearch}>Annuler la recherche et afficher la liste de tout les articles</button>
+          : "" }
     </div>
   )
 }

@@ -54,8 +54,7 @@ export default function FiltreArticle(props) {
             
                 Inclure les articles non disponibles ? 
                 <input type="checkbox" defaultChecked={false} value={checkUnavailableArticles} onChange={() => checkUnavailableArticles = !checkUnavailableArticles}/>
-                <br/>
-                <button onClick={() => apiSearchByCategory(categoryToLookFor, checkUnavailableArticles)}>Filtrer les articles</button>
+                <button className='MiniCardSubButton' onClick={() => apiSearchByCategory(categoryToLookFor, checkUnavailableArticles)}>Filtrer les articles</button>
             </div>
         );
     }
@@ -80,64 +79,11 @@ export default function FiltreArticle(props) {
                 Inclure les articles non disponibles ?
                 <input type="checkbox" defaultChecked={false} value={checkUnavailableArticles} onChange={() => checkUnavailableArticles = !checkUnavailableArticles}/>
 
-                <button onClick={() => apiSearchByName(nameToLookFor, checkUnavailableArticles)}>Valider</button>
+                <button className='MiniCardSubButton' onClick={() => apiSearchByName(nameToLookFor, checkUnavailableArticles)}>Filtrer les articles</button>
             </div>
         );
     }
     
-    //isByName = true → Recherche par nom //// isByName = false → Recherche par catégorie
-    const prepareSearch = (isByName) => {
-        let categoryToLookFor;
-        let nameToLookFor;
-        let checkUnavailableArticles;
-
-        if(isByName){
-            setSearchTool(
-                <div>
-                    Entrez votre recherche : 
-    
-                    <input
-                    placeholder="nom de l'article"
-                    value={nameToLookFor}
-                    type="text"
-                    onChange={(e) => nameToLookFor = e.target.value}
-                    name="searchName"
-                    />
-                    <br/>
-                
-                    Inclure les articles non disponibles ?
-                    <input type="checkbox" defaultChecked={false} value={checkUnavailableArticles} onChange={() => checkUnavailableArticles = !checkUnavailableArticles}/>
-                    <br/>
-                    <button onClick={() => apiSearchByName(nameToLookFor, checkUnavailableArticles)}>Lancer la recherche</button>
-                </div>
-            );
-        }else if (!isByName){
-            setSearchTool(
-                <div>
-                   <label>
-                        Rechercher un article de quelle catégorie ? 
-                        <select  onChange={(e) => categoryToLookFor = e.target.value}>
-                            <option value="snack">Snack</option>
-                            <option value="friandise">friandise</option>
-                            <option value="boisson chaude">Boisson chaude</option>
-                            <option value="boisson fraiche">Boisson fraîche</option>
-                            <option value="plat chaud">Plat chaud</option>
-                            <option value="plat froid">Plat froid</option>
-                        </select>
-                    </label>
-                    <br/>
-                
-                    Inclure les articles non disponibles ? 
-                    <input type="checkbox" defaultChecked={false} value={checkUnavailableArticles} onChange={() => checkUnavailableArticles = !checkUnavailableArticles}/>
-                    <br/>
-                    <button onClick={() => apiSearchByCategory(categoryToLookFor, checkUnavailableArticles)}>Filtrer les articles</button>
-                </div>
-            );
-        }else {
-            setSearchWarning("Impossible de lancer une recherche");
-        }
-    }
-
   return (
     <div>
         <h3>

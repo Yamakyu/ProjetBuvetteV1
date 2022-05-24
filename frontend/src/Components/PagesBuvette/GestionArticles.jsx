@@ -93,6 +93,11 @@ export default function ModifierArticle() {
         }
     }
 
+    const resetSearch = () => {
+        setArticleListResult(fullArticlesList);
+        setIsListFiltered(false);
+    }
+
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT et REQUÊTES
 
     const apiSearchArticlesByName = (searchFilter, checkUnavailableArticles) => {
@@ -206,7 +211,6 @@ export default function ModifierArticle() {
     <div>
         <br/>
         <FiltreArticle 
-            isListFiltered = {isListFiltered}
             setIsListFiltered = {setIsListFiltered}
         
             searchWarning = {searchWarning}
@@ -217,11 +221,10 @@ export default function ModifierArticle() {
         
             apiSearchByName = {apiSearchArticlesByName}
             apiSearchByCategory = {apiSearchArticlesByCategory}
-            apiGetAllArticles = {apiGetAllArticles}
             />
         <hr color='#adadad'/>
         { isListFiltered 
-            ? <button className='MiniCardCancelButton' onClick={() => setArticleListResult(fullArticlesList)}>Annuler la recherche et afficher la liste de tout les articles</button>
+            ? <button className='MiniCardCancelButton' onClick={resetSearch}>Annuler la recherche et afficher la liste de tout les articles</button>
             : "" }
         <ListeArticles 
             articles={articleListResult} 
@@ -230,7 +233,7 @@ export default function ModifierArticle() {
             displayToggleArticleButtonChild
         />
         { isListFiltered 
-        ? <button className='MiniCardCancelButton' onClick={() => setArticleListResult(fullArticlesList)}>Annuler la recherche et afficher la liste de tout les articles</button>
+        ? <button className='MiniCardCancelButton' onClick={resetSearch}>Annuler la recherche et afficher la liste de tout les articles</button>
         : "" }
     </div>
   )
