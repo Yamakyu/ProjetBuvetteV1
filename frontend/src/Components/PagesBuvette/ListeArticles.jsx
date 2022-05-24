@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext';
 import Article from '../Utility/Article'
+import MiniArticle from '../Utility/MiniArticle';
 
 export default function ListeArticles(props) {
 
@@ -34,7 +35,7 @@ export default function ListeArticles(props) {
         {theseArticles 
           ? theseArticles.map((article) =>{
             return(
-              <Article 
+              <MiniArticle 
                 key={article.id} 
                 article={article} 
                 displayDetailsButton={displayDetailsButton}

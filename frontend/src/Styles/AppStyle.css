@@ -117,12 +117,13 @@
 }
 .ArticleCard{
     font-size: 25px;
-
+    
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: space-evenly;
-
+    
+    width: 500px;
     /*width: 60rem;*/
 
     background-color: #fff2db;    
@@ -134,11 +135,14 @@
     margin-bottom: 5px;
 }
 .ArticleCardUnavailable{
+    font-size: 25px;
+
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: space-evenly;
 
+    width: 500px;
     /*width: 60rem;*/
 
     background-color: #b4b4b4;    
@@ -164,28 +168,68 @@
     overflow-wrap: break-word;
     width: fit-content;
 }
-.MiniArticleCard{
+.MiniArticleCardUnavailable{
     font-size: 13px;
 
-    width: 250px;
+    width: 420px;
 
     display: flex;
     align-items: center;
     flex-direction: column;
 
-    background-color: #f7e9ff;    
+    background-color: #b4b4b4;    
     border-radius: 20px;
-    outline-color: rgb(255, 253, 157);
+    outline-color: rgb(145, 130, 91);
     outline-width: 2px;
     outline-style: solid;  
     
     margin-bottom: 15px;
     padding: 3px;
 }
+.MiniArticleCard{
+    font-size: 13px;
+
+    width: 420px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    background-color: #fff2db;    
+    border-radius: 20px;
+    outline-color: rgb(255, 226, 146);
+    outline-width: 2px;
+    outline-style: solid;  
+    
+    margin-bottom: 15px;
+    padding: 3px;
+}
+.MiniCardContent{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+.MiniCardInfo{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-wrap: break-word;
+    margin-left: 10px;
+}
 .CardPhoto{
     height: 180px;
     margin: 20px;
     outline-width: 8px;
+    outline-color: black;
+    outline-style: solid;
+    border-radius: 15px;
+
+}
+.MiniCardPhoto{
+    max-block-size: 125px;
+    margin: 10px;
+    outline-width: 5px;
     outline-color: black;
     outline-style: solid;
     border-radius: 15px;
@@ -401,7 +445,15 @@
 }
 .ArticleDescription{
     margin-top: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
     font-size: 24;
+    width: 100%
+}
+.MiniCardDescription{
+    margin-top: 10px;
+    font-size: 20;
+    font-weight: bold;
 }
 /* --------- Autres --------- */
 

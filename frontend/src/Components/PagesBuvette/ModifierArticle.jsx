@@ -210,12 +210,11 @@ export default function ModifierArticle() {
             newArticle={articleWorkedOn}
             isEditingArticle
             dispplayEditArticleButton
+            displayGoBackButton
             handleEditForm={handleEditForm}
             backEndAPIRequest = {apiEditArticle}
             />
         </div>
-        <button onClick={prepareToggleArticle}>Rendre cet article {thatArticle.isDisponible ? "non disponible" : "disponible"}</button>
-        <button onClick={prepareEditArticle}>Modifier cet article</button>
         <br/>
         <br/>
       </div>

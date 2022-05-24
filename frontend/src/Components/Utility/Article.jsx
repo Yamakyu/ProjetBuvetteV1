@@ -17,11 +17,6 @@ export default function Article(props) {
     let newArticle = props.newArticle || emptyArticle;
     let isEditingArticle = props.isEditingArticle;
 
-    let addToOrder = props.addToOrder;
-
-    let displayAddToOrderButton = props.displayAddToOrderButton;
-    let displayDetailsButton = props.displayDetailsButton; 
-
     let displayToggleArticleButton = props.displayToggleArticleButton;
     let dispplayEditArticleButton = props.dispplayEditArticleButton;
 
@@ -74,14 +69,7 @@ export default function Article(props) {
 
             <div className='ButtonContainer' style={{width: "100%"}}>
                 <button className='ConfirmButton' hidden={!dispplayEditArticleButton} onClick={apiEditArticle}>Valider les modifications</button>
-
                 <button className='SubButton' hidden={!displayGoBackButton} onClick={() => {myAppNavigator("/manage/buvette/articles/overview")}}>Liste des articles</button>
-
-                <button className='SubButton' hidden={!displayDetailsButton} onClick={() => myAppNavigator(`/manage/buvette/articles/${article.id}`)}>Modifier</button>
-
-                <button className={article.isDisponible ? "CancelButton" : "ConfirmButton"} hidden={!displayToggleArticleButton} onClick={() => myAppNavigator("/manage/buvette/articles/toggle/"+article.id)}>Rendre {article.isDisponible ? "non disponible" : "disponible"}</button>
-
-                <button className='ConfirmButton' hidden={!displayAddToOrderButton} onClick={() => addToOrder(article)}>Ajouter à la commande</button>
 
                 <button className={article.isDisponible ? "RedButton" : "ConfirmButton"} hidden={!displayToggleArticleButton} disabled={disableConfirmButton}  onClick={() => apiToggleArticle(article)}>Rendre {article.isDisponible ? "non disponible" : "disponible"}</button>
 
