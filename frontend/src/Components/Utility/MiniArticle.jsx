@@ -16,7 +16,7 @@ export default function MiniArticle(props) {
         <div className='MiniCardContent'>
             <img className='MiniCardPhoto' src={article.photo}/>  
             <div className='MiniCardInfo'>
-                <h2>{article.nom} </h2>
+                <h2 className='MiniCardTitle'>{article.nom}</h2>
                 <div className='MiniCardDescription'>
                     <i>{article.description ? `"${article.description}"` : ""}</i> 
                 </div>
@@ -25,10 +25,7 @@ export default function MiniArticle(props) {
         <div style={{fontSize:"16px"}}>
             <br />
             Catégorie : {article.categorie} || {article.isDisponible ? <b>{article.prixUnitaire} €</b> : <u>Non disponible</u>}
-        </div>
-        <div >
-            </div> 
-    
+        </div>    
         <div className='MiniCardButtonContainer'>
             <button className='MiniCardSubButton' hidden={isOrdering} onClick={() => myAppNavigator(`/manage/buvette/articles/${article.id}`)}>Modifier</button> 
             <button className='MiniCardConfirmButton' hidden={!isOrdering || !article.isDisponible} onClick={() => addToOrder(article)}>Ajouter à la commande</button> 

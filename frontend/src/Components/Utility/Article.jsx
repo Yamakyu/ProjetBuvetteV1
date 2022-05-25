@@ -102,7 +102,6 @@ export default function Article(props) {
                             type="text"
                             name="nom"
                         />
-                        <div className='' />
 
                         <label className='FancyBr'>
                             <div className='VerticalLabel'>

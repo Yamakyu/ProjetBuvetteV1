@@ -96,6 +96,35 @@
 
     margin-bottom: 5px;
 }
+.OrderCard{
+    font-size: 16px;
+    line-height: 8px;
+    
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+    
+    width: 350px;
+    /*width: 60rem;*/
+
+    background-color: #fff2db;    
+    border-radius: 25px;
+    outline-color: rgb(255, 226, 146);
+    outline-width: 2px;
+    outline-style: solid;  
+
+    margin-bottom: 5px;
+}
+.OrderCancelSubCard{
+    margin: 20px;
+    line-height: normal;
+    background-color: #eec7de;
+    border-color: #ca7c7c;
+    border-style: solid;
+
+    border-radius: 15px;
+}
 .MiniUserCard{
     font-size: 13px;
 
@@ -467,6 +496,11 @@
     margin-top: 10px;
     font-size: 20;
     font-weight: bold;
+}
+.MiniCardTitle{
+    font-size: x-large;
+    line-height: 20px;
+    font-weight: lighter;
 }
 /* --------- Autres --------- */
 
