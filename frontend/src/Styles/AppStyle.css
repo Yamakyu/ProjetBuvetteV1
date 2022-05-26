@@ -116,6 +116,25 @@
 
     margin-bottom: 5px;
 }
+.ClientCard{
+    font-size: 16px;
+    
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+    
+    width: 350px;
+    /*width: 60rem;*/
+
+    background-color: #c2baac;    
+    border-radius: 25px;
+    outline-color: rgb(128, 116, 83);
+    outline-width: 2px;
+    outline-style: solid;  
+
+    margin-bottom: 5px;
+}
 .OrderCancelSubCard{
     margin: 20px;
     line-height: normal;
@@ -463,7 +482,8 @@
     font-size: 20px;
     color: orangered;
     background-color:#fcfe9f;
-    border-radius: 20px;
+    border-radius: 15px;
+    line-height: 18px;
 }
 .Avertissement{
     margin-bottom: 10px;

@@ -16,7 +16,9 @@ export default function VerifierCommande() {
     const [apiResponse, setApiResponse] = useState("");
     const [validateOrderResponse, setValidateOrderResponse] = useState("");
     const [orderComment, setOrderComment] = useState("");
+    const [commentWarning, setCommentWarning] = useState("");
 
+    const [isCommentValid, setisCommentValid] = useState(true);
     const [isCancellingOrder, setIsCancellingOrder] = useState(false);
     const [isFirstOrder, setIsFirstOrder] = useState(false);
     const [isOrderForSelf, setIsOrderForSelf] = useState(false);
@@ -96,6 +98,22 @@ export default function VerifierCommande() {
         setTotalAmountDiscounted(totalAmount * inputEvent.target.value)
         setDiscount(1-inputEvent.target.value);
         setIsCancellingOrder(false);
+
+        if(inputEvent.target.value != 1 && isStringEmpty(orderComment)){
+            setisCommentValid(false);
+        }else{
+            setisCommentValid(true);
+        }
+    }
+
+    const handleComment = (inputEvent) => {
+        if (!isStringEmpty(inputEvent.target.value)){
+            setisCommentValid(true);
+            setCommentWarning('')
+        }else{
+            setisCommentValid(false)
+        }
+        setOrderComment(inputEvent.target.value);
     }
 
     const handleCustomerInputSelect = (inputEvent) => {
@@ -328,7 +346,7 @@ export default function VerifierCommande() {
                     customer: `${customer.nom} ${customer.prenom}`,
                     gerantId: activeSession.userInfo.id,
                     gerant: `${activeSession.userInfo.nom} ${activeSession.userInfo.prenom}`,
-                    commentaire:"Pas de commentaire pour le moment",
+                    commentaire: orderComment,
                     totalAmount: totalAmount,
                     totalAmountDiscounted: totalAmountDiscounted,
                     discount: discount * 100,
@@ -415,13 +433,13 @@ export default function VerifierCommande() {
                         {Object.entries(reducedOrder).map(([objectKey, article]) =>
                             {
                                 return(
-                                        <li key={objectKey}>    
-                                        {article.quantite} {article.nom}{article.quantite > 1 ? "s":""} - {article.prixUnitaire * article.quantite} € 
-                                            <ul style={{fontSize:"13px"}}>
-                                                (Prix unitaire : {article.prixUnitaire}€)
-                                            </ul>
-                                            <div className='FancyBr'/>
-                                        </li>
+                                    <li key={objectKey}>    
+                                    {article.quantite} {article.nom}{article.quantite > 1 ? "s":""} - {article.prixUnitaire * article.quantite} € 
+                                        <ul style={{fontSize:"13px"}}>
+                                            (Prix unitaire : {article.prixUnitaire}€)
+                                        </ul>
+                                        <div className='FancyBr'/>
+                                    </li>
                                 )
                             })
                         }     
@@ -448,127 +466,124 @@ export default function VerifierCommande() {
                         <option value={0}>0%</option>
                     </select>
                 </label>
+                <div hidden={isCommentValid} className='APIResponse'>
+                Un commentaire est requis pour une commande payée à {((1-discount) * 100)}%
+                </div>
+                <div style={{marginTop:"20px"}}>↓ Commentaires ↓</div>
+                <textarea 
+                    value={orderComment} 
+                    style={{marginTop:"10px"}} 
+                    rows={5}
+                    onChange={handleComment}
+                />
                 <br />
                 <h2>Montant total : {totalAmountDiscounted} €</h2>
             </div>
+        
+            <br className='FancyBr' />
 
-        </div>
+            <div className='ClientCard' hidden={!isCommentValid}>
+                <label>
+                    <h4>Veuillez identifier la/le client.e</h4>
+                    <select onChange={handleCustomerInputSelect} defaultValue="notNew">
+                        <option value="notNew">La/le client.e a déjà commandé avant</option>
+                        <option value="new">La/le client.e commande pour la première fois</option> 
+                        <option value="myself">Je commande pour moi même, {activeSession.userInfo.nom} {activeSession.userInfo.prenom}</option> 
+                    </select>
+                </label>
 
+                {/* Formulaire de recherche d'un acheteur existant */}
+                <div hidden={isOrderForSelf || isFirstOrder}>
+                    Veuillez entrer son nom ou prénom. Laissez le champ vide pour afficher tout les utilisateurs.
+                    <br />
 
-
-        <br />
-        <hr />
-        <br />
-
-        <label>
-            <h4>Veuillez identifier la/le client.e</h4>
-            <select onChange={handleCustomerInputSelect} defaultValue="notNew">
-                <option value="notNew">La/le client.e a déjà commandé avant</option>
-                <option value="new">La/le client.e commande pour la première fois</option> 
-                <option value="myself">Je commande pour moi même, {activeSession.userInfo.nom} {activeSession.userInfo.prenom}</option> 
-            </select>
-        </label>
-
-        <ul>
-            {/* Formulaire de recherche d'un acheteur existant */}
-            <div hidden={isOrderForSelf || isFirstOrder}>
-                Veuillez entrer son nom ou prénom. Laissez le champ vide pour afficher tout les utilisateurs.
-                <br />
-
-                <input
-                placeholder='Entrez un nom/prénom'
-                value={nameToLookFor}
-                type="text"
-                onChange={(e) => setNameToLookFor(e.target.value)}
-                name="searchName"
-                />
-                <button onClick={() => apiSearchUsersByName(nameToLookFor)}>Afficher les utilisateurs</button>
-                <br/>
-                <br/>
-
-                {apiResponse}
-                {userListResult 
-                    ?
-                    <ul hidden={userListResult.length === 0}>
-                        {userListResult.map((userFound) => {
-                            return(
-                                <li key={userFound.id}>
-                                    {userFound.nom} {userFound.prenom} <button onClick={() => selectCustomer(userFound)}> Sélectionner </button>
-                                </li>
-                            )
-                        })}
-                    </ul>
-                    :""
-                }
-
-
-
-
-            </div>
-            
-            {/* Formulaire d'ajout d'un nouvel acheteur */}
-            <form onSubmit={prepareAddCustomer} hidden={isOrderForSelf || !isFirstOrder}>
-                Veuillez entrer les informations de l'acheteur
-                <br />
-                <input
-                    placeholder='nom'
-                    value={newCustomer.nom}
+                    <input
+                    placeholder='Entrez un nom/prénom'
+                    value={nameToLookFor}
                     type="text"
-                    onChange={handleNewCustomerInput}
-                    name="nom"
-                />
-                <input
-                    placeholder='prenom'
-                    value={newCustomer.prenom}
-                    type="text"
-                    onChange={handleNewCustomerInput}
-                    name="prenom"
-                />
-                <input
-                    placeholder='email'
-                    value={newCustomer.email}
-                    type="email"
-                    onChange={handleNewCustomerInput}
-                    name="email"
-                />
-                <button >Valider la saisie</button>
-                <br />
-                <br />
+                    onChange={(e) => setNameToLookFor(e.target.value)}
+                    name="searchName"
+                    />
+                    <button onClick={() => apiSearchUsersByName(nameToLookFor)}>Afficher les utilisateurs</button>
+                    <br/>
+                    <br/>
 
-                <div hidden={!isValidatingAddCustomerInput}>
-                    Veuillez vérifier la saisie :
-                    <ul >
-                        {Object.entries(newCustomer).map(([objectKey, value]) => {
-                            return(
-                                <li key={objectKey}> {objectKey} : {value} </li>
-                            )
-                        })}
-
-                        <br />
-                        <button onClick={apiAddNewCustomer}>La saisie est correcte</button>
-                    </ul>
+                    {apiResponse}
+                    {userListResult 
+                        ?
+                        <ul hidden={userListResult.length === 0}>
+                            {userListResult.map((userFound) => {
+                                return(
+                                    <li key={userFound.id}>
+                                        {userFound.nom} {userFound.prenom} <button onClick={() => selectCustomer(userFound)}> Sélectionner </button>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                        :""
+                    }
                 </div>
+                
+                {/* Formulaire d'ajout d'un nouvel acheteur */}
+                <form onSubmit={prepareAddCustomer} hidden={isOrderForSelf || !isFirstOrder}>
+                    Veuillez entrer les informations de l'acheteur
+                    <br />
+                    <input
+                        placeholder='nom'
+                        value={newCustomer.nom}
+                        type="text"
+                        onChange={handleNewCustomerInput}
+                        name="nom"
+                    />
+                    <input
+                        placeholder='prenom'
+                        value={newCustomer.prenom}
+                        type="text"
+                        onChange={handleNewCustomerInput}
+                        name="prenom"
+                    />
+                    <input
+                        placeholder='email'
+                        value={newCustomer.email}
+                        type="email"
+                        onChange={handleNewCustomerInput}
+                        name="email"
+                    />
+                    <button >Valider la saisie</button>
+                    <br />
+                    <br />
+
+                    <div hidden={!isValidatingAddCustomerInput}>
+                        Veuillez vérifier la saisie :
+                        <ul >
+                            {Object.entries(newCustomer).map(([objectKey, value]) => {
+                                return(
+                                    <li key={objectKey}> {objectKey} : {value} </li>
+                                )
+                            })}
+
+                            <br />
+                            <button onClick={apiAddNewCustomer}>La saisie est correcte</button>
+                        </ul>
+                    </div>
+                    <br />
+                    {apiResponse}
+                </form>
                 <br />
-                {apiResponse}
-            </form>
-            
-        <br />
-        </ul>
-        <h3>
-            {isOrderReady
+
+
+            <h3>
+            {(isOrderReady && isCommentValid)
                 ?   `Cette commande sera attribuée à ${customer.nom} ${customer.prenom}`
                 :   ""
             }
-        </h3>
-        <br />
-        <br />
-        {/*<button disabled={!isOrderReady && isStringEmpty(orderComment)} onClick={apiCompleteOrder}>Valider la commande</button>*/}
-        {validateOrderResponse}
-        <br />
-        <button disabled={!isOrderReady} onClick={apiCompleteOrder}>Valider la commande</button>
-        <br />
-        <br />
-        <br />
+            </h3>
+            {/*<button disabled={!isOrderReady && isStringEmpty(orderComment)} onClick={apiCompleteOrder}>Valider la commande</button>*/}
+            {validateOrderResponse}
+            <button disabled={!isOrderReady || !isCommentValid} className='ConfirmButton' onClick={apiCompleteOrder}>Valider la commande</button>
+            
+            </div>            
+        </div>
     </div>
   )
 }
