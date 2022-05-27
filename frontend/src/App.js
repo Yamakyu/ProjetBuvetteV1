@@ -28,6 +28,7 @@ import ToggleArticle from "./Components/PagesBuvette/ToggleArticle";
 
 function App() {
   const [currentOrder, setCurrentOrder] = useState([]);
+  const [needOrderReset, setNeedOrderReset] = useState(false);
   const [fullUserList, setFullUserList] = useState([]);
   const [userWorkedOn, setUserWorkedOn] = useState({
     nom: "",
@@ -128,6 +129,8 @@ function App() {
           setFullUserList,
           userWorkedOn,
           setUserWorkedOn,
+          needOrderReset,
+          setNeedOrderReset,
         }}
       >
         <BrowserRouter>

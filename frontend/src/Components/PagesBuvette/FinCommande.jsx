@@ -5,12 +5,19 @@ import DoTheThings from '../Utility/DoTheThings';
 
 export default function FinCommande() {
 
-    const { activeSession, isUserTokenExpired, currentOrder, setCurrentOrder } = useContext(SessionContext);
+    const { activeSession, isUserTokenExpired, setNeedOrderReset, currentOrder, setCurrentOrder } = useContext(SessionContext);
     const myAppNavigator = useNavigate();
 
+    useEffect(() => {
+      setNeedOrderReset(true);
     
+      return () => {}
+    }, [])
+    
+   
     const resetOrder = () => {
         setCurrentOrder([]);
+        setNeedOrderReset(false);
     }
     const goToDetails = () => {
         let orderID = currentOrder.id
@@ -31,7 +38,7 @@ export default function FinCommande() {
     }
 
   return (
-      <div>
+      <div className='BoxSimple'>
           {currentOrder.id !== undefined 
             ? <div>
                 <h2>La commande #{currentOrder.id} a été validée.</h2>

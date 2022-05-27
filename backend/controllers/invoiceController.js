@@ -54,6 +54,7 @@ exports.addInvoice = async (req, res) => {
             .then((result) => {
               console.log("resultat");
               console.log(result);
+              console.log(result >= 1);
               addOrderToUserResult = result >= 1;
             })
             .catch((error) => console.log(error));
@@ -78,7 +79,8 @@ exports.addInvoice = async (req, res) => {
       //Que l'opération ait réussi ou pas, on crééé les détails de la commande.
       await InvoiceLines.bulkCreate(invoiceLines)
         .then((data) => {
-          console.log(`------- Détails de factures ajoutés`);
+          console.log(`------- Détails de factures ajoutés`); //!!!!!!!! Ceci s'affiche avant AddToOrderResult (dans User.Update)
+          console.log(addOrderToUserResult);
           return res.status(200).json({
             message: addOrderToUserResult
               ? "La commande a bien été enregistrée !"

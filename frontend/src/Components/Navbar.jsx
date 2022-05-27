@@ -20,7 +20,7 @@ export default function Navbar() {
 
         setActiveSession(() => ({
           ...getLocalStorage("currentSession"),
-          userConnexionStatus: "Veuillez vous connecter pour accéeder aux fonctionnalités"
+          userConnexionStatus: "Veuillez vous connecter pour accéder aux fonctionnalités"
         }));
 
         setCurrentOrder([]);

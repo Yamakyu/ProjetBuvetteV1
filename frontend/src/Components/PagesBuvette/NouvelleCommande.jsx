@@ -10,7 +10,7 @@ export default function NouvelleCommande() {
   
 //------------------------------------------------------------------------- INITIALISATION
 
-  const { activeSession, isUserTokenExpired, currentOrder, setCurrentOrder } = useContext(SessionContext);
+  const { needOrderReset, setNeedOrderReset, activeSession, isUserTokenExpired, currentOrder, setCurrentOrder } = useContext(SessionContext);
 
   const myAppNavigator = useNavigate();
 

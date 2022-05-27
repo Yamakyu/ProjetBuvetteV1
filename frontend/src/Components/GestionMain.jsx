@@ -1,11 +1,20 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../Contexts/SessionContext'
 
 export default function GestionDouble() {
 
-    const {activeSession, setActiveSession}= useContext(SessionContext);
+    const {setCurrentOrder, activeSession, setActiveSession, needOrderReset, setNeedOrderReset}= useContext(SessionContext);
     const myAppNavigator = useNavigate();
+
+    useEffect(() => {
+      if (needOrderReset){
+        setCurrentOrder([])
+      }
+    
+      return () => {}
+    }, [])
+    
 
   return (
     <div className='BoxSimple'>
