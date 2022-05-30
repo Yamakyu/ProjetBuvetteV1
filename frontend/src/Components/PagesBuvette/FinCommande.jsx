@@ -41,21 +41,26 @@ export default function FinCommande() {
       <div className='BoxSimple'>
           {currentOrder.id !== undefined 
             ? <div>
-                <h2>La commande #{currentOrder.id} a été validée.</h2>
-                <h4>Vous pouvez retrouver les détails de cette commande sur la page listant toutes les commandes.</h4>
+                <h1 className='PageName'>La commande #{currentOrder.id} a été validée.</h1>
+                <h3>Vous pouvez retrouver les détails de cette commande sur la page listant toutes les commandes.</h3>
+                <br />
 
-                <button onClick={goToDetails}>Voir les détails de la commande</button>
-                <button onClick={goToOrderList}>Consulter l'historique complet des commandes</button>
+                <button className='ActionButton' onClick={goToNewOrder}>Nouvelle commande</button>
+                <br />
+                <button className='SubButton' onClick={goToDetails}>Détails de la commande</button>
+                <br />
+                <button className='SubButton' onClick={goToOrderList}>Historique des commandes</button>
+                <br />
+                <button className='SubButton' onClick={goToMenuBuvette}>Gestion de la buvette</button>
+
                 <br />
                 <br />
                 <br />
-                <button onClick={goToNewOrder}>Faire une nouvelle commande</button>
-                <button onClick={goToMenuBuvette}>Retour au menu de gestion de buvete</button>
             </div>
             : <div>
-            <h2>Veuillez commencer par entrer une commande</h2>
+            <h1 className='PageName' >Veuillez commencer par entrer une commande</h1>
             <br />
-            <button onClick={goToNewOrder}>Faire une nouvelle commande</button>
+            <button className='ActionButton' onClick={goToNewOrder}>Nouvelle commande</button>
         </div>
           }
 

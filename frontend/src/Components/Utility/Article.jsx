@@ -24,7 +24,7 @@ export default function Article(props) {
 
     let disableConfirmButton = props.disableConfirmButton;
 
-    let handleEditForm = props.handleEditForm || null;
+    let handleEditForm = props.handleEditForm || (() => {});
     let apiEditArticle = props.backEndAPIRequest;
     let apiToggleArticle = props.backEndAPIRequest; // TEMPORAIRE
 

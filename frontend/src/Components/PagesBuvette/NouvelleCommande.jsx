@@ -251,10 +251,13 @@ const isFilterValid = (filter) => {
 
       <h4>Montant total : {totalAmount} €</h4>
 
+      <button className='ConfirmButton' disabled={myOrder.length === 0} onClick={checkOrder}>Valider la commande</button>
+      <br />
       <br />
       <button className='MiniCardSubButton' disabled={isOrderSorted} onClick={sortOrder}>Trier les articles</button>
+      <br />
       <button className='MiniCardCancelButton' disabled={myOrder.length === 0} onClick={() => setIsCancellingOrder(true)}>Annuler la commande</button>
-      <button className='MiniCardConfirmButton' disabled={myOrder.length === 0} onClick={checkOrder}>Valider la commande</button>
+      <br />
       <br />
       <br />
       <div hidden={!isCancellingOrder}> Voulez vous vraiment retirer tout les articles de cette commande ? </div>
