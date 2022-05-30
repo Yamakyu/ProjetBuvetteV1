@@ -107,7 +107,8 @@ export default function VerifierCommande() {
     }
 
     const handleComment = (inputEvent) => {
-        if (!isStringEmpty(inputEvent.target.value)){
+        console.log(discount);
+        if (!isStringEmpty(inputEvent.target.value) || discount==0 ){
             setisCommentValid(true);
             setCommentWarning('')
         }else{
@@ -273,6 +274,7 @@ export default function VerifierCommande() {
     const apiAddNewCustomer = async () => {
 
         setApiResponse("L'opération peut prendre quelques instants. Veuillez patienter... ");
+        setisValidatingAddCustomerInput(false);
         await fetch("/api/users/signup/customer",{
             method: "POST",
             headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
