@@ -48,6 +48,9 @@ function App() {
 
       }
     */
+    console.log("From isUserTokenExpired : ");
+    console.log(apiResponseData);
+
     if (apiResponseData.needLogout) {
       try {
         localStorage.removeItem("currentSession");

@@ -247,6 +247,24 @@
     margin-bottom: 15px;
     padding: 3px;
 }
+.MiniArticleCardConfirm{
+    font-size: 13px;
+
+    width: 250px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    background-color: #eedec3;    
+    border-radius: 20px;
+    outline-color: rgb(218, 184, 112);
+    outline-width: 2px;
+    outline-style: solid;  
+    
+    margin-bottom: 15px;
+    padding: 3px;
+}
 .MiniCardContent{
     display: flex;
     flex-direction: row;

@@ -26,15 +26,15 @@ export default function AjouterArticle() {
     const displayInputedArticle = (article) => {
         console.log(article);
         return(
-            <ul>
+            <div className='MiniArticleCardConfirm'>
                 {Object.entries(article).map(([objectKey, value]) =>
                 objectKey.startsWith("file")
                 ? ""
-                : <li key={objectKey}> {objectKey} : { value } </li>   
+                : <h3 key={objectKey} style={{lineHeight:"4px"}}>  <u>{objectKey}</u> : <b>{value}{objectKey === "prix" ? "€" : ""}</b></h3>   
                 )}
                 <br/>
-                <button onClick={apiAddArticle}>→ Ajouter l'article ←</button>
-            </ul>
+                <button className='ConfirmButton' onClick={apiAddArticle}>Ajouter l'article</button>
+            </div>
         );
     }
 
@@ -93,10 +93,9 @@ export default function AjouterArticle() {
             }
         })
         .catch((err) => {
-            console.log("API response ↓");
+            console.log("API response (error) ↓");
             console.log(err.response.data.message);
-            console.log(err);
-            if (isUserTokenExpired(err)){
+            if (isUserTokenExpired(err.response.data)){
                 return myAppNavigator("/login");
             }
             setApiResponse(err.response.data.message);
@@ -113,38 +112,41 @@ export default function AjouterArticle() {
     }
 
 
-  return (
-    <div>
+  return (  
+    <div className='BoxSimple'>
         <br/>
         <h1>AJOUTER UN ARTICLE</h1>
-        <br/>
+        <br/>         
 
-        
-        <Container className='mt-5 p-2'>
-            <hr />
-                <Form onSubmit={prepareAddArticle}>
-
-                    <Form.Group controlId="fileName" className="mb-3">
-                        <Form.Label>Choississez une photo ou une image </Form.Label>
+            <form onSubmit={prepareAddArticle} className='ArticleCard'>
+                <Form>
+                    <Form.Group controlId="fileName">
+                        <Form.Label className='VerticalLabel'>Photo ou image :</Form.Label> <br />
                         <Form.Control
+                            className='LargeInput'
                             type="file"
                             name='image'
                             onChange={(e) => setArticleImage(e.target.files[0])}
-                            size="lg" />
-                    </Form.Group>
-                    
-                    <Form.Group className="mb-3" controlId="title">
-                        <Form.Label>Nom de l'article : </Form.Label>
-                        <Form.Control
-                            value={articleName}
-                            onChange={(e) => setArticleName(e.target.value)}
-                            type="text"
+                            size="lg" 
                         />
                     </Form.Group>
+                    <br />
+                    
+                    <div className='VerticalLabel'>Nom de l'article : </div>
+                    <input
+                        className='LargeInput'
+                        onChange={(e) => setArticleName(e.target.value)}
+                        value={articleName}
+                        type="text"
+                        name="nom"
+                    />
 
-                    <label>
-                        Categorie : {" "}
-                        <select name="categorie" onChange={(e) => setArticleCategory(e.target.value)} value={articleCategory}>
+                    <label className='FancyBr'>
+                        <div className='VerticalLabel'>
+                            Categorie : {" "}
+                        </div>
+                        <select name="categorie" 
+                        className='OptionSelector' onChange={(e) => setArticleCategory(e.target.value)} value={articleCategory}>
                             <option value="snack">Snack</option>
                             <option value="friandise">friandise</option>
                             <option value="boisson chaude">Boisson chaude</option>
@@ -154,25 +156,25 @@ export default function AjouterArticle() {
                         </select>
                     </label>
 
-                    <Form.Group className="mb-3" controlId="price">
-                        <Form.Label>Prix unitaire (€) : </Form.Label>
-                        <Form.Control
-                            value={articlePrice}
-                            onChange={(e) => setArticlePrice(e.target.value)}
-                            type="number"
-                            />
-                    </Form.Group>
+                    <div className='VerticalLabel'>Prix unitaire (€) : </div>
+                    <input
+                        className='LargeInput'
+                        value={articlePrice}
+                        onChange={(e) => setArticlePrice(e.target.value)}
+                        type="number"
+                        name="prixUnitaire"
+                    />
+                    <div className='FancyBr'/>
 
-                
-                    <Form.Group className="mb-3" controlId="description">
-                        <Form.Label>Description de l'article</Form.Label>
-                        <br/>
-                        <Form.Control
-                            value={articleDescription}
-                            onChange={(e) => setArticleDescription(e.target.value)}
-                            as="textarea"
-                            />
-                    </Form.Group>
+                    <Form.Label>Description de l'article</Form.Label>
+                    <br/>
+                    <Form.Control
+                        className='LargeInput'
+                        value={articleDescription}
+                        onChange={(e) => setArticleDescription(e.target.value)}
+                        as="textarea"
+                        name="description"
+                    />
 
                     <Form.Group className="mb-3" controlId="publishedCheckedid">
                         <Form.Check
@@ -182,21 +184,20 @@ export default function AjouterArticle() {
                             defaultChecked={true}
                         />
                     </Form.Group>
-
-
-                    <Button variant="primary" type="submit">
-                        Vérifier la saisie
-                    </Button>
                 </Form>
-            </Container>
+                
+                <br className='FancyBr'/>
+
+                <button hidden={false} className='SubButton'>Vérifier la saisie</button>
+
+            {validateArticle}
+            </form>
 
 
-        {validateArticle} {apiResponse}
+         {apiResponse}
 
-        <br/>
-        <br/>
-        <br/>
-        <button onClick={() => myAppNavigator("/manage/buvette/articles/overview")}>Accéder à la liste des articles</button>
+        <br className='FancyBr'/>
+        <button className='CancelButton' onClick={() => myAppNavigator("/manage/buvette/articles/overview")}>Liste des articles</button>
 
 
     </div>
