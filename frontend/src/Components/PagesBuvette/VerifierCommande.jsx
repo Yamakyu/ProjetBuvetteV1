@@ -585,14 +585,15 @@ export default function VerifierCommande() {
                                 
                                 {Object.entries(newCustomer).map(([objectKey, value]) => {
                                     return(
-                                        <h3 key={objectKey} style={{lineHeight:"5px"}}> <u>{objectKey}</u> : <b>{value}</b> </h3>
+                                        <h3 key={objectKey} > <u>{objectKey}</u> : <b>{value}</b> </h3>
                                     )
                                 })}
 
                                 <button className='MiniCardSubButton' style={{marginTop:"15px"}} onClick={apiAddNewCustomer}>La saisie est correcte</button>
                             </div>
                         </div>
-                        : <button className='MiniCardSubButton' >Valider la saisie</button>}
+                        : <button className='MiniCardSubButton' >Valider la saisie</button>
+                    }
                     
                     <div className='APIResponse'>
                         {apiResponse}

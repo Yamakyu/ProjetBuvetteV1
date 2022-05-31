@@ -62,6 +62,20 @@ export default function Connexion() {
                 switch (thatNewSession.userInfo.droits) {
                     case "Admin":
                     case "Double gérant":
+                    case "Gerant Buvette":
+                    case "Gerant Matériel":
+                        myAppNavigator("/main");
+                        break;
+                    case "Aucun":
+                    default:
+                        myAppNavigator("/");
+                        break;
+                }
+                
+                /*
+                switch (thatNewSession.userInfo.droits) {
+                    case "Admin":
+                    case "Double gérant":
                         myAppNavigator("/main");
                         break;
                     case "Gerant Buvette":
@@ -74,7 +88,7 @@ export default function Connexion() {
                     default:
                         myAppNavigator("/");
                         break;
-                }
+                }*/
 
             }else if (data.error){
                 console.log(data.error);
