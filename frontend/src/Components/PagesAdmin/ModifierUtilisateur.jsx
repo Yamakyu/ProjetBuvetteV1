@@ -64,6 +64,26 @@ export default function ModifierUtilisateur() {
     let userAfterEdit;
     setDisableConfirmButton(true);
 
+    let areUsersEqual = false;
+
+    for(let key in thatUser){
+      if((baseUser[key]!==thatUser[key])){
+        areUsersEqual = false;
+      } else {
+        areUsersEqual = true;
+      }
+      if (!areUsersEqual){
+        break;
+      }
+    }
+    
+    console.log(areUsersEqual);
+    
+    if(areUsersEqual){
+      setApiResponse("Vous n'avez entré aucune modification")
+      return;
+    }
+
     await fetch(`/api/users/edit/${thatUser.id}`,{
       method: "PUT",
       headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
@@ -114,9 +134,7 @@ export default function ModifierUtilisateur() {
 
       <div className='BoxSimple'>
 
-        <div className='APIResponse'>
-          {apiResponse || ""}
-        </div>
+        
 
         <Utilisateur
           user = {baseUser}
@@ -125,6 +143,7 @@ export default function ModifierUtilisateur() {
           displayEditButton
           displayGoBackButton
           isEditingUser
+          apiResponse = {apiResponse}
           disableConfirmButton={fullUserList.length===0}
           backEndAPIRequest = {apiEditUser}
         />

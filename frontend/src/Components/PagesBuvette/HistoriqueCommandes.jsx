@@ -293,7 +293,7 @@ export default function HistoriqueCommandes() {
         theOtherThing={null} 
         />
         <br />
-        <div>
+        <div className='BoxSimple'>
             <h3>
             <label>
                 Afficher les commandes... {" "}
@@ -334,29 +334,33 @@ export default function HistoriqueCommandes() {
 
         <hr />
 
-        <h2>
-        {invoiceListFull === undefined 
-            ? "Il n'y a pas encore eu de commande." 
-            : (apiSearchResponse || " Liste de toutes les commandes :")}
-        <br />
-        { isListFiltered 
-            ? <button onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>
-            : "" }
-        </h2>
-        {invoiceListResult !== undefined 
-            ?   <ul>
-                    {invoiceListResult.map(facture => {
-                        return(
-                            <div key={facture.id}>
-                                    <button onClick={() => myAppNavigator(`/manage/buvette/invoices/details/${facture.id}`)}>Voir les détails</button>
-                                {" "}Commande #{facture.id} || À l'ordre de <b>{facture.customer}</b>, le {facture.createdAt.substring(0,10)} || <b>{facture.totalAmountDiscounted}€</b> {facture.discount !== 0 ? `(après ${facture.discount}% de réduction) ` : ""}
-                            </div>
-                        )
-                    })}
-                </ul>
-            
-            : ""
-            }
+        <div className='BoxSimple'>
+            <h2>
+            {invoiceListFull === undefined 
+                ? "Il n'y a pas encore eu de commande." 
+                : (apiSearchResponse || " Liste de toutes les commandes :")}
+            <br />
+            { isListFiltered 
+                ? <button onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>
+                : "" }
+            </h2>
+            {invoiceListResult !== undefined 
+                ?   <div>
+                        {invoiceListResult.map(facture => {
+                            return(
+                                <div key={facture.id}>
+                                        <button onClick={() => myAppNavigator(`/manage/buvette/invoices/details/${facture.id}`)}>Voir les détails</button>
+                                    {" "}Commande #{facture.id} || À l'ordre de <b>{facture.customer}</b>, le {facture.createdAt.substring(0,10)} || <b>{facture.totalAmountDiscounted}€</b> {facture.discount !== 0 ? `(après ${facture.discount}% de réduction) ` : ""}
+                                </div>
+                            )
+                        })}
+                    </div>
+                
+                : ""
+                }
+
+        </div>
+
     </div>
   )
 }

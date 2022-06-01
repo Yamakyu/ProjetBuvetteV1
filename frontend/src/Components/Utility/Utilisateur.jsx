@@ -15,6 +15,7 @@ export default function Utilisateur(props) {
 
     let user = props.user || userWorkedOn;
     let newUser = props.newUser;
+    let apiResponse = props.apiResponse;
     let isEditingUser = props.isEditingUser;
 
     let backEndAPIRequest = props.backEndAPIRequest;
@@ -144,6 +145,10 @@ export default function Utilisateur(props) {
                 }
             
                 <button className='SubButton' hidden={!displayGoBackToOvrwiewButton} onClick={() => {myAppNavigator("/manage/users/overview")}}>Liste des utilisateurs</button>
+            </div>
+
+            <div className='APIResponse'>
+                {apiResponse || ""}
             </div>
 
 

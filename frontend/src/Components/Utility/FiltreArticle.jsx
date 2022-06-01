@@ -87,7 +87,6 @@ export default function FiltreArticle(props) {
   return (
     <div>
         <h3>
-            
             <label>
                 Rechercher des articles... ? {" "}
                 <select onChange={handleInputSelect}>

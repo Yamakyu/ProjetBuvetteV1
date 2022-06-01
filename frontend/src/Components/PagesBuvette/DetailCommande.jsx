@@ -80,49 +80,44 @@ export default function DetailCommande() {
 //------------------------------------------------------------------------- AFFICHAGE
 
   return (
-    <div>
+    <div className='BoxSimple'>
       <DoTheThings
         theThing={null}
         theOtherThing={null} 
         />
 
-      <h2>Facture #{invoice.id}</h2>
-      <h3>Commande validée par {invoice.gerant}, pour <i>{invoice.customer}</i>.
-      <hr />
-      <br />
-      Détails de la commande : </h3>
-      
-      <h3>
-        <ul>
-          {Object.entries(invoiceDetails).map(([objectKey, ligneDeFacture]) => {
-            return(
-              <li key={objectKey}>
-                {ligneDeFacture.quantite} {ligneDeFacture.article}{ligneDeFacture.quantite > 1 ? "s":""} - {ligneDeFacture.prixSomme}€
-                <ul style={{fontSize:"13px"}}>
-                  (Prix unitaire : {ligneDeFacture.prixUnitaire}€)
-                </ul>
-              </li>
-            )
-          })}
-          <br />
-        {invoice.discount !== 0 
-          ?<div>
-            <h4>Montant total : {invoice.totalAmount} €
-            <br />
-            Réduction : {invoice.discount}%</h4> 
-            <br/>
-            <h3>Montant total après réduction : {invoice.totalAmountDiscounted} €</h3>
-          </div>
-          : <h3>Montant total : {invoice.totalAmountDiscounted} €</h3> 
-        }  
-        </ul>
-        <br />
-        <br />
+      <div className='OrderCard'>
+        <h3 style={{fontWeight:"lighter"}}>Facture #{invoice.id}</h3>
+        <h3>Commande pour <i>{invoice.customer}</i>, validée par {invoice.gerant}.
+        <hr className='FancyBr'/>
+        Détails de la commande : </h3>
+        
+        <h3>
+            {Object.entries(invoiceDetails).map(([objectKey, ligneDeFacture]) => {
+              return(
+                <li key={objectKey}>
+                  {ligneDeFacture.quantite} {ligneDeFacture.article}{ligneDeFacture.quantite > 1 ? "s":""} - {ligneDeFacture.prixSomme}€
+                  <ul style={{fontSize:"13px"}}>
+                    (Prix unitaire : {ligneDeFacture.prixUnitaire}€)
+                  </ul>
+                </li>
+              )
+            })}
+          {invoice.discount !== 0 
+            ?<div>
+              <h4 style={{fontWeight:"lighter"}}>Montant total : {invoice.totalAmount} €
+              <br />
+              (Réduction : {invoice.discount}%)</h4> 
+              <h3>Montant total après réduction : {invoice.totalAmountDiscounted} €</h3>
+            </div>
+            : <h3>Montant total : {invoice.totalAmountDiscounted} €</h3> 
+          }  
 
-        Commande datée du {invoice.createdAt !== undefined ? invoice.createdAt.substring(0,10) : invoice.createdAt }
+          </h3>
+          Commande datée du <b>{invoice.createdAt !== undefined ? invoice.createdAt.substring(0,10) : invoice.createdAt }</b>
+      </div>
 
-      </h3>
-
+      <button className='SubButton' onClick={() => myAppNavigator("/manage/buvette/invoices")}>Historique des commmandes </button>
 
     </div>
   )
