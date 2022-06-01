@@ -64,7 +64,7 @@ export default function Navbar() {
                     case "Double gérant":
                         return(
                             <nav className='Navbar'>
-                                <Link className='NavbarButton' to="/manage">Menu principal</Link>
+                                <Link className='NavbarButton' to="/main">Menu principal</Link>
                                 <Link className='LogoutButton' to="/" onClick={userLogout}>Deconnexion</Link>
                             </nav>
                         )

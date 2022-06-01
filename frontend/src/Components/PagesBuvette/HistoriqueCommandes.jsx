@@ -14,7 +14,6 @@ export default function HistoriqueCommandes() {
     const [customerListFull, setCustomerListFull] = useState([]);
     const [gerantListFull, setGerantListFull] = useState([]);
     const [apiSearchResponse, setApiSearchResponse] = useState("");
-    const [searchTool, setSearchTool] = useState("");
     const [searchWarning, setSearchWarning] = useState("");
     const [searchType, setSearchType] = useState("all");
     const [isListFiltered, setIsListFiltered] = useState(false);
@@ -55,7 +54,6 @@ export default function HistoriqueCommandes() {
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT
 
     const handleDateInputSelect = (inputEvent) => {
-        setSearchTool("");
         const spanOfTime = inputEvent.target.value;
         console.log(spanOfTime);
     }
@@ -149,27 +147,6 @@ export default function HistoriqueCommandes() {
         }else{
             setSearchWarning("Aucun résultat pour ce nom ou prénom");
         }
-    }
-
-    const displaySearchTool = () => {
-        let nameToLookFor;
-
-        setSearchTool(
-            <div>
-                Vous pouvez chercher un nom ou prénom
-
-                <input
-                placeholder="Entrez un nom"
-                value={nameToLookFor}
-                type="text"
-                onChange={(e) => nameToLookFor = e.target.value}
-                name="searchName"
-                />
-                <br/>
-            
-                <button onClick={() => filterUserResults(nameToLookFor)}>Lancer la recherche</button>
-            </div>
-        );
     }
 
     const isFilterNotEmpty = (filter) => {
@@ -288,10 +265,6 @@ export default function HistoriqueCommandes() {
 
   return (
     <div>
-        <DoTheThings 
-        theThing={theThing}
-        theOtherThing={null} 
-        />
         <br />
         <div className='BoxSimple'>
             <h3>
@@ -302,7 +275,7 @@ export default function HistoriqueCommandes() {
                     <option value="myself"> validées par moi même, {activeSession.userInfo.nom} {activeSession.userInfo.prenom} </option>
                     <option value="gerant"> validées par (gérant) </option>
                     <option value="selfOrder"> à l'ordre de moi même, {activeSession.userInfo.nom} {activeSession.userInfo.prenom} </option>
-                    <option value="customer"> à l'ordre de (consommateur)</option>
+                    <option value="customer"> à l'ordre de (client)</option>
                     <option value="date"> datant (inactif pour le moment)</option>
                 </select>
             </label>
@@ -318,17 +291,24 @@ export default function HistoriqueCommandes() {
             </label>
             </h3>
 
-            <ul hidden={(userListResult.length === 0) || (searchType=== "all") || (searchType=== "myself") || (searchType=== "selfOrder")}>
-                {userListResult.map(user => {
-                    return(
-                        <li key={user.id}>
-                                {user.nom} {user.prenom} {user.isActiveAccount ? "" : "(compte inactif)"}
-                                    <button onClick={() => handleFilterUsers(user, searchType)}>Afficher les commandes</button>
-                            </li>
-                        )
-                    })}
-            </ul>
-            { searchTool }
+            
+
+            <div hidden={(userListResult.length === 0) || (searchType=== "all") || (searchType=== "myself") || (searchType=== "selfOrder")}>
+                {userListResult 
+                        ?
+                        <div className='UserSearchCard' style={{width:"100%"}} hidden={userListResult.length === 0}>
+                            {userListResult.map((user) => {
+                                return(
+                                    <div style={{lineHeight:"10px", textAlign:"left"}} key={user.id}>
+                                        <button className='MiniCardSubButton' onClick={() => handleFilterUsers(user, searchType)}> Afficher les commandes </button> {user.nom} {user.prenom} {user.isActiveAccount ? "" : "(inactif)"}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        :""
+                    }
+
+            </div>
             { searchWarning }
         </div>
 
@@ -336,31 +316,55 @@ export default function HistoriqueCommandes() {
 
         <div className='BoxSimple'>
             <h2>
+            { isListFiltered 
+                ? <div>
+                    <button className='MiniCardCancelButton' onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>
+                    <br />
+                    <br />
+                </div> 
+                : "" }
+
+
             {invoiceListFull === undefined 
                 ? "Il n'y a pas encore eu de commande." 
                 : (apiSearchResponse || " Liste de toutes les commandes :")}
-            <br />
-            { isListFiltered 
-                ? <button onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>
-                : "" }
+            
             </h2>
+
+
             {invoiceListResult !== undefined 
                 ?   <div>
                         {invoiceListResult.map(facture => {
                             return(
-                                <div key={facture.id}>
-                                        <button onClick={() => myAppNavigator(`/manage/buvette/invoices/details/${facture.id}`)}>Voir les détails</button>
-                                    {" "}Commande #{facture.id} || À l'ordre de <b>{facture.customer}</b>, le {facture.createdAt.substring(0,10)} || <b>{facture.totalAmountDiscounted}€</b> {facture.discount !== 0 ? `(après ${facture.discount}% de réduction) ` : ""}
+                                <div className='MiniOrderCard' style={{fontSize:'16px'}} key={facture.id}>
+                                    <b>{" "}#{facture.id} || {" "} {facture.customer}</b> le {facture.createdAt.substring(0,10)}
+                                    <br style={{margin:'10px'}} />
+
+                                        {facture.commentaire.length === 0 
+                                            ? ""
+                                            : <><b>Commentaire :</b> <i>"{facture.commentaire}"</i></> }
+                                        
+                                        
+                                        <br style={{margin:'15px'}} />
+
+                                    <div>
+                                        Montant total : <b style={{fontSize:'20px'}}>{facture.totalAmountDiscounted}€</b> 
+                                    </div>
+
+                                    <br />{facture.discount !== 0 ? `(après ${facture.discount}% de réduction) ` : ""}
+                                    <button className='MiniCardSubButton' onClick={() => myAppNavigator(`/manage/buvette/invoices/details/${facture.id}`)}>Voir les détails</button>
                                 </div>
                             )
                         })}
                     </div>
-                
                 : ""
                 }
+            { isListFiltered 
+            ? <button style={{margin:'20px'}} className='MiniCardCancelButton' onClick={cancelFilter}>Annuler la recherche et afficher la liste de toutes les commandes</button>
+            : ""
+            }
 
         </div>
-
     </div>
   )
 }

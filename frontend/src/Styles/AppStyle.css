@@ -109,9 +109,9 @@
     width: 350px;
     /*width: 60rem;*/
 
-    background-color: #dbfbff;    
+    background-color: #dbe9ff;    
     border-radius: 25px;
-    outline-color: rgb(146, 239, 255);
+    outline-color: rgb(146, 181, 255);
     outline-width: 2px;
     outline-style: solid;  
 
@@ -131,6 +131,20 @@
 
     margin-bottom: 5px;
     padding-top: 15px;
+}
+.UserSearchCard{
+    font-size: 16px;
+    
+    width: 350px;
+
+    background-color: #cdecf0;    
+    border-radius: 25px;
+    outline-color: rgb(176, 224, 222);
+    outline-width: 2px;
+    outline-style: solid;  
+
+    padding: 5px;
+    margin-bottom: 5px;
 }
 .OrderCancelSubCard{
     margin: 20px;
@@ -275,9 +289,9 @@
     align-items: center;
     flex-direction: column;
 
-    background-color: #dbfbff;    
+    background-color: #dbe9ff;    
     border-radius: 20px;
-    outline-color: rgb(146, 239, 255);
+    outline-color: rgb(146, 181, 255);
     outline-width: 2px;
     outline-style: solid;  
     

@@ -81,16 +81,15 @@ export default function DetailCommande() {
 
   return (
     <div className='BoxSimple'>
-      <DoTheThings
-        theThing={null}
-        theOtherThing={null} 
-        />
-
       <div className='OrderCard'>
-        <h3 style={{fontWeight:"lighter"}}>Facture #{invoice.id}</h3>
-        <h3>Commande pour <i>{invoice.customer}</i>, validée par {invoice.gerant}.
+        <h3 style={{margin:"5px", fontWeight:"lighter"}}>Facture #{invoice.id}
+        <br />
+        <br />
+        <div style={{fontWeight:"normal"}}>
+          Commande pour <b ><i>{invoice.customer}</i></b>, validée par <b>{invoice.gerant}</b>.
+        </div>
         <hr className='FancyBr'/>
-        Détails de la commande : </h3>
+        <u>Détails de la commande :</u> </h3>
         
         <h3>
             {Object.entries(invoiceDetails).map(([objectKey, ligneDeFacture]) => {
@@ -112,9 +111,17 @@ export default function DetailCommande() {
             </div>
             : <h3>Montant total : {invoice.totalAmountDiscounted} €</h3> 
           }  
+          <br />
+
+          {(invoice.commentaire) && (invoice.commentaire.length !== 0)
+            ? <div style={{margin:'5px'}}>
+              Commentaire : <i style={{fontWeight:"lighter"}}>"{invoice.commentaire}"</i>
+            </div>
+            : "" }
 
           </h3>
           Commande datée du <b>{invoice.createdAt !== undefined ? invoice.createdAt.substring(0,10) : invoice.createdAt }</b>
+          <br style={{margin:'5px'}}/>
       </div>
 
       <button className='SubButton' onClick={() => myAppNavigator("/manage/buvette/invoices")}>Historique des commmandes </button>
