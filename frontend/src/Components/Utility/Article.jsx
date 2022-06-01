@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { Container, Form, Button } from 'react-bootstrap'
+import DoTheThings from './DoTheThings';
 
 export default function Article(props) {
+
+    const [isArticlesEquals, setIsArticlesEquals] = useState(true);
 
     let emptyArticle = {
         nom:"",
@@ -26,12 +29,16 @@ export default function Article(props) {
 
     let handleEditForm = props.handleEditForm || (() => {});
     let apiEditArticle = props.backEndAPIRequest;
-    let apiToggleArticle = props.backEndAPIRequest; // TEMPORAIRE
+    let apiToggleArticle = props.backEndAPIRequest;
+
+    let apiResponse = props.apiResponse;
 
     const myAppNavigator = useNavigate();
 
     return (
         <div className={article.isDisponible ? 'ArticleCard' : 'ArticleCardUnavailable'}>
+
+        
             
             <div className='ArticleName'>{article.nom}
                 {(isEditingArticle && (newArticle.nom !== article.nom)) 
@@ -43,7 +50,7 @@ export default function Article(props) {
                     <div className='ArticlePrix'>{article.isDisponible ? ` ${article.prixUnitaire}€ ` : "Non disponible"}
                         {(isEditingArticle && (newArticle.prixUnitaire != article.prixUnitaire)) 
                             ? <> → <b>{newArticle.prixUnitaire}€</b> </>
-                            : ""}
+                            :""}
                     </div>
 
                     <div><u>Categorie :</u> {article.categorie}
@@ -72,12 +79,13 @@ export default function Article(props) {
                 <button className='SubButton' hidden={!displayGoBackButton} onClick={() => {myAppNavigator("/manage/buvette/articles/overview")}}>Liste des articles</button>
 
                 <button className={article.isDisponible ? "RedButton" : "ConfirmButton"} hidden={!displayToggleArticleButton} disabled={disableConfirmButton}  onClick={() => apiToggleArticle(article)}>Rendre {article.isDisponible ? "non disponible" : "disponible"}</button>
-
-                 {/*<button className={article.isDisponible ? "CancelButton" : "ConfirmButton"} hidden={!displayToggleArticleButton} onClick={() => console.log("Bouton activation/désactivation !")}>Rendre cet article {article.isDisponible ? "non disponible" : "disponible"}</button>*/}
             </div>
 
+            <div className='APIResponse'>
+                {apiResponse || ""}
+            </div>
 
-            <div hidden={!isEditingArticle} className='FancyBr'>
+            <div hidden={!isEditingArticle} >
                 <hr />
                 <h4>Entrez les modifications désirées</h4>
                 <div >

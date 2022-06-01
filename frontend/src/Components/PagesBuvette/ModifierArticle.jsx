@@ -66,24 +66,10 @@ export default function ModifierArticle() {
 
 //------------------------------------------------------------------------- METHODES DE PRÉPARATON DE REQUÊTE
 
-  const prepareToggleArticle = () => {
-    setApiResponse(` Cet article ${thatArticle.isDisponible ? "ne sera PLUS DISPONIBLE" : "sera de nouveau DISPONIBLE"} dans la buvette. Vous pourrez de nouveau changer ce statut à volonté.`);
-    setConfirmButton(<button onClick={apiChangeArticleActiveState}> Confirmer la modification ? </button>);
-    setCancelButton(<button onClick={cancelModification}> Annuler l'opération </button>);
-    setIsCurrentlyEditingArticle("");
-  }
-
-  const prepareEditArticle = () => {    
-    setApiResponse("")
-    setArticleWorkedOn(thatArticle);
-    
-    setConfirmButton("");   //L'affichage du bouton de confirmation (pour l'édition est géré par isCurrentlyEditingArticle)
-    setIsCurrentlyEditingArticle(true);
-    setCancelButton(<button onClick={cancelModification}> Annuler l'opération </button>);
-  }
-
   const handleEditForm = inputEvent => {
     const { name, value, files } = inputEvent.target;
+
+    setApiResponse("");
 
     if (name !== "image"){
       setArticleWorkedOn(prevState => ({
@@ -99,43 +85,7 @@ export default function ModifierArticle() {
     }
   }
 
-  const cancelModification = () =>  {
-    setCancelButton("");
-    setConfirmButton("");
-    setApiResponse("");
-    setIsCurrentlyEditingArticle(false);
-  }
-
 //------------------------------------------------------------------------- METHODES DE TRAITEMENT et REQUÊTES
-
-  const apiChangeArticleActiveState = async () => {
-    
-    setApiResponse("Requête envoyée. L'opération peut prendre quelques instants. En attente de la réponse du serveur... ");
-    setConfirmButton("");
-    setCancelButton("");
-
-    await fetch(`/api/articles/edit/${thatArticle.id}`,{
-      method: "PUT",
-      headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-      body: JSON.stringify(
-      {
-        isDisponible:!thatArticle.isDisponible
-      })
-    })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("API response ↓");
-      console.log(data.message);
-      
-      if (isUserTokenExpired(data)){
-        myAppNavigator("/login");
-      }
-      
-      setApiResponse(data.message);      
-      setThatArticle(data.updatedArticle);            
-    })
-    .catch((err) => console.log(err));
-  }
 
   const apiEditArticle = async () => {
     
@@ -143,6 +93,26 @@ export default function ModifierArticle() {
     setConfirmButton("");
     setCancelButton("");
     setIsCurrentlyEditingArticle(false);
+
+    let areArticlesEqual = false;
+
+    for(let key in articleWorkedOn){
+      if((thatArticle[key]!==articleWorkedOn[key]) || (key === "file" && articleWorkedOn[key] !== undefined)){
+        areArticlesEqual = false;
+      } else {
+        areArticlesEqual = true;
+      }
+      if (!areArticlesEqual){
+        break;
+      }
+    }
+    
+    console.log(areArticlesEqual);
+    
+    if(areArticlesEqual){
+      setApiResponse("Vous n'avez entré aucune modification")
+      return;
+    }
 
     const formData = new FormData();
     
@@ -170,6 +140,7 @@ export default function ModifierArticle() {
       }else{
         setApiResponse(res.data.message);
         setThatArticle(res.data.updatedArticle)
+        setArticleWorkedOn(res.data.updatedArticle);
       }
     })
     .catch((err) => {
@@ -190,11 +161,11 @@ export default function ModifierArticle() {
     console.log(thatArticle);
     console.log(thatArticle.prixUnitaire == articleWorkedOn.prixUnitaire);
     console.log(thatArticle.prixUnitaire != articleWorkedOn.prixUnitaire);
+    console.log(articleWorkedOn.file);
   }
 
   return (
     <div>
-      
       <DoTheThings
         theThing = {doThething}
         theOtherThing={null}
@@ -202,27 +173,25 @@ export default function ModifierArticle() {
       <h1 className='PageName'> Article #{articleId}</h1>
 
       <div className='BoxSimple'>
-
-      <div className='APIResponse'>
-          {apiResponse || ""}
-        </div>
-
-        <div>
+        
           <Article 
             article={thatArticle} 
             newArticle={articleWorkedOn}
+            apiResponse={apiResponse}
             isEditingArticle
             dispplayEditArticleButton
             displayGoBackButton
+
+            setIsArticlesEqual
+            isArticlesEqual
+            
             handleEditForm={handleEditForm}
             backEndAPIRequest = {apiEditArticle}
-            />
-        </div>
+          />
+        
         <br/>
         <br/>
       </div>
-
-
     </div>
   )
 }

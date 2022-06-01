@@ -11,11 +11,8 @@ export default function AjouterArticle() {
     const {activeSession, isUserTokenExpired}= useContext(SessionContext);
     const myAppNavigator = useNavigate();
 
-    const [validateArticle, setValidateArticle] = useState("");
     const [apiResponse, setApiResponse] = useState("");
-
     const [isValidating, setIsValidating] = useState(false)
-
     const [articleWorkedOn, setArticleWorkedOn] = useState({
         nom:"",
         description:"",
@@ -23,29 +20,7 @@ export default function AjouterArticle() {
         categorie:"snack",
         file:"",
         published: true
-      });
-
-
-      /*
-    const displayInputedArticle = (article) => {
-        console.log(article);
-
-        <button hidden={false} className='SubButton'>Vérifier la saisie</button>
-
-        return(
-            <div className='MiniArticleCardConfirm'>
-                {Object.entries(article).map(([objectKey, value]) =>
-                objectKey.startsWith("file")
-                ? ""
-                : <h3 key={objectKey} style={{lineHeight:"4px"}}>  <u>{objectKey}</u> : <b>{value}{objectKey === "prix" ? "€" : ""}</b></h3>   
-                )}
-                <br/>
-                <button className='ConfirmButton' onClick={apiAddArticle}>Ajouter l'article</button>
-            </div>
-        );
-    }
-    */
-   
+    });
 
     const prepareAddArticle = (e) => {
         e.preventDefault();
@@ -69,8 +44,22 @@ export default function AjouterArticle() {
         setIsValidating(true);
     }
 
-    const parseIfPublished = objectValue => {
-        console.log('from parseIfPublished : ');
+    const parseArticle = (objectKey, objectValue) => {
+        //: <h3 key={objectKey}>  <u>{objectKey}</u> : <b>{parseArticle(value)}{objectKey === "prixUnitaire" ? "€" : ""}</b></h3>   
+
+        switch (objectKey) {
+            case "nom":
+                
+                break;
+        
+            default:
+                break;
+        }
+
+
+
+
+        console.log(`Parsing "${objectKey}" and "${objectValue}"`);
         console.log(objectValue);
         console.log(typeof(objectValue) === 'boolean');
         if (typeof(objectValue) === 'boolean'){
@@ -247,24 +236,19 @@ export default function AjouterArticle() {
                         {Object.entries(articleWorkedOn).map(([objectKey, value]) =>
                             objectKey.startsWith("file")
                                 ? ""
-                                : <h3 key={objectKey}>  <u>{objectKey}</u> : <b>{parseIfPublished(value)}{objectKey === "prixUnitaire" ? "€" : ""}</b></h3>   
+                                : <h3 key={objectKey}>{parseArticle(objectKey, value)}</h3>
                             )}
                         <br/>
                         <button className='ConfirmButton' onClick={apiAddArticle}>Ajouter l'article</button>
                     </div>
                     :<button onClick={prepareAddArticle} className='SubButton'>Vérifier la saisie</button>
-                }
-                {validateArticle}
+                }                
             </div>
-
-
 
          {apiResponse}
 
         <br className='FancyBr'/>
         <button className='CancelButton' onClick={() => myAppNavigator("/manage/buvette/articles/overview")}>Liste des articles</button>
-
-
     </div>
   )
 }

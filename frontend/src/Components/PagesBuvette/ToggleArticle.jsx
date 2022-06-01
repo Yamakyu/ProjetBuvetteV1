@@ -69,19 +69,15 @@ export default function ToggleArticle() {
 
   return (
     <div className='BoxSimple'>
-        
-        <div className='APIResponse'>
-            {apiResponse}
-        </div>
+      <h1 className='PageName'>Vous pouvez rendre cet article {article.isDisponible ? "non disponible" : "disponible"}</h1>
 
-        <h1 className='PageName'>Vous pouvez rendre cet article {article.isDisponible ? "non disponible" : "disponible"}</h1>
-
-        <Article
-            article={article}
-            displayGoBackButton
-            displayToggleArticleButton
-            backEndAPIRequest = {apiToggleArticle}
-        />
+      <Article
+        article={article}
+        displayGoBackButton
+        apiResponse
+        displayToggleArticleButton
+        backEndAPIRequest = {apiToggleArticle}
+      />
         
     </div>
   )
