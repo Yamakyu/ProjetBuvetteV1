@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../Contexts/SessionContext'
 
@@ -7,6 +7,9 @@ export default function GestionDouble() {
     const {setCurrentOrder, activeSession, setActiveSession, needOrderReset, setNeedOrderReset}= useContext(SessionContext);
     const myAppNavigator = useNavigate();
 
+    const [wipeButton, setWipeButton] = useState("");
+    const [apiResponse, setApiResponse] = useState("");
+
     useEffect(() => {
       if (needOrderReset){
         setCurrentOrder([])
@@ -14,7 +17,25 @@ export default function GestionDouble() {
     
       return () => {}
     }, [])
-    
+       
+    const apiWipeDB = async () => {    
+      setApiResponse("L'opération peut prendre quelques instants. Veuillez patienter... ");
+      
+      await fetch("/api/reset",{
+        method: "GET",
+        headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API response ↓");
+        console.log(data.message);
+        setApiResponse(data.message);
+
+        myAppNavigator("/login");
+      })
+      .catch((err) => console.log(err));
+  }
+
 
   return (
     <div className='BoxSimple'>
@@ -38,6 +59,16 @@ export default function GestionDouble() {
           onClick={() => myAppNavigator("/manage/materiel")}>
             Gestion du materiel
         </button>
+
+        <button className='MiniCardCancelButton'
+          hidden={!activeSession.userInfo.isAdmin && !activeSession.userInfo.isGerantMateriel}
+          onClick={() => setWipeButton(<button onClick={apiWipeDB} className='MiniCardRedButton'>Confirmer ?</button>)}>
+            Reset databse
+        </button>
+
+        {wipeButton}
+
+        <div className='APIResponse'>{apiResponse}</div>
         
       </div>
     </div>

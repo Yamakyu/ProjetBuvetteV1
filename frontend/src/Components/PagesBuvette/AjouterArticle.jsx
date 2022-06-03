@@ -49,9 +49,15 @@ export default function AjouterArticle() {
 
         switch (objectKey) {
             case "nom":
-                
-                break;
-        
+                return <div><u>Nom</u> : {objectValue}</div>
+            case "categorie":
+                return <div><u>Catégorie</u> : {objectValue}</div>
+            case "prixUnitaire":
+                return <div><u>Prix unitaire</u> : {objectValue}€</div>
+            case "description":
+                return <div><u>Description</u> : {objectValue}</div>
+            case "published":
+                return <div><u>Disponible ?</u> : {objectValue === true ? "oui" : "non"}</div>
             default:
                 break;
         }
