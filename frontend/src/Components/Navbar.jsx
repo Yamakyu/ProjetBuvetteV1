@@ -11,12 +11,9 @@ export default function Navbar() {
     const [confirmDropDatabaseBtn, setConfirmDropDatabaseBtn] = useState("")
     const [cancelDropDatabaseBtn, setCancelDropDatabaseBtn] = useState("")
 
-    const {activeSession, setActiveSession, getLocalStorage, setCurrentOrder, isUserTokenExpired}= useContext(SessionContext); 
+    const {activeSession, setActiveSession, getLocalStorage, setCurrentOrder}= useContext(SessionContext); 
 
     const userLogout = () => {
-        //setActiveSession(() => localStorage.removeItem('currentSession'));
-
-
         localStorage.removeItem("currentSession")
 
         setActiveSession(() => ({

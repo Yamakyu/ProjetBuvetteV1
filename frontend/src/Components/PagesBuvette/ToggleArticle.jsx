@@ -13,6 +13,7 @@ export default function ToggleArticle() {
 
     const [article, setArticle] = useState({});
     const [apiResponse, setApiResponse] = useState("");
+    const [disableConfirmButton, setDisableConfirmButton] = useState(false)
 
     useEffect(() => {
       
@@ -43,6 +44,7 @@ export default function ToggleArticle() {
     const apiToggleArticle = async () => {
     
         setApiResponse("Requête envoyée. L'opération peut prendre quelques instants. En attente de la réponse du serveur... ");
+        setDisableConfirmButton(true);
     
         await fetch(`/api/articles/edit/${article.id}`,{
           method: "PUT",
@@ -63,6 +65,8 @@ export default function ToggleArticle() {
           
           setApiResponse(data.message);      
           setArticle(data.updatedArticle);            
+
+          setDisableConfirmButton(false);
         })
         .catch((err) => console.log(err));
       }
@@ -76,6 +80,7 @@ export default function ToggleArticle() {
         displayGoBackButton
         apiResponse
         displayToggleArticleButton
+        disableConfirmButton = {disableConfirmButton}
         backEndAPIRequest = {apiToggleArticle}
       />
         

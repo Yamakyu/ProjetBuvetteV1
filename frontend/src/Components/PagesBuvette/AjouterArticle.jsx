@@ -1,7 +1,6 @@
 import React, {  useState, useContext } from 'react'
-import Article from "../Utility/Article"
 import axios from 'axios';
-import { Container, Form, Button } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext'
 
@@ -32,20 +31,10 @@ export default function AjouterArticle() {
             setApiResponse("ATTENTION : le prix indiqué est 0€ !");
         }
 
-        let newArticle = {
-            nom: articleWorkedOn.nom,
-            description: articleWorkedOn.description,
-            categorie: articleWorkedOn.categorie,
-            prix: articleWorkedOn.prixUnitaire,
-            file: articleWorkedOn.file,
-            disponible: articleWorkedOn.published ? "oui" : "non"        //← Ici je parse le booléen en "oui" ou "non", pour la vérification
-        }
-        //setValidateArticle(displayInputedArticle(newArticle))
         setIsValidating(true);
     }
 
     const parseArticle = (objectKey, objectValue) => {
-        //: <h3 key={objectKey}>  <u>{objectKey}</u> : <b>{parseArticle(value)}{objectKey === "prixUnitaire" ? "€" : ""}</b></h3>   
 
         switch (objectKey) {
             case "nom":
@@ -61,9 +50,6 @@ export default function AjouterArticle() {
             default:
                 break;
         }
-
-
-
 
         console.log(`Parsing "${objectKey}" and "${objectValue}"`);
         console.log(objectValue);
@@ -139,6 +125,7 @@ export default function AjouterArticle() {
                     file:"",
                     published: true
                   }))
+                setIsValidating(false);
             }
         })
         .catch((err) => {
@@ -166,7 +153,6 @@ export default function AjouterArticle() {
         <br/>
         <h1>AJOUTER UN ARTICLE</h1>
         <br/>         
-
             <div  className='ArticleCard'>
                 <Form>
                     <Form.Group controlId="fileName">
@@ -228,7 +214,7 @@ export default function AjouterArticle() {
                         <Form.Check
                             type="checkbox"
                             name="published"
-                            onChange={(e) => setArticleWorkedOn.published(e.target.checked)}
+                            onChange={handleEditForm}
                             label="Article immédiatement disponible ?"
                             defaultChecked={true}
                         />
@@ -248,11 +234,11 @@ export default function AjouterArticle() {
                         <button className='ConfirmButton' onClick={apiAddArticle}>Ajouter l'article</button>
                     </div>
                     :<button onClick={prepareAddArticle} className='SubButton'>Vérifier la saisie</button>
-                }                
+                }     
+                <div className='APIResponse'>
+                    {apiResponse}
+                </div>
             </div>
-
-         {apiResponse}
-
         <br className='FancyBr'/>
         <button className='CancelButton' onClick={() => myAppNavigator("/manage/buvette/articles/overview")}>Liste des articles</button>
     </div>

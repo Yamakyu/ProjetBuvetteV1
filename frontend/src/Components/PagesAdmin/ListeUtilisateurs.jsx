@@ -267,7 +267,7 @@ export default function ListeUtilisateurs() {
     }
 
     const prepareSearchUserByRole = () => {
-        let roleToLookFor;
+        let roleToLookFor = "Aucun";
         resetWarning();
         setDisableInput(true);
         setCheckEditUser("");

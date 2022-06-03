@@ -522,7 +522,9 @@
 /* --------- Texte --------- */
 
 .PageName{
-    margin-bottom: 50px;
+    margin-bottom: 40px;
+    margin-left: 7px;
+    margin-right: 8px;
     font-size: 40px;
 }
 .APIResponse{
