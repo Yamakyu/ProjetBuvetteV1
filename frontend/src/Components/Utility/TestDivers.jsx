@@ -29,28 +29,11 @@ export default function TestDivers() {
     const apiSendPic = async () => {
         
         const formData = new FormData()
-        //formData.append('file', file)
-        //formData.append('api_key', "ZYF2QBCO84555782f94697373bbd48d8cf84902f")
-        formData.append("firstName", "Yamakyu")
-        formData.append("id", 26)
+        formData.append('file', file)
 
-        axios.post("https://thronesapi.com/api/v2/Characters", formData, {
+        await axios.post('https://api.imageshack.com/v2/images', {
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json' 
-            }    
-        })
-        .then((reponse) => {
-            console.log(reponse);
-            console.log(reponse.data);
-        })
-        .catch((err) => console.log(err))
-
-        return;
-
-        await axios.post('/api/test/uploadPic', formData, {
-            headers: {
-              Authorization: "Bearer " + activeSession.userToken,
+              Authorization: "Bearer " + activeSession.userToken, crossorigin:true
             }
           }).then((res) => {
             console.log("API response ↓");
@@ -58,12 +41,29 @@ export default function TestDivers() {
       
           })
           .catch((err) => {
-            console.log("API error ↓");
+            console.log("API response ↓");
             console.log(err);
 
           });
           
           return;
+
+        if (activeSession) {  
+            await fetch("https://api.imageshack.com/v2/images",{
+                method: "POST",
+                headers:{"Content-type" : "application/json"},
+                body: JSON.stringify(
+                    {
+                        file:file
+                    }),
+                api_key:"ZYF2QBCO84555782f94697373bbd48d8cf84902f",
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((err) => console.log(err));
+        }
     }
 
 
