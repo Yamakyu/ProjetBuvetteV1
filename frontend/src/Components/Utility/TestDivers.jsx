@@ -4,171 +4,92 @@ import axios from 'axios';
 import { Container, Form, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext'
+import DoTheThings from './DoTheThings';
 
 export default function TestDivers() {
 
     const {activeSession, isUserTokenExpired}= useContext(SessionContext);
     const myAppNavigator = useNavigate();
 
-    const [thatImage, setThatImage] = useState("");
-    const [thatArticle, setThatArticle] = useState({});
-    const [thatArticleImage, setThatArticleImage] = useState();
+    const [file, setFile] = useState(undefined);
 
-    //-------------------------------
-
-    const [title, setTitle] = useState('')
-    const [price, setPrice] = useState(0)
-    const [description, setDescription] = useState('')
-    const [published, setPublished] = useState(true)
-    const [image, setImage] = useState('')
-
-
-    //-------------------------------
-    const formData = new FormData()
-
-    const addProductHandler = async (e) => {
-
-        e.preventDefault()
-
-        // const data = {
-        //     title: title,
-        //     price: price,
-        //     description: description,
-        //     published: published
-        // }
-
-        //const formData = new FormData()
-
-        formData.append('file', image)
-        formData.append('nom', title)
-        formData.append('price', price)
-        formData.append('description', description)
-        formData.append('published', published)
-
-
-        await axios.post('/api/articles/add', formData, {
-            headers: {
-                Authorization: "Bearer " + activeSession.userToken
-            }
-        }).then((res) => {
-            console.log(res.data.message);
-            console.log(res.data.image);
-            if (isUserTokenExpired(res.data)){
-                return myAppNavigator("/login");
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-            console.log(err.message);
-            if (isUserTokenExpired(err)){
-                return myAppNavigator("/login");
-            }
-        })
-
+    const handleEditForm = inputEvent => {
+        const { files } = inputEvent.target;
+    
+        console.log(files[0]);
+        setFile(files[0]);
     }
-
-    const fetchArticle = async () => {
+    
+    const displayFile = () => {
+        console.log(file);
         
-        await fetch(`/api/test/article/13`,{
-            method: "GET",
-            headers:{"Content-type" : "application/json", "authorization" : `Bearer ${activeSession.userToken}`},
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("API response ↓");
-            console.log(data.message);
-            
-            if (isUserTokenExpired(data)){
-                myAppNavigator("/login");
+    }
+
+
+    const apiSendPic = async () => {
+        
+        const formData = new FormData()
+        formData.append('file', file)
+
+        await axios.post('https://api.imageshack.com/v2/images', {
+            headers: {
+              Authorization: "Bearer " + activeSession.userToken, crossorigin:true
             }
-            
-            setThatArticle(data.article);
-            console.log(data.article);
-            setThatImage("http://" + data.ip + "/images/"+ data.article.photo);      //Permet d'avoir l'image avec l'ip du backend, pour utilisation sur le réseau
-            console.log(thatImage);
-        })
-        .catch((err) => console.log(err));      
+          }).then((res) => {
+            console.log("API response ↓");
+            console.log(res);
+      
+          })
+          .catch((err) => {
+            console.log("API response ↓");
+            console.log(err);
+
+          });
+          
+          return;
+
+        if (activeSession) {  
+            await fetch("https://api.imageshack.com/v2/images",{
+                method: "POST",
+                headers:{"Content-type" : "application/json"},
+                body: JSON.stringify(
+                    {
+                        file:file
+                    }),
+                api_key:"ZYF2QBCO84555782f94697373bbd48d8cf84902f",
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((err) => console.log(err));
+        }
     }
-    
-    
-    const displayImage = () => {
-        console.log(thatImage);
-        //setThatArticleImage(<img src={`http://${thatImage}`}/>);
-        setThatArticle(() => ({
-            ...thatArticle, image : thatImage
-        }))
-        setThatArticleImage(<img src={thatImage}/>);
-    }
+
+
+    //-------------------------------
+
     
     return (
         <div>
+            <DoTheThings
+                theThing={displayFile}
+                theOtherThing={apiSendPic}
+            />
 
-        <button onClick={fetchArticle}>Récupérer l'article</button>
-        <button onClick={displayImage}>Afficher l'image de l'article</button>
-
-        {thatArticleImage} 
-        
-            <Container className='mt-5 p-2'>
-                <h1>Add Product</h1>
-                <hr />
-
-                <Form onSubmit={addProductHandler} method="POST" encType='multipart/form-data'>
-
-                <Form.Group controlId="fileName" className="mb-3">
-                    <Form.Label>Upload Image</Form.Label>
+            <Form>
+                <Form.Group controlId="fileName">
+                    <Form.Label className='VerticalLabel'>Photo ou image :</Form.Label> <br />
                     <Form.Control
+                        className='LargeInput'
                         type="file"
                         name='image'
-                        onChange={(e) => setImage(e.target.files[0])}
-                        size="lg" />
+                        onChange={handleEditForm}
+                        size="lg" 
+                    />
                 </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="title">
-                        <Form.Label>Title</Form.Label>
-                        <Form.Control
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            type="text"
-                          />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="price">
-                        <Form.Label>Price ($)</Form.Label>
-                        <Form.Control
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            type="number"
-                             />
-                    </Form.Group>
-
-                  
-                    <Form.Group className="mb-3" controlId="description">
-                        <Form.Label>Description</Form.Label>
-                        <Form.Control
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            as="textarea"
-                            />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="publishedCheckedid">
-                        <Form.Check
-                            type="checkbox"
-                            onChange={(e) => setPublished(e.target.checked)}
-                            label="publish"
-                           />
-                    </Form.Group>
-
-
-                    <Button variant="primary" type="submit">
-                        Add Product
-                    </Button>
-                </Form>
-            </Container>
-
-
-
-        <Article article={thatArticle}/>
-    </div>
-  )
+            </Form>
+            <div className='APIResponse'>Faire les tests d'upload image</div>
+        </div>
+    )
 }
