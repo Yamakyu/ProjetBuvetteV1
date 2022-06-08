@@ -24,7 +24,7 @@ try {
 
 //global.__basedir = __dirname;
 
-var corsOptions = { origin: "http://localhost:8081/" };
+var corsOptions = { origin: "http://localhost:"+PORT };
 monApp.use(cors(corsOptions));
 
 //On l'utilise pour initialiser les admin

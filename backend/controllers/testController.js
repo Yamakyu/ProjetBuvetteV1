@@ -25,41 +25,7 @@ exports.ping = async (req, res) => {
 
 exports.upload = async (req, res) => {
   try {
-    /*
-    if (req.file) {
-      console.log(req.file);
-      return res.status(200).json({
-        message: "image found",
-      });
-    }
-    */
-
-    let info = {
-      photo: req.file.filename,
-      //photo: req.file.path,
-      //photo: fs.readFileSync(req.file.path),
-      //photo: fs.readFileSync(req.file.path).buffer.toString("base64"),
-      nom: req.body.nom,
-      prixUnitaire: req.body.price,
-      description: req.body.description,
-      isDisponible: req.body.published,
-    };
-
-    const article = await Article.create(info);
-
-    res.status(200).json({
-      message: "that worked, apparently",
-      image: info.photo,
-    });
-
-    console.log(article);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error,
-      message: "couldn't upload",
-    });
-  }
+  } catch (error) {}
 };
 
 exports.getThatArticle = async (req, res) => {
