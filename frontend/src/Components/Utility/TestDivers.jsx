@@ -1,7 +1,6 @@
 import React, {  useState, useContext } from 'react'
-import Article from "./Article"
 import axios from 'axios';
-import { Container, Form, Button } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../../Contexts/SessionContext'
 import DoTheThings from './DoTheThings';
@@ -22,22 +21,41 @@ export default function TestDivers() {
     
     const displayFile = () => {
         console.log(file);
-        
     }
 
 
     const apiSendPic = async () => {
         
         const formData = new FormData()
-        //formData.append('file', file)
-        //formData.append('api_key', "ZYF2QBCO84555782f94697373bbd48d8cf84902f")
+        formData.append('file', file)
+        formData.append('key', "6d207e02198a847aa98d0a2a901485a5")
         formData.append("firstName", "Yamakyu")
-        formData.append("id", 26)
+        formData.append("id", 26)    
 
-        axios.post("https://thronesapi.com/api/v2/Characters", formData, {
+        await axios.post('/api/test/upload', formData, {
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json' 
+              Authorization: "Bearer " + activeSession.userToken,
+            }
+          }).then((res) => {
+            console.log("API response ↓");
+            console.log(res);
+      
+          })
+          .catch((err) => {
+            console.log("API error ↓");
+            console.log(err);
+
+          });
+          
+        return;
+
+        /*
+
+        axios.post("https://freeimage.host/api/1/upload", formData, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
+                Authorization: "Bearer " + activeSession.userToken,
             }    
         })
         .then((reponse) => {
@@ -48,7 +66,22 @@ export default function TestDivers() {
 
         return;
 
-        await axios.post('/api/test/uploadPic', formData, {
+        axios.post("https://httpbin.org/post", formData, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: "Bearer " + activeSession.userToken,
+            }    
+        })
+        .then((reponse) => {
+            console.log(reponse);
+            console.log(reponse.data);
+        })
+        .catch((err) => console.log(err))
+
+        return;
+
+        await axios.post('/api/test/upload', formData, {
             headers: {
               Authorization: "Bearer " + activeSession.userToken,
             }
@@ -64,6 +97,7 @@ export default function TestDivers() {
           });
           
           return;
+          */
     }
 
 

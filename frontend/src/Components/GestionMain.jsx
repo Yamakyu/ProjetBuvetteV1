@@ -66,6 +66,14 @@ export default function GestionDouble() {
             Reset databse
         </button>
 
+        <button className='MiniSubButton'
+          hidden={!activeSession.userInfo.isAdmin && !activeSession.userInfo.isGerantMateriel}
+          onClick={
+            () => myAppNavigator('/test')
+            }>
+            Test page
+        </button>
+
         {wipeButton}
 
         <div className='APIResponse'>{apiResponse}</div>

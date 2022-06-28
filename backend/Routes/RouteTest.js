@@ -13,7 +13,7 @@ router.post(
 router.post(
   "/upload",
   userController.isLoggedIn,
-  imageMiddleware.single("file"),
+  //imageMiddleware.single("file"),
   testController.upload
 );
 

@@ -1,12 +1,8 @@
 require("dotenv").config();
 const db = require("../models");
 const Article = db.articles;
-const fs = require("fs");
 const os = require("os");
-
-// main work
-
-//POST ---------- PING
+const fetch = import("node-fetch");
 
 exports.ping = async (req, res) => {
   try {
@@ -25,7 +21,28 @@ exports.ping = async (req, res) => {
 
 exports.upload = async (req, res) => {
   try {
-  } catch (error) {}
+    await fetch("https://freeimage.host/api/1/upload", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        nom: "yamakyu",
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API response ↓");
+        console.log(data.message);
+      });
+  } catch (error) {
+    console.log("↓ ------- Une erreur s'est produite ↓");
+    console.log(error);
+    return res.status(500).json({
+      message: `Ca marche pas : ${error}`,
+      error,
+    });
+  }
 };
 
 exports.getThatArticle = async (req, res) => {

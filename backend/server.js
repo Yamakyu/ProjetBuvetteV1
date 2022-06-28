@@ -23,8 +23,12 @@ try {
 }
 
 //global.__basedir = __dirname;
-
-var corsOptions = { origin: "http://localhost:"+PORT };
+//var corsOptions = { origin: "http://localhost:" + PORT };
+const corsOptions = {
+  origin: "*",
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
 monApp.use(cors(corsOptions));
 
 //On l'utilise pour initialiser les admin
