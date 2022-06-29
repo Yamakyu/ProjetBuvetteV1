@@ -2,7 +2,10 @@ require("dotenv").config();
 const db = require("../models");
 const Article = db.articles;
 const os = require("os");
-const fetch = import("node-fetch");
+const https = require("node:https");
+const fs = require("fs");
+const axios = require("axios");
+const formData = require("form-data");
 
 exports.ping = async (req, res) => {
   try {
@@ -19,8 +22,178 @@ exports.ping = async (req, res) => {
   }
 };
 
+exports.uploadAxios = async (req, res) => {
+  try {
+    console.log("ping !");
+
+    const myFile = fs.readFileSync(
+      `./images/picsBuvette/${req.file.filename}`,
+      {
+        encoding: "base64",
+      }
+    );
+
+    const myForm = new formData();
+
+    //myForm.append("source", myFile);
+    myForm.append("source", myFile);
+    myForm.append("files", myFile);
+    myForm.append("file", myFile);
+    myForm.append("key", "6d207e02198a847aa98d0a2a901485a5");
+    myForm.append("action", "upload");
+
+    await axios
+      .get(
+        "https://freeimage.host/api/1/upload/key=6d207e02198a847aa98d0a2a901485a5&action=upload&source=https://bsolife.fr/img/blog/upload/17_Uma-Musume_Pretty-Derby_Au-dela-des-limites_Plus-ultra/UM2_30.png"
+      )
+      .then((data) => {
+        console.log("API response ↓");
+        console.log(data);
+        res.status(200).json({
+          message: "that worked !",
+          data,
+        });
+      })
+      .catch((err) => {
+        console.log("API error ↓");
+        console.log(err);
+
+        if (err.response.data.error) {
+          console.log(err.response.data.error);
+        }
+
+        res.status(500).json({
+          err,
+          dataError: err.response.data.error,
+          message: "Didn't work, but request was sent",
+        });
+      });
+
+    await axios
+      .post(
+        `https://freeimage.host/api/1/upload/`,
+        {
+          key: "6d207e02198a847aa98d0a2a901485a5",
+          source: myFile,
+        },
+        { headers: { key: "6d207e02198a847aa98d0a2a901485a5" } }
+      )
+      .then((data) => {
+        console.log("API response ↓");
+        console.log(data);
+        res.status(200).json({
+          message: "that worked !",
+          data,
+        });
+      })
+      .catch((err) => {
+        console.log("API error ↓");
+        //console.log(err);
+
+        if (err.response.data.error) {
+          //console.log(err.response.data.error);
+        }
+
+        res.status(500).json({
+          err,
+          dataError: err.response.data.error,
+          message: "Didn't work, but request was sent",
+        });
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error,
+      message: "Didn't work",
+    });
+  }
+};
+
 exports.upload = async (req, res) => {
   try {
+    const myFile = fs.createReadStream(
+      `images/picsBuvette/${req.file.filename}`
+    );
+
+    const options = {
+      hostname: "freeimage.host",
+      path: "/api/1/upload/?key=6d207e02198a847aa98d0a2a901485a5",
+      port: 443,
+      method: "POST",
+      headers: {
+        //"Content-Type": "multipart/form-data",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    };
+
+    const request = https.request(options, (response) => {
+      console.log("statusCode:", response.statusCode);
+      console.log("headers:", response.headers);
+
+      response.setEncoding("utf8");
+
+      request.on("error", (e) => {
+        console.error(e);
+        return res.status(500).json({
+          message: `Ca marche pas : ${error}`,
+          error,
+        });
+      });
+
+      myFile.on("data", function (data) {
+        request.write(data);
+        console.log(data);
+      });
+
+      response.on("data", (chunk) => {
+        console.log(`BODY: ${chunk}`);
+      });
+
+      response.on("end", () => {
+        console.log("No more data in response.");
+      });
+    });
+
+    myFile.on("end", function () {
+      request.end();
+    });
+
+    //request.write(myFile);
+    //request.end();
+
+    /*
+    const options = {
+      hostname: "thronesapi.com",
+      path: "/api/v2/Characters/5",
+      port: 443,
+      method: "GET",
+    };
+
+    const request = https.request(options, (response) => {
+      console.log("statusCode:", response.statusCode);
+      console.log("headers:", response.headers);
+
+      response.on("data", (d) => {
+        console.log(d);
+        process.stdout.write(d);
+      });
+    });
+
+    request.on("error", (e) => {
+      console.error(e);
+
+      return res.status(500).json({
+        message: `Ca marche pas : ${error}`,
+        error,
+      });
+    });
+    request.write(data);
+    request.end();
+    */
+
+    //--------
+
+    /*
     await fetch("https://freeimage.host/api/1/upload", {
       method: "POST",
       headers: {
@@ -35,6 +208,7 @@ exports.upload = async (req, res) => {
         console.log("API response ↓");
         console.log(data.message);
       });
+    */
   } catch (error) {
     console.log("↓ ------- Une erreur s'est produite ↓");
     console.log(error);

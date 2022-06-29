@@ -32,13 +32,14 @@ export default function TestDivers() {
         formData.append("firstName", "Yamakyu")
         formData.append("id", 26)    
 
-        await axios.post('/api/test/upload', formData, {
+        await axios.post('/api/test/uploadax', formData, {
             headers: {
               Authorization: "Bearer " + activeSession.userToken,
             }
           }).then((res) => {
             console.log("API response ↓");
             console.log(res);
+            console.log(res.message);
       
           })
           .catch((err) => {

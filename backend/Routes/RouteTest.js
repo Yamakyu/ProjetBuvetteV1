@@ -13,8 +13,15 @@ router.post(
 router.post(
   "/upload",
   userController.isLoggedIn,
-  //imageMiddleware.single("file"),
+  imageMiddleware.single("file"),
   testController.upload
+);
+
+router.post(
+  "/uploadax",
+  userController.isLoggedIn,
+  imageMiddleware.single("file"),
+  testController.uploadAxios
 );
 
 router.get(
