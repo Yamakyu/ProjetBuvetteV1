@@ -40,6 +40,8 @@ export default function TestDivers() {
             console.log("API response ↓");
             console.log(res);
             console.log(res.message);
+            console.log(res.data.message);
+            console.log(res.data.image);
       
           })
           .catch((err) => {

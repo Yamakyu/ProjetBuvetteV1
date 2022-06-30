@@ -213,6 +213,8 @@ exports.findAllArticles = async (req, res) => {
   console.log("ARTICLE controller : findAllArticles -------");
 
   try {
+    await clearImageFolder();
+
     let theseArticles;
 
     if (req.body.isOnlyAvailableArticles) {

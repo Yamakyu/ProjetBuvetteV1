@@ -34,67 +34,37 @@ exports.uploadAxios = async (req, res) => {
     );
 
     const myForm = new formData();
-
-    //myForm.append("source", myFile);
-    myForm.append("source", myFile);
-    myForm.append("files", myFile);
-    myForm.append("file", myFile);
-    myForm.append("key", "6d207e02198a847aa98d0a2a901485a5");
-    myForm.append("action", "upload");
+    myForm.append("image", myFile);
 
     await axios
-      .get(
-        "https://freeimage.host/api/1/upload/key=6d207e02198a847aa98d0a2a901485a5&action=upload&source=https://bsolife.fr/img/blog/upload/17_Uma-Musume_Pretty-Derby_Au-dela-des-limites_Plus-ultra/UM2_30.png"
+      .post(
+        `https://api.imgbb.com/1/upload?key=37711df21236d0496b6a91c8a3ba843f`,
+        myForm,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       )
-      .then((data) => {
+      .then((response) => {
         console.log("API response ↓");
-        console.log(data);
-        res.status(200).json({
+        console.log(response);
+        console.log(response.data.data.url);
+
+        const image = response.data.data.url;
+
+        return res.status(200).json({
+          image,
           message: "that worked !",
-          data,
         });
       })
       .catch((err) => {
         console.log("API error ↓");
         console.log(err);
-
         if (err.response.data.error) {
           console.log(err.response.data.error);
         }
-
-        res.status(500).json({
-          err,
-          dataError: err.response.data.error,
-          message: "Didn't work, but request was sent",
-        });
-      });
-
-    await axios
-      .post(
-        `https://freeimage.host/api/1/upload/`,
-        {
-          key: "6d207e02198a847aa98d0a2a901485a5",
-          source: myFile,
-        },
-        { headers: { key: "6d207e02198a847aa98d0a2a901485a5" } }
-      )
-      .then((data) => {
-        console.log("API response ↓");
-        console.log(data);
-        res.status(200).json({
-          message: "that worked !",
-          data,
-        });
-      })
-      .catch((err) => {
-        console.log("API error ↓");
-        //console.log(err);
-
-        if (err.response.data.error) {
-          //console.log(err.response.data.error);
-        }
-
-        res.status(500).json({
+        return res.status(500).json({
           err,
           dataError: err.response.data.error,
           message: "Didn't work, but request was sent",
@@ -102,7 +72,7 @@ exports.uploadAxios = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       error,
       message: "Didn't work",
     });
